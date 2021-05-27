@@ -1,0 +1,1498 @@
+# https://irclogs.thegrebs.com/debian/2021/03/27
+
+00:01 -!- jmatos [~jmatos@00028665.user.oftc.net] has quit [Quit: Quitting.]
+00:01 -!- simonpatapon [simon@patapon.lol] has quit [Remote host closed the connection]
+00:01 -!- asilanat [~asilanat@ool-457f2633.dyn.optonline.net] has quit [Read error: Connection reset by peer]
+00:01 -!- Brainium [~brainium@00028330.user.oftc.net] has quit [Quit: Konversation terminated!]
+00:02 -!- asilanat [~asilanat@ool-457f2633.dyn.optonline.net] has joined #debian
+00:02 -!- asilanat is "realname" on #debian #cryptoparty #kali
+00:03 -!- simonpatapon [simon@patapon.lol] has joined #debian
+00:03 -!- simonpatapon is "Simon Patapon" on #buddhism #debian-next #oftc #debian #bitlbee
+00:05 -!- narispo [~narispo@193.32.126.231] has quit [Ping timeout: 480 seconds]
+00:05 -!- medicalwei [~medicalwe@forum.lxde.org] has joined #debian
+00:05 -!- medicalwei is "Yao Wei" on #debian-c3 #debian
+00:06 -!- hele_ [~hele@88-115-23-57.elisa-laajakaista.fi] has joined #debian
+00:06 -!- hele_ is "hele" on #debian-next #debian
+00:07 -!- aindilis [~aindilis@172-12-3-117.lightspeed.sgnwmi.sbcglobal.net] has quit [Remote host closed the connection]
+00:07 -!- rwp [~invalid@havoc.proulx.com] has quit [Server closed connection]
+00:08 -!- rwp [~invalid@havoc.proulx.com] has joined #debian
+00:08 -!- rwp is "Bob Proulx" on #virt #debian-next #debian
+00:10 -!- tnewman is now known as Guest1099
+00:10 -!- tnewman [~tnewman@36-229-232-28.dynamic-ip.hinet.net] has joined #debian
+00:10 -!- tnewman is "Travis Newman" on #debian
+00:11 -!- coruja [~coruja@000170b7.user.oftc.net] has quit [Server closed connection]
+00:11 -!- coruja [~coruja@158.181.81.101] has joined #debian
+00:11 -!- coruja is "Markus Meyer" on #frickelplatz #blobot #debian #debian-next
+00:11 -!- josegatica [~josegatic@181.226.213.86] has quit [Remote host closed the connection]
+00:12 -!- Guest1099 [~tnewman@36-229-232-28.dynamic-ip.hinet.net] has quit [Read error: Connection reset by peer]
+00:13 -!- diogenes_oftc [~diogenes_@212.0.201.166] has joined #debian
+00:13 -!- diogenes_oftc is "Nicolas" on #debian
+00:16 -!- DLange [~DLange@dlange.user.oftc.net] has quit [Server closed connection]
+00:16 -!- DLange [~DLange@dlange.user.oftc.net] has joined #debian
+00:16 -!- DLange is "Daniel Lange" on #virt #debian-lists #qemu #debian-dpp #spi #ceph-devel #ubuntu-expats @#cdchina @#cdchange @#realfreaks @#roma #kernelnewbies #debian #gentoo #moocows #oftc
+00:21 -!- jmatos [~jmatos@00028665.user.oftc.net] has joined #debian
+00:21 -!- jmatos is "nil" on #vmdb2 #oftc #debian-raspberrypi #debian-next #debian
+00:22 -!- RedSoxFan07 [~Thunderbi@d-159-250-218-50.ct.cpe.atlanticbb.net] has quit [Quit: RedSoxFan07]
+00:24 -!- schizo [~schizo@00021b96.user.oftc.net] has quit [Server closed connection]
+00:24 -!- schizo [~schizo@00021b96.user.oftc.net] has joined #debian
+00:24 -!- schizo is "me without a mic is like a beat without a snare" on #oftc #linux #debian
+00:26 -!- Brigo [~Brigo@40.181.60.213.dynamic.reverse-mundo-r.com] has quit [Ping timeout: 480 seconds]
+00:28 -!- meti [~meti@00019a84.user.oftc.net] has quit [Server closed connection]
+00:28 -!- meti [~meti@00019a84.user.oftc.net] has joined #debian
+00:28 -!- meti is "meti" on #debian
+00:32 <daviiid>   hello - wrt to https://bugs.debian.org/984426, once someone can 'sit in front of the machine', i was wondering: if it can boot an older kernel, can I then reinstall the bootloader, running which command? like update-grub?
+00:32 <judd>  Bug https://bugs.debian.org/984426 in grub-pc (open): «grub suddenly does not boot and ends up with "grub_register_command_lockdown not found"»; severity: important; opened: 2021-03-03; last modified: 2021-03-16.
+00:34 -!- phos [~daniel@94-255-250-104.cust.bredband2.com] has quit [Server closed connection]
+00:34 -!- phos [~daniel@94-255-250-104.cust.bredband2.com] has joined #debian
+00:34 -!- phos is "daniel" on #debian
+00:34 -!- azubieta6 [~azubieta@azubieta.net] has quit [Server closed connection]
+00:34 -!- asilanat [~asilanat@ool-457f2633.dyn.optonline.net] has quit [Read error: Connection reset by peer]
+00:35 -!- azubieta6 [~azubieta@azubieta.net] has joined #debian
+00:35 -!- azubieta6 is "azubieta" on #debian
+00:36 -!- asilanat [~asilanat@ool-457f2633.dyn.optonline.net] has joined #debian
+00:36 -!- asilanat is "realname" on #debian #cryptoparty @#kali
+00:37 -!- Guest968 [~Cyrus@144.202.93.237] has quit [Server closed connection]
+00:37 -!- Cyrus [~Cyrus@144.202.93.237] has joined #debian
+00:37 -!- Cyrus is "Cyrus" on #debian
+00:37 -!- draco [~draco@79.109.89.87.dyn.user.ono.com] has joined #debian
+00:37 -!- draco is "realname" on #debian
+00:37 -!- draco [~draco@79.109.89.87.dyn.user.ono.com] has left #debian []
+00:38 -!- Cyrus is now known as Guest1106
+00:40 -!- cef [~cef@60-242-247-161.tpgi.com.au] has quit [Server closed connection]
+00:40 -!- nyov is now known as Guest1107
+00:40 -!- nyov [~nyov@nyov.user.oftc.net] has joined #debian
+00:40 -!- nyov is "nyov" on #debian-offtopic #oftc #debian #luakit
+00:40 -!- heyj__ [sid171370@id-171370.stonehaven.irccloud.com] has quit [Server closed connection]
+00:40 -!- heyj__ [sid171370@id-171370.stonehaven.irccloud.com] has joined #debian
+00:40 -!- heyj__ is "Jason Reule" on #debian
+00:40 -!- cef [~cef@60-242-247-161.tpgi.com.au] has joined #debian
+00:40 -!- cef is "Cefiar" on #debian-next #debian
+00:41 -!- Caesar [apollock@daedalus.andrew.net.au] has quit [Server closed connection]
+00:41 -!- Caesar [apollock@daedalus.andrew.net.au] has joined #debian
+00:41 -!- Caesar is "Andrew Pollock" on #debian-tech #debian
+00:43 -!- dcraig [craig@00017371.user.oftc.net] has quit [Server closed connection]
+00:43 -!- dcraig [craig@00017371.user.oftc.net] has joined #debian
+00:43 -!- dcraig is "dcraig" on #uno #linode-beta #linode #oftc #debian #tardigans #moocows
+00:44 -!- cudunk [~cudunk@180.252.250.20] has joined #debian
+00:44 -!- cudunk is "Aswin Simatupang" on #debian
+00:44 -!- roshanavand [~roshanava@185.209.196.154] has joined #debian
+00:44 -!- roshanavand is "realname" on #debian
+00:45 -!- msim [~quassel@0002b050.user.oftc.net] has quit [Server closed connection]
+00:46 -!- msim [~quassel@2001:8003:d194:d000::d8d] has joined #debian
+00:46 -!- msim is "msim" on #ricochet #debian #qemu #C #llvm #oftc #c++ #linux
+00:46 -!- Voeid [luke@voeid.cf] has quit [Quit: Leaving...]
+00:47 -!- Voeid [luke@0002a306.user.oftc.net] has joined #debian
+00:47 -!- Voeid is "Voeid" on #debian
+00:47 -!- Guest1107 [~nyov@nyov.user.oftc.net] has quit [Ping timeout: 480 seconds]
+00:49 -!- camb [~camb@pip.ozlabs.org] has quit [Server closed connection]
+00:49 -!- camb [~camb@pip.ozlabs.org] has joined #debian
+00:49 -!- camb is "Cyril Bur" on #debian
+00:49 -!- jar-el [~jar-el@145-132-134-198.fixed.kpn.net] has quit [Server closed connection]
+00:50 -!- jar-el [~jar-el@145-132-134-198.fixed.kpn.net] has joined #debian
+00:50 -!- jar-el is "realname" on #debian #debian-games #debian-offtopic
+00:52 -!- dpanter [~dpanter@0002672e.user.oftc.net] has quit [Server closed connection]
+00:53 -!- XeryusTC [~XeryusTC@000128e4.user.oftc.net] has quit [Ping timeout: 480 seconds]
+00:54 -!- lids [~lids@0001fd69.user.oftc.net] has quit [Server closed connection]
+00:54 -!- lids [~lids@ppp-94-67-164-40.home.otenet.gr] has joined #debian
+00:54 -!- lids is "lids" on #tinycore-lab @#oab #debian-ru #debian-community #bash-completion #debian-astro #debian
+00:54 -!- dpanter [~dpanter@0002672e.user.oftc.net] has joined #debian
+00:54 -!- dpanter is "realname" on #debian #debian-next #debian-offtopic #debian-kde
+00:57 -!- SWAT [~swat@swat.user.oftc.net] has quit [Server closed connection]
+00:57 -!- SWAT [~swat@swat.user.oftc.net] has joined #debian
+00:57 -!- SWAT is "Unknown" on #debian
+01:01 -!- ozars [~ozars@00027611.user.oftc.net] has quit [Quit: ozars]
+01:03 -!- agaida [~quassel@mail.g7y.de] has joined #debian
+01:03 -!- agaida is "Alf Gaida " on #debian
+01:03 -!- XeryusTC [~XeryusTC@000128e4.user.oftc.net] has joined #debian
+01:03 -!- XeryusTC is "XeryusTC" on @#openttdcoop.dev #openttd #debian-next #debian @#coopetition
+01:04 -!- tm [~tm@00028838.user.oftc.net] has joined #debian
+01:04 -!- tm is "tm" on #debian #ceph
+01:05 -!- secntech [~secntech@0002a124.user.oftc.net] has quit [Read error: Connection reset by peer]
+01:05 -!- tm_ [~tm@dynamic-078-049-036-038.78.49.pool.telefonica.de] has quit [Ping timeout: 480 seconds]
+01:07 -!- asilanat [~asilanat@ool-457f2633.dyn.optonline.net] has quit [Remote host closed the connection]
+01:08 -!- asilanat [~asilanat@ool-457f2633.dyn.optonline.net] has joined #debian
+01:08 -!- asilanat is "realname" on #debian #cryptoparty #kali
+01:09 -!- dad [~dad@c-73-248-16-106.hsd1.nj.comcast.net] has joined #debian
+01:09 -!- dad is "dad" on #debian
+01:12 -!- maschinenhans [~Hans@200116b82a3eab00188ef3d27238fd64.dip.versatel-1u1.de] has quit [Ping timeout: 480 seconds]
+01:16 -!- znalo [~quassel@ppp118-208-187-252.cbr-trn-nor-bras39.tpg.internode.on.net] has quit [Server closed connection]
+01:16 -!- znalo [~quassel@ppp118-208-187-252.cbr-trn-nor-bras39.tpg.internode.on.net] has joined #debian
+01:16 -!- znalo is "Ambrose Andrews" on #debian #freedombox
+01:17 -!- delatjua [~quassel@181.228.199.15] has quit [Quit: https://quassel-irc.org - Chat comfortably. Anywhere.]
+01:19 -!- cudunk [~cudunk@180.252.250.20] has quit [Quit: cudunk]
+01:21 -!- maschinenhans [~Hans@200116b82a3eab00bdc7484dc06322ca.dip.versatel-1u1.de] has joined #debian
+01:21 -!- maschinenhans is "realname" on #debian
+01:23 -!- carlos [~smuxi@bast.cmartin.tk] has quit [Server closed connection]
+01:24 -!- kkd [~kkd@00029ff1.user.oftc.net] has quit [Server closed connection]
+01:24 -!- kkd [~kkd@2400:8902::f03c:92ff:feac:6d1] has joined #debian
+01:24 -!- kkd is "Kumar Kartikeya Dwivedi" on #C #c++ #linux-storage #bcache #mm #llvm #linode #kernelnewbies #ext4 #debian-next #debian #bpftrace #virt
+01:25 -!- clowninasack [clowninasa@0001afcf.user.oftc.net] has quit [Server closed connection]
+01:25 -!- clowninasack [clowninasa@0001afcf.user.oftc.net] has joined #debian
+01:25 -!- clowninasack is "clowninasack" on #ceph #bitlbee #debian
+01:25 -!- carlos [~smuxi@bast.cmartin.tk] has joined #debian
+01:25 -!- carlos is "Your Name" on #debian
+01:28 -!- nevivurn [~nevivurn@00028645.user.oftc.net] has quit [Server closed connection]
+01:28 -!- nevivurn [~nevivurn@00028645.user.oftc.net] has joined #debian
+01:28 -!- nevivurn is "nevivurn" on #debian #C
+01:29 -!- DanB288 [~textual@49.204.96.109] has joined #debian
+01:29 -!- DanB288 is "Textual User" on #debian
+01:34 -!- asilanat [~asilanat@ool-457f2633.dyn.optonline.net] has quit [Read error: Connection reset by peer]
+01:34 -!- asilanat [~asilanat@ool-457f2633.dyn.optonline.net] has joined #debian
+01:34 -!- asilanat is "realname" on #debian #cryptoparty #kali
+01:36 -!- daemonkeeper [~arno@arno.ninja] has quit [Server closed connection]
+01:36 -!- daemonkeeper [~arno@arno.ninja] has joined #debian
+01:36 -!- daemonkeeper is "arno" on #debian-next #debian
+01:37 -!- Muzer [~muzer@tim32.org] has quit [Server closed connection]
+01:38 -!- kini [~kini@2600:1700:8a10:71e0::21] has joined #debian
+01:38 -!- kini is "Keshav Kini -- http://github.com/kini" on #debian #virt #debian-japanese #debian-next #llvm @#aptitude #debian-pdx
+01:38 -!- goncalor [~goncalor@static.209.153.216.95.clients.your-server.de] has quit [Server closed connection]
+01:38 -!- goncalor [~goncalor@static.209.153.216.95.clients.your-server.de] has joined #debian
+01:39 -!- goncalor is "goncalor" on #debian
+01:40 -!- redlegion [sid429547@id-429547.charlton.irccloud.com] has quit [Server closed connection]
+01:40 -!- redlegion [sid429547@id-429547.charlton.irccloud.com] has joined #debian
+01:40 -!- redlegion is "redlegion" on #oftc #debian #Qubes_OS
+01:42 -!- sigma [~sigma@c-174-56-62-191.hsd1.nm.comcast.net] has joined #debian
+01:42 -!- sigma is "sigma" on #debian
+01:42 -!- daviiid [~user@179.210.52.91] has quit [Read error: Connection reset by peer]
+01:43 -!- daviiid [~user@179.210.52.91] has joined #debian
+01:43 -!- daviiid is "unknown" on #debian
+01:43 -!- sigma [~sigma@c-174-56-62-191.hsd1.nm.comcast.net] has quit []
+01:44 -!- Muzer [~muzer@tim32.org] has joined #debian
+01:44 -!- Muzer is "Murray Colpman" on #llvm #gc-linux #debian #OpenRailwayMap
+01:45 -!- raghavgururajan [9fd51d1ea8@raghavgururajan.user.oftc.net] has quit [Server closed connection]
+01:45 -!- raghavgururajan [9fd51d1ea8@telesto.hot-chilli.net] has joined #debian
+01:45 -!- raghavgururajan is "Raghav Gururajan" on #debian #oftc
+01:49 -!- calcmandan [~quassel@00026782.user.oftc.net] has quit [Server closed connection]
+01:49 -!- calcmandan [~quassel@69.62.219.168] has joined #debian
+01:49 -!- calcmandan is "Daniel" on #debconf-fosdem #tor-bots ##asm #qemu #debian #rust #oftc #smoothwall
+01:50 -!- hele_ [~hele@88-115-23-57.elisa-laajakaista.fi] has quit [Ping timeout: 480 seconds]
+01:52 -!- edeak [~edeak@25.14.63.94.rev.vodafone.pt] has joined #debian
+01:52 -!- edeak is "realname" on #debian
+01:53 -!- godzilla [~godzilla@117.41.131.85] has quit [Server closed connection]
+01:54 -!- godzilla [~godzilla@117.41.131.85] has joined #debian
+01:54 -!- godzilla is "致良郭" on #oftc #mm #linux #tor-bots #help #debian
+01:54 -!- caraka [~quassel@58.48.255.123.static.snap.net.nz] has quit [Server closed connection]
+01:55 -!- caraka [~quassel@58.48.255.123.static.snap.net.nz] has joined #debian
+01:55 -!- caraka is "rick,,," on #debian #salsaci #debian-academy
+01:55 -!- eti [~eti@2a07:abc4::1:26e] has quit [Server closed connection]
+01:55 -!- eti [~eti@2a07:abc4::1:26e] has joined #debian
+01:55 -!- eti is "really?" on #debian-next #debian
+01:55 -!- _zxq9_ [~zxq9@FL1-119-244-160-91.okn.mesh.ad.jp] has quit [Server closed connection]
+01:56 -!- _zxq9_ [~zxq9@FL1-119-244-160-91.okn.mesh.ad.jp] has joined #debian
+01:56 -!- _zxq9_ is "zxq9" on #debian #zomp #rust #erlang #space
+01:57 -!- svedrin [~quassel@tiamat.funzt-halt.net] has quit [Server closed connection]
+01:57 -!- svedrin [~quassel@tiamat.funzt-halt.net] has joined #debian
+01:57 -!- svedrin is "Michael Ziegler,,," on #debian
+01:58 -!- Ericounet [~Eric@2a01:e0a:d0:3c20:95af:cb77:3a3e:4ae8] has joined #debian
+01:58 -!- Ericounet is "realname" on #freedombox #debian
+02:02 -!- Yash [~oftc-webi@110.226.26.127] has joined #debian
+02:02 -!- Yash is "OFTC WebIRC Client" on #debian
+02:02 -!- DanB288 [~textual@49.204.96.109] has quit [Quit: My MacBook has gone to sleep. ZZZzzz…]
+02:06 <Yash>  I have been planning to use Debian 10 for my production KVM host but while procurring server hardware(Lenovo SR530) i came to know that Debian 10 is not listed in compatible operating system list link https://lenovopress.com/osig#servers=sr530-7x07-7x08-sp-gen-2&support=all
+02:07 -!- dad [~dad@c-73-248-16-106.hsd1.nj.comcast.net] has quit [Ping timeout: 480 seconds]
+02:07 <Yash>  can i use debian 10 on lenovo sr530?
+02:10 <cc>    seeing how it lists ubuntu and rhel 7 as supported, I would expect it to run debian without any problems
+02:14 <Yash>  is it advisable for production usage?
+02:15 <diogenes_oftc> Yash, i'd not recommend anything lenovo related to anything Linux related.
+02:17 <Yash>  any server hardware provider which supports Debian 10 out of the box?
+02:18 <Yash>  i have checked dell, lenovo, hp & supermicro
+02:18 <Yash>  i can not see debian 10 in compatible os list
+02:21 -!- texou [~jp@000178ec.user.oftc.net] has quit [Quit: WeeChat 3.0.1]
+02:21 -!- binaryhermit [sid462772@00027d94.user.oftc.net] has joined #debian
+02:21 -!- binaryhermit is "binaryhermit" on #freedombox #debian-offtopic #debian
+02:22 -!- texou [~jp@000178ec.user.oftc.net] has joined #debian
+02:22 -!- texou is "Stoicien" on #debian-nonupload #debian-i18n #bitlbee #debian-next #debian #debian-es #debian-devel-es #debian-devel-it #debian-l10n-fr #debian-a11y
+02:24 -!- _zxq9_ [~zxq9@FL1-119-244-160-91.okn.mesh.ad.jp] has quit [Quit: バイバイ！ (^_^)/~]
+02:27 -!- _zxq9_ [~zxq9@FL1-119-244-160-91.okn.mesh.ad.jp] has joined #debian
+02:27 -!- _zxq9_ is "zxq9" on #debian #zomp #rust #erlang #space
+02:28 -!- topyli [~topyli@esm-84-240-127-217.netplaza.fi] has joined #debian
+02:28 -!- topyli is "realname" on #debian #debian-next #debian-offtopic
+02:28 -!- cef [~cef@60-242-247-161.tpgi.com.au] has quit [Remote host closed the connection]
+02:29 -!- cef [~cef@60-242-247-161.tpgi.com.au] has joined #debian
+02:29 -!- cef is "Cefiar" on #debian #debian-next
+02:37 -!- jakethedog [~jakethedo@000269d7.user.oftc.net] has joined #debian
+02:37 -!- jakethedog is "jakethedog" on #debian
+02:38 -!- rasmus-mk [~rasmus@c83-253-223-217.bredband.comhem.se] has joined #debian
+02:38 -!- rasmus-mk is "Rasmus MK" on #mobian #debian-next #debian
+02:40 -!- ol [~quassel@2406:e003:810:b301:8e89:a5ff:feca:57fe] has joined #debian
+02:40 -!- ol is "Ol" on #debian
+02:44 -!- freshtube [~freshtube@193.138.218.213] has joined #debian
+02:44 -!- freshtube is "realname" on #debian
+02:44 -!- radhitya [~radhitya@103.213.129.142] has joined #debian
+02:44 -!- radhitya is "Alif Radhitya" on #debian
+02:44 -!- Yash [~oftc-webi@110.226.26.127] has quit [Remote host closed the connection]
+02:44 -!- radhitya [~radhitya@103.213.129.142] has quit []
+02:46 -!- ansel [~ansel@aurora.ydns.eu] has joined #debian
+02:47 -!- ansel is "Andreas Seltenreich" on #debian #llvm
+02:55 -!- cef [~cef@60-242-247-161.tpgi.com.au] has quit [Quit: Zoom!]
+02:56 -!- cef [~cef@60-242-247-161.tpgi.com.au] has joined #debian
+02:56 -!- cef is "Cefiar" on #debian #debian-next
+02:56 -!- awal1 [~awal1@bras-base-mtrlpq0315w-grc-18-70-55-155-143.dsl.bell.ca] has quit [Quit: Leaving]
+03:01 -!- alpernebbi [~quassel@178.233.26.119] has joined #debian
+03:01 -!- alpernebbi is "Alper Nebi Yasak" on #debian #debian-next
+03:04 -!- titi [~smuxi@lfbn-lil-1-329-25.w81-49.abo.wanadoo.fr] has joined #debian
+03:04 -!- titi is "Your Name" on #debian
+03:12 -!- artur [~smuxi@78.10.205.60] has joined #debian
+03:12 -!- artur is "Your Name" on #debian
+03:13 -!- ol [~quassel@2406:e003:810:b301:8e89:a5ff:feca:57fe] has quit [Ping timeout: 480 seconds]
+03:20 -!- artur [~smuxi@78.10.205.60] has quit [Remote host closed the connection]
+03:29 -!- Guest1106 is now known as Cyrus
+03:31 -!- ao2 [~ao2@host-82-55-141-84.retail.telecomitalia.it] has joined #debian
+03:31 -!- ao2 is "ao2" on #vcs-home #debian #cell
+03:32 -!- Ganneff [~joerg@ganneff.noc.oftc.net] has quit [Remote host closed the connection]
+03:32 -!- joemaro [~joemaro@p200300c54f3a27efb0d030a9e05a6c4c.dip0.t-ipconnect.de] has joined #debian
+03:32 -!- joemaro is "realname" on #debian-next #debian
+03:40 -!- andibmu [~andi@94.134.93.101] has joined #debian
+03:40 -!- andibmu is "Andreas B. Mundt" on #debian-meeting #debian #debian-next #debian-offtopic #debian-edu #debian-lan
+03:44 -!- aidalgol_ [~aidalgol@222-154-27-167-vdsl.sparkbb.co.nz] has joined #debian
+03:44 -!- aidalgol_ is "Aidan Gauland" on #debian
+03:45 -!- Iridos [~k@0001a0a9.user.oftc.net] has joined #debian
+03:45 -!- Iridos is "realname" on #debian-offtopic #debian
+03:46 -!- aidalgol [~aidalgol@0001a1b7.user.oftc.net] has quit [Ping timeout: 480 seconds]
+03:48 -!- mode/#debian [+l 707] by debhelper
+03:52 -!- arunpyasi [~arunpyasi@2407:5200:400:1276:6cff:41e6:46b1:fac1] has joined #debian
+03:52 -!- arunpyasi is "realname" on #packaging #minidebconf-online #debian-ubuntu #debian-meeting #debian-lts #debian #debian-deepin
+03:52 -!- UnoMas51 [~4564asdf6@31.4.129.33] has joined #debian
+03:52 -!- UnoMas51 is "Si SI" on #debian
+03:55 -!- se7en [~smuxi@115.164.93.32] has joined #debian
+03:55 -!- se7en is "Your Name" on #debian
+03:55 -!- se7en [~smuxi@115.164.93.32] has quit [Read error: Connection reset by peer]
+03:56 -!- D4yDr34m [~quassel@115.164.93.32] has joined #debian
+03:56 -!- D4yDr34m is ",,," on #debian
+03:57 -!- D4yDr34m [~quassel@115.164.93.32] has quit []
+03:58 -!- D4yDr34m [~quassel@115.164.93.32] has joined #debian
+03:58 -!- D4yDr34m is ",,," on #debian #hackers
+03:59 -!- Iridos [~k@0001a0a9.user.oftc.net] has quit [Ping timeout: 480 seconds]
+03:59 -!- Maduro51 [~4564asdf6@din-128-184-231-77.ipcom.comunitel.net] has joined #debian
+03:59 -!- Maduro51 is "Si SI" on #debian
+04:00 -!- user [~user@0BGAAAHJI.tor-irc.dnsbl.oftc.net] has joined #debian
+04:00 -!- user is "user" on #debian
+04:00 -!- user is now known as Guest1124
+04:00 -!- Guest1124 [~user@0BGAAAHJI.tor-irc.dnsbl.oftc.net] has quit []
+04:00 -!- D4yDr34m [~quassel@115.164.93.32] has quit []
+04:02 -!- D4yDr34m [~quassel@115.164.93.32] has joined #debian
+04:02 -!- D4yDr34m is ",,," on #ノエラートTwitter君…🤔🤔🤔" #debian @#hack #hackers
+04:03 -!- D4yDr34m [~quassel@115.164.93.32] has quit []
+04:03 -!- UnoMas51 [~4564asdf6@31.4.129.33] has quit [Ping timeout: 480 seconds]
+04:03 -!- debacle [3a8a2df271@v2202101139504140605.quicksrv.de] has joined #debian
+04:03 -!- debacle is "debacle" on #mobian #debian-social #debian #debian-next #debconf-haifa #quodlibet
+04:03 -!- bodiccea [~bodiccea@78.214.78.108] has quit [Quit: Leaving]
+04:06 -!- mzf [~mzf@0002ab8d.user.oftc.net] has joined #debian
+04:06 -!- mzf is "realname" on #salsaci #debian-next #debian-offtopic #debian-hpc #minidebconf-online #mini-DebConf-fr #debian
+04:09 -!- arunpyasi_ [~arunpyasi@45.64.160.4] has joined #debian
+04:09 -!- arunpyasi_ is "realname" on #debian-deepin #debian #debian-lts #debian-meeting #debian-ubuntu #minidebconf-online #packaging
+04:10 -!- RiteshRajSarraf[m] [~riteshsar@2001:470:1af1:101::7367] has joined #debian
+04:10 -!- RiteshRajSarraf[m] is "org.matrix:riteshsarraf" on #debian #salsaci #minidebconf-india #mobian
+04:11 -!- bodiccea [~bodiccea@78.214.78.108] has joined #debian
+04:11 -!- bodiccea is "bodiccea" on #oftc #debian-next #debian #kernelnewbies
+04:15 -!- arunpyasi [~arunpyasi@2407:5200:400:1276:6cff:41e6:46b1:fac1] has quit [Ping timeout: 480 seconds]
+04:20 -!- marcus-d [~marcus@89-158-243-153.rev.numericable.fr] has joined #debian
+04:20 -!- marcus-d is "marcus-d" on #linux #qemu #debian
+04:21 -!- totonika [~toto@aftr-37-201-215-255.unity-media.net] has joined #debian
+04:21 -!- totonika is "realname" on #debian-next #debian
+04:22 -!- Q-Master [~AdminUser@2.94.96.192] has quit [Ping timeout: 480 seconds]
+04:22 -!- Q-Master [~AdminUser@2.93.129.63] has joined #debian
+04:22 -!- Q-Master is "Vladimir Berezenko" on #debian-next #debian
+04:24 -!- menace [~someone@2001:a61:35ec:2f01:ed17:a030:6e4a:ca65] has joined #debian
+04:24 -!- menace is "someone" on #virt #freedombox #packaging #debian-ubuntu #debian
+04:24 -!- kathenas [~kathenas@2a02:c7f:9234:0:1d0f:dff7:8660:fe64] has quit [Quit: Leaving]
+04:25 -!- diogenes_oftc [~diogenes_@212.0.201.166] has quit [Quit: vergissmeinnicht]
+04:35 -!- nzrc532987 [~someone@8VQAAAL0V.tor-irc.dnsbl.oftc.net] has joined #debian
+04:35 -!- nzrc532987 is "user" on #debian
+04:36 -!- kathenas [~kathenas@2a02:c7f:9234:0:1d0f:dff7:8660:fe64] has joined #debian
+04:36 -!- kathenas is "Phil Wyett" on #packaging #debian #debian-ai #debian-next #debian-social #debian-meeting
+04:37 -!- arunpyasi [~arunpyasi@45.64.160.4] has joined #debian
+04:37 -!- arunpyasi is "realname" on #debian-deepin #debian #debian-lts #debian-meeting #debian-ubuntu #minidebconf-online #packaging
+04:37 -!- nzrc532987 [~someone@8VQAAAL0V.tor-irc.dnsbl.oftc.net] has quit []
+04:38 -!- mode/#debian [+l 714] by debhelper
+04:38 -!- arunpyasi_ [~arunpyasi@45.64.160.4] has quit [Ping timeout: 480 seconds]
+04:38 -!- pamaury_ [~pamaury@92.40.172.204.threembb.co.uk] has joined #debian
+04:38 -!- pamaury_ is "Amaury Pouly" on #oftc #debian-next #debian
+04:46 -!- gerdon [~Gerdon@host-80-116-242-21.retail.telecomitalia.it] has joined #debian
+04:46 -!- gerdon is "realname" on #debian
+04:46 -!- gerdon [~Gerdon@host-80-116-242-21.retail.telecomitalia.it] has quit []
+04:48 -!- ebmm [~ebmm@2001:818:dab1:f100:4795:7c82:dbbe:68e3] has joined #debian
+04:48 -!- ebmm is "ebmm" on #debian
+04:50 -!- olanz [~quassel@203-214-44-162.dyn.iinet.net.au] has joined #debian
+04:50 -!- olanz is "Ambrose Andrews" on #debian #freedombox
+04:53 -!- znalo [~quassel@ppp118-208-187-252.cbr-trn-nor-bras39.tpg.internode.on.net] has quit [Ping timeout: 480 seconds]
+04:53 -!- stderr [~poho@2001:470:28:8b2:616c:746d:756c:6967] has quit [Ping timeout: 480 seconds]
+04:54 -!- ebmm [~ebmm@2001:818:dab1:f100:4795:7c82:dbbe:68e3] has quit [Quit: Konversation terminated!]
+04:55 -!- kathenas [~kathenas@2a02:c7f:9234:0:1d0f:dff7:8660:fe64] has quit [Quit: Leaving]
+04:59 -!- kathenas [~kathenas@2a02:c7f:9234:0:1d0f:dff7:8660:fe64] has joined #debian
+04:59 -!- kathenas is "Phil Wyett" on #packaging #debian #debian-ai #debian-next #debian-social #debian-meeting
+05:01 -!- stderr [~poho@2001:470:28:8b2:616c:746d:756c:6967] has joined #debian
+05:01 -!- stderr is "Povl Ole Haarlev Olsen" on #debian @#stderr #tzdata-javascript
+05:02 -!- arunpyasi [~arunpyasi@45.64.160.4] has quit [Remote host closed the connection]
+05:02 -!- DanB288 [~textual@49.204.96.109] has joined #debian
+05:02 -!- DanB288 is "Textual User" on #debian
+05:05 -!- menace [~someone@2001:a61:35ec:2f01:ed17:a030:6e4a:ca65] has quit []
+05:07 -!- marcus-d [~marcus@89-158-243-153.rev.numericable.fr] has quit [Ping timeout: 480 seconds]
+05:11 -!- Talkless [~Talkless@62.80.227.49] has joined #debian
+05:11 -!- Talkless is "Talkless" on #debian-next #debian
+05:21 -!- stderr [~poho@2001:470:28:8b2:616c:746d:756c:6967] has quit [Ping timeout: 480 seconds]
+05:26 -!- netvor [~amahdal@ip-94-112-128-19.net.upcbroadband.cz] has joined #debian
+05:26 -!- netvor is "amahdal" on #debian
+05:26 -!- mbond [~mbond@2600:1700:65a0:b550::15] has quit [Ping timeout: 480 seconds]
+05:27 -!- ebmm [~ebmm@2001:818:dab1:f100:4795:7c82:dbbe:68e3] has joined #debian
+05:27 -!- ebmm is "ebmm" on #debian
+05:27 -!- epoll [~epoll@electra.zerofill.de] has quit []
+05:28 -!- ebmm [~ebmm@2001:818:dab1:f100:4795:7c82:dbbe:68e3] has left #debian []
+05:28 -!- Ganneff [~joerg@ganneff.noc.oftc.net] has joined #debian
+05:28 -!- Ganneff is "Joerg Jaspert" on #help #debian-lists @#cdrkit #spi #oftc #german #debian
+05:28 -!- hele_ [~hele@88-115-23-57.elisa-laajakaista.fi] has joined #debian
+05:28 -!- hele_ is "hele" on #debian-next #debian
+05:28 -!- epoll [~epoll@electra.zerofill.de] has joined #debian
+05:28 -!- epoll is "epoll" on #kernelnewbies #debian
+05:29 -!- asilanat [~asilanat@ool-457f2633.dyn.optonline.net] has quit [Remote host closed the connection]
+05:29 -!- asilanat [~asilanat@ool-457f2633.dyn.optonline.net] has joined #debian
+05:29 -!- asilanat is "realname" on #debian #cryptoparty #kali
+05:30 -!- kobi [~kobi@199.195.248.229] has quit [Quit: Ping timeout (120 seconds)]
+05:30 -!- kobi [~kobi@0002aac9.user.oftc.net] has joined #debian
+05:30 -!- kobi is "kobi" on #debian
+05:31 -!- vonsyd0w [~vonsyd0w@00025319.user.oftc.net] has quit [Ping timeout: 480 seconds]
+05:33 -!- oss9 [~oss9@193.138.218.203] has joined #debian
+05:33 -!- oss9 is "realname" on #debian-next #debian
+05:33 -!- oss9 [~oss9@193.138.218.203] has quit []
+05:35 -!- stderr [~poho@2001:470:28:8b2:616c:746d:756c:6967] has joined #debian
+05:35 -!- stderr is "Povl Ole Haarlev Olsen" on #tzdata-javascript #stderr #debian
+05:35 -!- topyli [~topyli@esm-84-240-127-217.netplaza.fi] has quit [Ping timeout: 480 seconds]
+05:36 <bentham>   ,v openssl
+05:36 <judd>  Package: openssl on amd64 -- jessie: 1.0.1t-1+deb8u8; jessie-security: 1.0.1t-1+deb8u12; stretch: 1.1.0l-1~deb9u1; stretch-security: 1.1.0l-1~deb9u1; buster: 1.1.1d-0+deb10u4; buster-proposed-updates: 1.1.1d-0+deb10u5; buster-security: 1.1.1d-0+deb10u6; bullseye: 1.1.1j-1; sid: 1.1.1k-1; experimental: 3.0.0~~alpha4-1
+05:37 -!- mbond [~mbond@2600:1700:65a0:b550::15] has joined #debian
+05:37 -!- mbond is "mbond" on #debian
+05:37 <bentham>   When will 1.1.1k-1 arrive in bullseye?
+05:38 -!- pamaury__ [~pamaury@2a02:c7f:60fd:1100:8286:9881:abe9:3d42] has joined #debian
+05:38 -!- pamaury__ is "Amaury Pouly" on #oftc #debian-next #debian
+05:38 -!- pamaury_ [~pamaury@92.40.172.204.threembb.co.uk] has quit [Ping timeout: 480 seconds]
+05:40 -!- madduck [~madduck@matilda.madduck.net] has joined #debian
+05:40 -!- madduck is "martin f krafft, 0x55c9882d999bbcc4, @martinkrafft" on #virt #reclass #oftc #dpp #debian-ipv6 #debian-devel-changes #debian @#bar
+05:40 -!- DanB288 [~textual@49.204.96.109] has quit [Read error: Connection reset by peer]
+05:40 <bentham>   apologies, I meant to send this to #debian-next
+05:41 -!- DanB288 [~textual@49.204.96.109] has joined #debian
+05:41 -!- DanB288 is "Textual User" on #debian
+05:46 -!- NomadJim [~Jim@72.168.161.40] has quit [Read error: Connection reset by peer]
+05:46 -!- NomadJim [~Jim@2001:5b0:2d1f:1968:f460:6663:c291:1b34] has joined #debian
+05:46 -!- NomadJim is "Nomad" on #debian #linode
+05:48 -!- Blacker47 [~Blacker47@00014f22.user.oftc.net] has joined #debian
+05:48 -!- Blacker47 is "Blacker47" on #debian-next #debian
+05:48 -!- pavlushka [~pavlushka@00021abb.user.oftc.net] has joined #debian
+05:48 -!- pavlushka is "Pavel Sayekat" on #debian #oftc
+05:57 -!- marcus-d [~marcus@85-168-230-27.rev.numericable.fr] has joined #debian
+05:57 -!- marcus-d is "marcus-d" on #linux #qemu #debian
+06:00 -!- oss9 [~oss9@185.195.233.158] has joined #debian
+06:00 -!- oss9 is "realname" on #debian-next #debian
+06:00 -!- oss9 [~oss9@185.195.233.158] has quit []
+06:03 -!- pamaury__ [~pamaury@2a02:c7f:60fd:1100:8286:9881:abe9:3d42] has quit [Ping timeout: 480 seconds]
+06:04 -!- user [~user@8A4AAAAMX.tor-irc.dnsbl.oftc.net] has joined #debian
+06:04 -!- user is "user" on #debian
+06:04 -!- user is now known as Guest1129
+06:05 <Guest1129> hi all
+06:05 -!- pavlushka [~pavlushka@00021abb.user.oftc.net] has quit [Ping timeout: 480 seconds]
+06:06 -!- czesmir [~stefan@aedk133.neoplus.adsl.tpnet.pl] has joined #debian
+06:06 -!- czesmir is "Stefan" on #debian
+06:06 -!- Guest1129 [~user@8A4AAAAMX.tor-irc.dnsbl.oftc.net] has quit []
+06:09 -!- Mezz [~Mezz@dsl-hkibng31-54fabd-233.dhcp.inet.fi] has joined #debian
+06:09 -!- Mezz is "Mezz" on #virt #llvm #kvm #moocows #redditprivacy #oftc #badgeteam @#gemu #ceph #mobian #debian-xfce #Qubes_OS #alpine-linux #packaging #biz #qemu #debian #realraum #freedombox #bcache #aqi-data-share #publiclab #help
+06:10 -!- f10_ [~flo@ip5b402e34.dynamic.kabel-deutschland.de] has joined #debian
+06:10 -!- f10_ is "f10" on #debian
+06:15 -!- bifter [~bifter@0002b254.user.oftc.net] has joined #debian
+06:15 -!- bifter is "realname" on #debian
+06:17 -!- pamaury_ [~pamaury@2a02:c7f:60fd:1100:8286:9881:abe9:3d42] has joined #debian
+06:17 -!- pamaury_ is "Amaury Pouly" on #oftc #debian-next #debian
+06:17 -!- edeak [~edeak@25.14.63.94.rev.vodafone.pt] has quit [Ping timeout: 480 seconds]
+06:18 -!- mode/#debian [+l 720] by debhelper
+06:18 -!- Brigo [~Brigo@40.181.60.213.dynamic.reverse-mundo-r.com] has joined #debian
+06:18 -!- Brigo is "realname" on #debian #debian-es #debian-next #debian-offtopic
+06:26 -!- bifter [~bifter@0002b254.user.oftc.net] has quit [Quit: Leaving]
+06:29 -!- towo` [~towo@00012f0f.user.oftc.net] has joined #debian
+06:29 -!- towo` is "Torsten -towo- Wohlfarth" on #qemu #kernelnewbies #siduction-admin #debian-offtopic #debian-next #debian #aptosid
+06:38 -!- Haudegen [~quassel@178.115.237.87.static.drei.at] has joined #debian
+06:38 -!- Haudegen is "AP,,," on #security #debian.or.at #debian-next #debian
+06:39 -!- uos_eric2023 [~quassel@119.4.240.125] has quit [Remote host closed the connection]
+06:43 -!- asilanat [~asilanat@ool-457f2633.dyn.optonline.net] has quit [Remote host closed the connection]
+06:44 -!- asilanat [~asilanat@ool-457f2633.dyn.optonline.net] has joined #debian
+06:44 -!- asilanat is "realname" on #debian #cryptoparty #kali
+06:45 -!- godzilla [~godzilla@117.41.131.85] has quit [Ping timeout: 480 seconds]
+06:48 -!- godzilla [~godzilla@117.41.131.85] has joined #debian
+06:48 -!- godzilla is "致良郭" on #oftc #mm #linux #tor-bots #help #debian
+07:01 -!- Brigo [~Brigo@40.181.60.213.dynamic.reverse-mundo-r.com] has quit [Ping timeout: 480 seconds]
+07:05 -!- dpkg [~dpkg@dpkg.bot.oftc.net] has quit [Quit: buh bye!]
+07:05 -!- dpkg [~dpkg@dpkg.bot.oftc.net] has joined #debian
+07:05 -!- dpkg is "apt backup" on #debian
+07:10 -!- dselect [~dselect@dselect.bot.oftc.net] has quit [Quit: ouch... that hurt]
+07:11 -!- Strelnikov [~strelniko@4G4AAAKKT.tor-irc.dnsbl.oftc.net] has quit [Remote host closed the connection]
+07:11 -!- dselect [~dselect@dselect.bot.oftc.net] has joined #debian
+07:11 -!- dselect is "dpkg backup readonly db" on #debian
+07:11 -!- Strelnikov [~strelniko@86MAAAAOH.tor-irc.dnsbl.oftc.net] has joined #debian
+07:11 -!- Strelnikov is "strelnikov" on #tor-south #tor-project #tor-mobile #tor-l10n #tor-dev #tor-bots #debian #dfri_se
+07:14 -!- netvor [~amahdal@ip-94-112-128-19.net.upcbroadband.cz] has quit [Ping timeout: 480 seconds]
+07:19 -!- asilanat [~asilanat@ool-457f2633.dyn.optonline.net] has quit [Remote host closed the connection]
+07:20 -!- asilanat [~asilanat@ool-457f2633.dyn.optonline.net] has joined #debian
+07:20 -!- asilanat is "realname" on #debian #cryptoparty @#kali
+07:24 -!- joemaro [~joemaro@p200300c54f3a27efb0d030a9e05a6c4c.dip0.t-ipconnect.de] has quit [Ping timeout: 480 seconds]
+07:32 <filePeter> Hi, upgrading my system today, resulted in me finding out, that my /boot/ partition is too small. (269 M: gzip: stdout: No space left on device)
+07:32 <filePeter> E: mkinitramfs failure cpio 141 gzip 1
+07:32 -!- ganpa[m] [~ganpamatr@2001:470:1af1:101::7a53] has left #debian [User left]
+07:33 <rudi_s>    filePeter: Delete unused kernel images.
+07:33 <filePeter> While I could fix it, with removing another kernel, is there a method to change this behavior? (tmpfs, different installation path?)
+07:33 <filePeter> rudi_s: Thank you. Yes this is what made it work in the end.
+07:33 <grawity>   I'm not sure a tmpfs would help if the end result is unable to fit in /boot anyway?
+07:34 <grawity>   well, might help for temporary files I guess
+07:35 -!- netvor [~amahdal@ip-94-112-128-19.net.upcbroadband.cz] has joined #debian
+07:35 -!- netvor is "amahdal" on #debian
+07:35 -!- Roman3349 [~Thunderbi@host-89-203-169-159.ip.topnet.cz] has joined #debian
+07:35 -!- Roman3349 is "Roman3349" on #debian-sponsors #packaging #debian
+07:35 <filePeter> Yeah… Oh my… I am really not keen on repartitioning the whole drive. (rest of the drive is a cryptsetup+lvm)
+07:37 -!- guits__ [~guits@143.208.14.88] has joined #debian
+07:37 -!- guits__ is "guits" on #debian
+07:39 -!- pavlushka [~pavlushka@00021abb.user.oftc.net] has joined #debian
+07:39 -!- pavlushka is "Pavel Sayekat" on #debian #oftc
+07:46 -!- Blacker47 [~Blacker47@00014f22.user.oftc.net] has quit [Quit: Life is short. Get a V.90 modem fast!]
+07:47 -!- Blacker47 [~Blacker47@00014f22.user.oftc.net] has joined #debian
+07:47 -!- Blacker47 is "Blacker47" on #debian-next #debian
+07:51 -!- ottavio [~m0ttv@host81-134-46-203.in-addr.btopenworld.com] has joined #debian
+07:51 -!- ottavio is "Ottavio Caruso" on #debian #qemu
+07:52 -!- DanB288 [~textual@49.204.96.109] has quit [Quit: My MacBook has gone to sleep. ZZZzzz…]
+07:53 -!- user [~user@9O6AAAA9Q.tor-irc.dnsbl.oftc.net] has joined #debian
+07:53 -!- user is "user" on #debian
+07:53 -!- user is now known as Guest1133
+07:55 -!- DanB288 [~textual@49.204.96.109] has joined #debian
+07:55 -!- DanB288 is "Textual User" on #debian
+07:59 -!- DanB288 [~textual@49.204.96.109] has quit []
+07:59 -!- foka_ [~foka@00014ec7.user.oftc.net] has joined #debian
+07:59 -!- foka_ is "Anthony Fok" on #debian-java #debian-i18n #debian-glibc #debian-eeepc #debian-edu #debian-devel-changes #debian-ci #debian-ayatana #debian #debconf18-taiwan #autodeb
+08:00 -!- kathenas [~kathenas@2a02:c7f:9234:0:1d0f:dff7:8660:fe64] has quit [Quit: Leaving]
+08:01 -!- foka [~foka@00014ec7.user.oftc.net] has quit [Ping timeout: 480 seconds]
+08:02 -!- Strelnikov [~strelniko@86MAAAAOH.tor-irc.dnsbl.oftc.net] has quit [Remote host closed the connection]
+08:03 -!- Strelnikov [~strelniko@8VQAAAL2P.tor-irc.dnsbl.oftc.net] has joined #debian
+08:03 -!- Strelnikov is "strelnikov" on #tor-south #tor-project #tor-mobile #tor-l10n #tor-dev #tor-bots #debian #dfri_se
+08:05 -!- Guest1133 [~user@9O6AAAA9Q.tor-irc.dnsbl.oftc.net] has quit [Quit: Guest1133]
+08:07 -!- Talkless [~Talkless@62.80.227.49] has quit [Quit: Konversation terminated!]
+08:07 -!- filePeter [~filePeter@ip1f123c27.dynamic.kabel-deutschland.de] has quit [Quit: leaving]
+08:14 -!- ac_laptop [~ac_laptop@186.2.247.129] has joined #debian
+08:14 -!- ac_laptop is "ac_laptop" on #packaging #debian-next #debian
+08:15 -!- hele_ [~hele@88-115-23-57.elisa-laajakaista.fi] has quit [Ping timeout: 480 seconds]
+08:16 -!- Talkless [~Talkless@62.80.227.49] has joined #debian
+08:16 -!- Talkless is "Talkless" on #debian-next #debian
+08:16 -!- texou [~jp@000178ec.user.oftc.net] has quit [Quit: WeeChat 3.0.1]
+08:16 -!- marcus-d [~marcus@85-168-230-27.rev.numericable.fr] has quit [Ping timeout: 480 seconds]
+08:16 -!- texou [~jp@000178ec.user.oftc.net] has joined #debian
+08:16 -!- texou is "Stoicien" on #debian-nonupload #debian-i18n #bitlbee #debian-next #debian #debian-es #debian-devel-es #debian-devel-it #debian-l10n-fr #debian-a11y
+08:17 -!- ee2455 [~ee2455@0001c7c0.user.oftc.net] has joined #debian
+08:17 -!- ee2455 is "ee2455" on #debian
+08:20 -!- hedy [thelounge@hedy.user.oftc.net] has quit [Remote host closed the connection]
+08:20 -!- ottavio [~m0ttv@00029a13.user.oftc.net] has quit [Remote host closed the connection]
+08:21 -!- hedy [thelounge@envs.net] has joined #debian
+08:21 -!- hedy is "Hedy" on #debian
+08:22 -!- ottavio [~m0ttv@00029a13.user.oftc.net] has joined #debian
+08:22 -!- ottavio is "Ottavio Caruso" on #qemu #debian
+08:26 -!- debalance [~quassel@2a02:908:1080:9040:201:2eff:fe70:36f] has joined #debian
+08:26 -!- debalance is "Philipp Huebner" on #debian #debian-devel-changes
+08:27 -!- kathenas [~kathenas@2a02:c7f:9234:0:1d0f:dff7:8660:fe64] has joined #debian
+08:27 -!- kathenas is "Phil Wyett" on #packaging #debian #debian-ai #debian-next #debian-social #debian-meeting
+08:33 <ottavio>   when using ssh-copy-id, do the users need to be the same on the host and remote server?
+08:34 <grawity>   no
+08:34 <ottavio>   grawity: ok, so for some reason, I get connection timed out with ssh-copy-id, but I can login fine with password.
+08:35 <ottavio>   The remote ssh server is on my same lan.
+08:35 -!- etienneme [~textual@176-149-215-214.abo.bbox.fr] has joined #debian
+08:35 -!- etienneme is "Textual User" on #debian #debian-next #ceph-devel #ceph-orchestrators #ceph #ceph-ansible #ceph-dashboard
+08:35 <grawity>   well, "connection timed out" has nothing to do with usernames, it means the client didn't even reach the point of talking SSH, much less sending it the username yet
+08:35 <abrotman>  v4 vs v6?
+08:37 <ottavio>   I get connection timed out after installing the keys.
+08:37 <ottavio>   It says installing keys.... and then connection timed out.
+08:38 -!- joemaro [~joemaro@p200300c54f3a27efba5882b05d565390.dip0.t-ipconnect.de] has joined #debian
+08:38 -!- joemaro is "realname" on #debian #debian-next
+08:39 -!- thiras [~thiras@24.133.81.19] has joined #debian
+08:39 -!- thiras is "Ant Somers" on #debian
+08:41 -!- ida_ [~ida@dynamic-077-012-162-169.77.12.pool.telefonica.de] has joined #debian
+08:41 -!- ida_ is "realname" on #debian
+08:41 -!- ida_ [~ida@dynamic-077-012-162-169.77.12.pool.telefonica.de] has quit []
+08:43 -!- Strelnikov [~strelniko@8VQAAAL2P.tor-irc.dnsbl.oftc.net] has quit [Remote host closed the connection]
+08:45 -!- filePeter [~filePeter@ip1f123c27.dynamic.kabel-deutschland.de] has joined #debian
+08:45 -!- filePeter is "PeterM" on #debian
+08:47 -!- choozy [~quassel@2001:1c02:1e12:c500:4d20:dfcd:1d48:5d5d] has joined #debian
+08:47 -!- choozy is "Kees Korteweg,,," on #mobian #debian
+08:48 -!- DanB288 [~textual@49.204.96.109] has joined #debian
+08:48 -!- DanB288 is "Textual User" on #debian
+08:49 <grove> I'm with grawity: password<->key auth has no influence on the timeouts. Are you sure you're now varying anything else? Perhaps through .ssh/config? Show us the complete interaction of a good and a bad connection attempt
+08:53 <ottavio>   grove: let me paste this sowehere
+08:54 -!- Brigo [~Brigo@40.181.60.213.dynamic.reverse-mundo-r.com] has joined #debian
+08:54 -!- Brigo is "realname" on #debian #debian-es #debian-next #debian-offtopic
+08:55 -!- Talkless [~Talkless@62.80.227.49] has quit [Ping timeout: 480 seconds]
+08:55 -!- ac_laptop [~ac_laptop@186.2.247.129] has quit [Ping timeout: 480 seconds]
+08:56 -!- jimpop [~jimpop@jimpop.user.oftc.net] has quit [Quit: leaving]
+08:56 <ottavio>   I have edited some bits > https://termbin.com/gml9
+08:57 <grawity>   please edit fewer bits, that's rather useless when we don't even know whether those two "xxx@xxx"s are the same or not
+08:57 -!- jimpop [~jimpop@jimpop.user.oftc.net] has joined #debian
+08:57 -!- jimpop is "Jim Popovitch" on #debian
+08:58 -!- jimpop [~jimpop@jimpop.user.oftc.net] has quit []
+08:58 <ottavio>   yes they are the same
+08:58 -!- voyager1 [~voyager1@0002a22b.user.oftc.net] has quit [Ping timeout: 480 seconds]
+08:59 <ottavio>   I'm in the server using password login, how do I check if the ssh keys have been installed?
+08:59 -!- jimpop [~jimpop@jimpop.user.oftc.net] has joined #debian
+08:59 -!- jimpop is "Jim Popovitch" on #debian
+08:59 <grove> You look in ~/.ssh/authorized_keys
+09:00 <grawity>   well, take a look at `ssh -v -v xxx@xxxx` and compare it with `ssh-copy-id -o LogLevel=DEBUG2 xxx@xxxxxx`
+09:00 <grawity>   to make sure they're indeed connecting to the same destination
+09:01 <ottavio>   ~/.ssh/authorized_keys are the clinet keys or the server keys?
+09:01 <grawity>   that's a file the server looks in
+09:02 <grawity>   so it's on the server, but it contains client public keys, of course
+09:02 <ottavio>   shouldn't that be /etc/ssh/* something?
+09:03 <grove> There's no gain, just potential for chasing unicorns in hiding the user+host, please provide us with output where you haven't done that.
+09:03 -!- zebrag [~inkbottle@aaubervilliers-654-1-98-245.w86-212.abo.wanadoo.fr] has joined #debian
+09:03 -!- zebrag is "inkbottle" on #oftc #debian-offtopic #debian-kde #debian-next #debian #kernelnewbies
+09:03 <grawity>   no, why should it be?
+09:04 -!- voyager1 [~voyager1@0002a22b.user.oftc.net] has joined #debian
+09:04 -!- voyager1 is "user" on #debian
+09:04 <ottavio>   Anyway, in any case it' still asking for a password
+09:04 -!- Talkless [~Talkless@62.80.227.49] has joined #debian
+09:04 -!- Talkless is "Talkless" on #debian-next #debian
+09:05 <grawity>   wait, "still" asking for a password?
+09:05 <grawity>   a while earlier you said it was timing out before it got to that point
+09:05 <grove> If the different amount of x's indicate that the hostnames given to the commands are different, that's your explanation, different hostnames might cause different lookups in your .ssh/config (on the client) and that might in turn cause all kinds of weird behaviour
+09:05 <ottavio>   Yes, I've done this a million times but only for this local machine it's not working.
+09:05 <ottavio>   grove: no this was just a bad edit of mine.
+09:05 <grawity>   in that case, edit the *server's* /etc/ssh/sshd_config to have 'LogLevel DEBUG2', restart sshd, then check the server-side system logs
+09:06 <grawity>   it'll tell you why the keys are being ignored etc
+09:06 <grove> Another reason not to do edits
+09:06 <ottavio>   There's no /etc/ssh on the server, but it's running an embedded version of Linux.
+09:07 <grawity>   glad you mentioned that
+09:07 <ottavio>   probably dropbear, let me check
+09:07 <grawity>   in that case it's most likely a different sshd than OpenSSH, and looking for the user keys in a different place
+09:07 <grawity>   which means ssh-copy-id is useless against it
+09:07 -!- etienneme [~textual@176-149-215-214.abo.bbox.fr] has quit [Quit: My MacBook has gone to sleep. ZZZzzz…]
+09:07 <ottavio>   Ah ok, amen to that.
+09:08 -!- mode/#debian [+l 726] by debhelper
+09:08 <ottavio>   sorry for the noise.
+09:15 -!- netx [~netx@23-24-2-197-static.hfc.comcastbusiness.net] has joined #debian
+09:15 -!- netx is "netx" on #debian
+09:21 -!- e-baley [~e-baley@67.218.251.194] has joined #debian
+09:21 -!- e-baley is "e-baley" on #debian-next #debian-offtopic #debian
+09:31 -!- richard_h [~richard@2406:e001:8:a900:6e62:6dff:fe05:ae29] has joined #debian
+09:31 -!- richard_h is "purple" on #debian
+09:33 -!- voyager1 [~voyager1@0002a22b.user.oftc.net] has quit [Quit: ...]
+09:33 <richard_h> the logrotate config for nginx creates the logfiles on rotation; is that strictly necessary?
+09:40 -!- voyager1 [~voyager1@0002a22b.user.oftc.net] has joined #debian
+09:40 -!- voyager1 is "user" on #debian
+09:42 -!- igormuzetti [~igormuzet@187.114.45.99] has joined #debian
+09:42 -!- igormuzetti is "igor" on #debian
+09:42 -!- debalance [~quassel@00017b9a.user.oftc.net] has quit [Quit: http://quassel-irc.org - Chat comfortably. Anywhere.]
+09:42 -!- wololoer [~user@00022ff6.user.oftc.net] has joined #debian
+09:42 -!- wololoer is "user" on #qemu #kvm #virt #suckless #openjdk #debian-next #debian
+09:44 -!- dr_bot [~dr_bot@000294a2.user.oftc.net] has joined #debian
+09:44 -!- dr_bot is "realname" on #debian-next #debian
+09:45 -!- joemaro [~joemaro@p200300c54f3a27efba5882b05d565390.dip0.t-ipconnect.de] has quit [Ping timeout: 480 seconds]
+09:46 <rudi_s>    richard_h: It is if nginx cannot write the file itself (e.g. when running another user).
+09:47 -!- alex11 [~alex11@bras-base-mtrlpq5302w-grc-37-76-71-166-141.dsl.bell.ca] has quit [Remote host closed the connection]
+09:48 -!- pavlushka [~pavlushka@00021abb.user.oftc.net] has quit [Ping timeout: 480 seconds]
+09:50 -!- guits__ [~guits@143.208.14.88] has quit [Read error: Connection reset by peer]
+09:51 <richard_h> rudi_s: thanks - I think I'm going to have to test what I want, since I'm having trouble visualising it :-)
+09:51 -!- guits__ [~guits@143.208.14.111] has joined #debian
+09:51 -!- guits__ is "guits" on #debian #kernel-br #debian-php #debian-nerds #debian-latam #debian-hugs #debian-games #debian-devel-br #debian-br #br #bash
+09:51 <rudi_s>    ;-)
+09:52 <richard_h> I've added /var/log/sitelogs/site for each site, and nginx is successfully creating files in there. But it creates them with different ownership (www-data:siteowner).
+09:52 <richard_h> so if I let logrotate create the files, I think they will then be wrong. And if I create a separate logrotate config, nginx will get reloaded twice.
+09:53 <richard_h> so my plan is to remove the create directive, and hopefully nginx will do the right thing by itself :-)
+09:53 -!- Jose [~Jose@181.93.138.135] has joined #debian
+09:53 -!- Jose is "realname" on #debian
+09:54 -!- Jose [~Jose@181.93.138.135] has quit []
+09:54 <richard_h> I want the siteowner to be able to read the logs, but not add them to adm.
+09:54 -!- marcus-d [~marcus@89-158-243-153.rev.numericable.fr] has joined #debian
+09:54 -!- marcus-d is "marcus-d" on #linux #qemu #debian
+09:54 -!- ac_laptop [~ac_laptop@186.2.247.129] has joined #debian
+09:54 -!- ac_laptop is "ac_laptop" on #packaging #debian-next #debian
+09:54 <rudi_s>    richard_h: Why is nginx reloaded twice? And even if it is, is that a problem?
+09:55 <richard_h> if I have 2 configs that both rotate nginx logs, sharedscripts won't recognise that, will it?
+09:56 -!- alex11 [~alex11@bras-base-mtrlpq5302w-grc-37-76-71-166-141.dsl.bell.ca] has joined #debian
+09:56 -!- alex11 is "your worst nightmare" on #debian-next #debian
+09:56 <richard_h> I guess twice isn't a huge deal.
+09:56 -!- wololoer [~user@00022ff6.user.oftc.net] has quit [Quit: WeeChat 3.0.1]
+09:57 <richard_h> maybe I should stick to the 2 config setup, and leave the default one alone.
+09:58 <richard_h> I'm not sure whether I should include the prerotate section from the default config in mine; I don't know what it's there for
+09:58 <richard_h> there's currently no such file, so it has no effect anyway
+10:00 -!- pavlushka [~pavlushka@00021abb.user.oftc.net] has joined #debian
+10:00 -!- pavlushka is "Pavel Sayekat" on #debian #oftc
+10:00 -!- scm_ [~scm@cpe-24-198-223-165.maine.res.rr.com] has joined #debian
+10:00 -!- scm_ is "scm" on #debian
+10:01 -!- scm_ [~scm@cpe-24-198-223-165.maine.res.rr.com] has quit [Read error: Connection reset by peer]
+10:01 -!- carnil [~carnil@000120a9.user.oftc.net] has quit [Remote host closed the connection]
+10:02 -!- scm_ [~scm@193.148.18.88] has joined #debian
+10:02 -!- scm_ is "scm" on #debian
+10:02 -!- catman370 [~catman@pool-74-105-144-233.nwrknj.fios.verizon.net] has joined #debian
+10:02 -!- catman370 is "catman" on #linux #debian
+10:04 -!- carnil [~carnil@lorien.valinor.li] has joined #debian
+10:04 -!- carnil is "Salvatore Bonaccorso" on #debian-next #debian-gnupg #debian-lts #debian-perl #debian-devel-changes #debian
+10:06 -!- s1 [~s1@112.133.215.4] has joined #debian
+10:06 -!- s1 is "realname" on #debian
+10:07 -!- s1 [~s1@112.133.215.4] has quit []
+10:07 -!- pamaury_ [~pamaury@2a02:c7f:60fd:1100:8286:9881:abe9:3d42] has quit [Remote host closed the connection]
+10:08 -!- mode/#debian [+l 732] by debhelper
+10:08 -!- scm [~scm@37.120.244.60] has quit [Ping timeout: 480 seconds]
+10:08 -!- pamaury [~pamaury@2a02:c7f:60fd:1100:8286:9881:abe9:3d42] has joined #debian
+10:08 -!- pamaury is "Amaury Pouly" on #oftc #debian #debian-next
+10:08 -!- lavamind [~lavamind@192-0-229-11.cpe.teksavvy.com] has joined #debian
+10:08 -!- lavamind is "lavamind" on #debian #monkeysphere #debian-quebec
+10:17 -!- andibmu [~andi@94.134.93.101] has quit [Ping timeout: 480 seconds]
+10:20 -!- style [error@localhost.st] has quit [Quit: fatal error(); /bed/sleep/drea.ms]
+10:21 -!- style [error@localhost.st] has joined #debian
+10:21 -!- style is " " on #tor-project #debian #moocows #oftc @#ninja
+10:22 -!- style [error@localhost.st] has quit []
+10:22 -!- style [error@localhost.st] has joined #debian
+10:22 -!- style is " " on #tor-project #debian #moocows #oftc @#ninja
+10:22 -!- Myon [~myon@myon.noc.oftc.net] has quit [Remote host closed the connection]
+10:24 -!- Myon [~myon@myon.noc.oftc.net] has joined #debian
+10:24 -!- Myon is "Christoph Berg DF7CB" on #help #elephant-shed #debian-devel-changes #moocows @#myon #oftc #debian
+10:24 -!- DanB288 [~textual@49.204.96.109] has quit [Read error: Connection reset by peer]
+10:25 -!- zebrag [~inkbottle@aaubervilliers-654-1-98-245.w86-212.abo.wanadoo.fr] has quit [Quit: Konversation terminated!]
+10:25 -!- zebrag [~inkbottle@aaubervilliers-654-1-98-245.w86-212.abo.wanadoo.fr] has joined #debian
+10:25 -!- zebrag is "inkbottle" on #oftc #debian-offtopic #debian-kde #debian-next #debian #kernelnewbies
+10:28 -!- Ericounet [~Eric@2a01:e0a:d0:3c20:95af:cb77:3a3e:4ae8] has quit [Ping timeout: 480 seconds]
+10:42 -!- filePeter [~filePeter@ip1f123c27.dynamic.kabel-deutschland.de] has quit [Quit: leaving]
+10:42 -!- zleap [~Pau@00028cc7.user.oftc.net] has joined #debian
+10:42 -!- zleap is "realname" on #minidebconf-online #debian-academy #debian-next #debian
+10:43 -!- filePeter [~filePeter@ip1f123c27.dynamic.kabel-deutschland.de] has joined #debian
+10:43 -!- filePeter is "PeterM" on #debian-zh #debian
+10:50 -!- choozy [~quassel@2001:1c02:1e12:c500:4d20:dfcd:1d48:5d5d] has quit [Remote host closed the connection]
+10:53 -!- Guest1143 [~ubuntu@174-18-80-177.tcso.qwest.net] has joined #debian
+10:53 -!- Guest1143 is "ubuntu" on #debian
+10:54 <Guest1143> woahhh
+10:54 -!- choozy [~quassel@2001:1c02:1e12:c500:439c:227:4159:7c8e] has joined #debian
+10:54 -!- choozy is "Choozy VAHFG" on #mobian #debian #debian-mali
+10:55 -!- marcus-d [~marcus@89-158-243-153.rev.numericable.fr] has quit [Ping timeout: 480 seconds]
+10:55 -!- ghavil [~ghavil@techsmix.net] has quit [Quit: Cya!]
+10:56 -!- alex11 [~alex11@bras-base-mtrlpq5302w-grc-37-76-71-166-141.dsl.bell.ca] has quit [Quit: Leaving]
+10:56 -!- ghavil [~ghavil@techsmix.net] has joined #debian
+10:56 -!- ghavil is "No." on #debian
+10:56 -!- alex11 [~alex11@bras-base-mtrlpq5302w-grc-37-76-71-166-141.dsl.bell.ca] has joined #debian
+10:56 -!- alex11 is "your worst nightmare" on #debian-next #debian
+10:57 <Guest1143> oh
+10:57 <Guest1143> ubuntu 5.04 is nice
+10:58 -!- Guest1143 [~ubuntu@174-18-80-177.tcso.qwest.net] has quit []
+10:58 <ottavio>   Ubuntu is for human beings. We're not human here.
+10:59 -!- l31ia [~oftc-webi@189.216.49.152] has joined #debian
+10:59 -!- l31ia is "OFTC WebIRC Client" on #debian
+10:59 <l31ia> hello world
+11:01 <zleap> congrats on 10.9 release, upgrade from 10.8 seemed to go really well for me
+11:02 -!- WizardNate [~wizard@047-227-192-180.res.spectrum.com] has joined #debian
+11:02 -!- WizardNate is "realname" on #debian-offtopic #debian
+11:05 -!- WizardNate [~wizard@047-227-192-180.res.spectrum.com] has quit []
+11:05 -!- DanB288 [~textual@49.204.96.109] has joined #debian
+11:05 -!- DanB288 is "Textual User" on #debian
+11:06 -!- tulpa [tulpa@chat.amomentofdecay.com] has quit [Quit: quit]
+11:07 -!- aindilis [~aindilis@172-12-3-117.lightspeed.sgnwmi.sbcglobal.net] has joined #debian
+11:07 -!- aindilis is "Andrew John Dougherty" on #debian
+11:09 -!- tulpa [tulpa@2604:bc0:2::1d:23d3:d128] has joined #debian
+11:09 -!- tulpa is "sup" on #debian
+11:11 -!- carnil_ [~carnil@80-218-24-251.dclient.hispeed.ch] has quit [Remote host closed the connection]
+11:11 <graytron>  anyone know why linux-image-4.19.0-15-amd64 was skipped in stable
+11:13 <ottavio>   Is it possible to do a "reverse backport" that is run a stretch binary on buster?
+11:13 -!- l31ia [~oftc-webi@189.216.49.152] has quit [Quit: Page closed]
+11:13 <ottavio>   I have a problem with morse(1) since using Buster that I didn't have on Stretch.
+11:14 <choozy>    grayton: Someone earlier mentioned they didn't release kernel 4.19.0-15 and only 14 and 16 got released
+11:17 -!- topyli [~topyli@esm-84-240-127-217.netplaza.fi] has joined #debian
+11:17 -!- topyli is "realname" on #debian #debian-next #debian-offtopic
+11:17 -!- pastly [~pastly@pastly.netop.oftc.net] has quit [Remote host closed the connection]
+11:17 -!- les [~les@cpc158557-nmal25-2-0-cust204.19-2.cable.virginm.net] has joined #debian
+11:17 -!- les is "realname" on #debian
+11:17 -!- pastly is "pastly" on #oftc +#tor-project +#tor-dev
+11:17 -!- pastly [~pastly@pastly.netop.oftc.net] has joined #debian
+11:18 -!- les is now known as Guest1144
+11:20 -!- Guest1144 is now known as mangoginger
+11:22 <mangoginger>   hi - I ran rkhunter and this message appeared. Warning: The following suspicious (large) shared memory segments have been found:
+11:22 -!- catman370 [~catman@pool-74-105-144-233.nwrknj.fios.verizon.net] has quit [Quit: See you later..]
+11:22 <mangoginger>   Process: /usr/bin/gnome-software PID: 2148 Owner: bes Size: 32MB (configured size allowed: 1.0MB)
+11:23 -!- earthundead [~earthunde@188.170.78.193] has joined #debian
+11:23 -!- earthundead is "realname" on #debian
+11:23 <mangoginger>   Does this mean my debian system has been compromised ?
+11:23 <rudi_s>    mangoginger: Without knowing details what excatly gnome-software is or does .. rkhunter is really old and I think no longer useful.
+11:23 -!- diogenes_oftc [~diogenes_@188.208.122.230] has joined #debian
+11:23 -!- diogenes_oftc is "Nicolas" on #debian
+11:24 <mangoginger>   rudi_s, Can I safely remove it ?
+11:24 -!- scm_ [~scm@193.148.18.88] has quit [Quit: -a- Connection Timed Out]
+11:24 <mangoginger>   rudi_s, has rkhunter been superseeded by something else?
+11:25 <mangoginger>   remove gnome-software
+11:25 -!- zebrag [~inkbottle@aaubervilliers-654-1-98-245.w86-212.abo.wanadoo.fr] has quit [Quit: Konversation terminated!]
+11:25 -!- zebrag [~inkbottle@aaubervilliers-654-1-98-245.w86-212.abo.wanadoo.fr] has joined #debian
+11:25 -!- zebrag is "inkbottle" on #oftc #debian-offtopic #debian-kde #debian-next #debian #kernelnewbies
+11:27 -!- asterismo [~santiago@2800:a4:103f:1f00:c907:925a:40e6:c56b] has joined #debian
+11:27 -!- asterismo is "Santiago" on #debian
+11:27 <rudi_s>    mangoginger: As I said, no idea what gnome-software is. But I'm guessing you're using Gnome so you cannot remove it.
+11:28 <rudi_s>    Not that I know of. Detecting rootkits is very difficult so generic tools won't help much.
+11:28 -!- scm [~scm@193.148.18.88] has joined #debian
+11:28 -!- scm is "scm" on #debian
+11:28 <mangoginger>   Also since doing apt update && apt dist-upgrade my sound on the laptop has ceased working the USB and stereo jack input headphone and microphone combination. Only the on board built-in microphone is working. How do I go about fixing this as the kernel changed and now no microphone input?
+11:28 <richard_h> package installation tool
+11:29 <richard_h> like synaptic
+11:29 <richard_h> (from the description)
+11:29 <mangoginger>   rudi_s, So there is no point checking for rootkits anymore ?
+11:29 -!- Ericounet [~Eric@2a01:e0a:d0:3c20:ef83:5271:e764:c0e2] has joined #debian
+11:29 -!- Ericounet is "realname" on #debian #freedombox
+11:30 -!- Guest1089 is now known as mcintoh
+11:30 -!- mcintoh is now known as mcintosh
+11:30 -!- ax56234 [~NickServ@0002affd.user.oftc.net] has joined #debian
+11:30 -!- ax56234 is "+" on #debian
+11:30 <mangoginger>   richard_h, synaptic could help fix the problem?
+11:30 <richard_h> I don't know if there is a problem
+11:31 <richard_h> but synaptic does similar things to gnome-software
+11:31 <richard_h> as does apt, aptitude etc
+11:31 <rudi_s>    mangoginger: Well, you won't catch any realistic ones with rkhunter IMO.
+11:31 <mangoginger>   I have a sound issue and rkhunter show a suspect file..
+11:31 <richard_h> so you certainly don't need gnome-software, but you might find it useful
+11:31 <rudi_s>    Sure, because a root kit would tamper with your sound ...
+11:32 <mangoginger>   rudi_s, what do you suggest I do in checking for rootkits etc Is there better software in checking this ?
+11:32 <richard_h> rudi_s: who knows ... listening in could be a thing
+11:32 -!- choozy [~quassel@2001:1c02:1e12:c500:439c:227:4159:7c8e] has quit [Quit: https://quassel-irc.org - Chat comfortably. Anywhere.]
+11:33 <mangoginger>   rudi_s, would it make sense switching to another desktop like kde etc ?
+11:33 <richard_h> you could try debsums (but read up on it yourself)
+11:33 <richard_h> changing desktop seems extreme
+11:33 <mangoginger>   richard_h, ok I'll look into that but not used it before...
+11:34 <richard_h> but intrusion detection is inherently difficult, because an intruder can change the tools you're checking with ...
+11:35 <mangoginger>   oh :o now that's a good trick that an intruder can do ...
+11:35 <mangoginger>   Maybe just run a liveDVD of debian is safer than a hard disk installation of debian?
+11:35 <rudi_s>    mangoginger: I suggest you don't worry about it. Use common security practices (good passwords, not running arbitrary code, e.g. curl | sudo sh, etc.) ..
+11:36 <rudi_s>    *and be done with it. You cannot protect yourself from any possible attacker no matter how hard you try.
+11:36 <mangoginger>   rudi_s, It sounds like a wipe of the installation is a good idea ?
+11:37 <rudi_s>    mangoginger: Well, do what you want. But it won't do any good (most likely).
+11:37 <rudi_s>    It's propably just a bug in the recent update. So either bisect it or look for other bug repots.
+11:37 <mangoginger>   rudi_s, is there no way of detecting an intruder is on the box and get a warning telling me something is awry?
+11:38 <rudi_s>    mangoginger: Against some intruders, sure. But there's no general solution.
+11:39 <richard_h> I really wouldn't trust rkhunter very much.
+11:39 <rudi_s>    But if you keep your software updated and don't go to shady websites, use a proper adblocker, proper passwords and so on, then a compromise is unlikely.
+11:39 <rudi_s>    And rkhunter is like 10 years old or so.
+11:39 <richard_h> But installing debsums and running 'debsums gnome-software' might give you some peace of mind
+11:39 <rudi_s>    Sure, but it won't help against any half-serious attacker.
+11:40 <mangoginger>   I am running Debian GNU/Linux bullseye/sid which should keep the software security up to date ?
+11:40 <richard_h> there's no formal security updates for sid
+11:40 <mangoginger>   richard_h, I'll try that now ...
+11:40 <richard_h> if you want actual security updates, run stable
+11:40 <rudi_s>    Testing is a little slower, but sid should get updates quickly. But as richard_h said no proper security updates (however, most of the time updates in sid are faster than the security updates in stable).
+11:42 <mangoginger>   So a downgrade is possible instead of a wipe and start again ?
+11:42 <richard_h> not supported
+11:43 <mangoginger>   ahhh lol
+11:44 <mangoginger>   richard_h, I just ran debsums gnome-software and all came back as ok ...
+11:44 <richard_h> then I don't think I'd worry too much
+11:45 <mangoginger>   What if I install boxes and installed stable debian that would have the security updates and a solution to the sound issues and the suspect file problem?
+11:45 -!- joemaro [~joemaro@p200300c54f3a27ef79ab11995a8bb548.dip0.t-ipconnect.de] has joined #debian
+11:45 -!- joemaro is "realname" on #debian #debian-next
+11:47 -!- carnil_ [~carnil@80-218-24-251.dclient.hispeed.ch] has joined #debian
+11:47 -!- carnil_ is "Salvatore Bonaccorso" on #debian-next #debian-perl #debian-devel-changes #debian
+11:47 -!- Mister00X [~quassel@0002a863.user.oftc.net] has joined #debian
+11:47 -!- Mister00X is "Mr.X" on #debian-next #debian
+11:48 <rudi_s>    mangoginger: Maybe, bugs are everywhere and in all releases. If you don't want to handle stuff breaking from time to time stable is definitely the better release for you.
+11:48 -!- mode/#debian [+l 739] by debhelper
+11:48 <mangoginger>   the /dev/shm directory what is supposed to be in this directory as I also saw a /dev/shm/PostgreSQL.858802425: data file in here too?
+11:49 <rudi_s>    mangoginger: Some stuff, and yeah, postgres is fine.
+11:49 <mangoginger>   rudi_s, I'll go for that in boxes as I really don't want to wipe and start again...:)
+11:49 <mangoginger>   Can I delete this file manually without problems... /dev/shm/PostgreSQL.858802425: data ?
+11:50 -!- pamaury [~pamaury@2a02:c7f:60fd:1100:8286:9881:abe9:3d42] has quit [Ping timeout: 480 seconds]
+11:50 <mangoginger>   I also see a program called tripwire to see if something gets tampered with. Is this a waste of time too ?
+11:51 <richard_h> they're all things I'd take time to learn about thoroughly before using them
+11:51 <richard_h> (intrusion detection tools)
+11:52 <rudi_s>    mangoginger: What you're doing makes no sense at all. Stop guessing without understanding how the system works. If you don't know how it works you won't be able to find an attacker anyway.
+11:52 <mangoginger>   richard_h, ok sounds like a mindfield of great tools to learn ... :)
+11:52 <rudi_s>    And if you delete /dev/shm/PostgreSQL.858802425 you'll break your local postgres database ...
+11:52 <rudi_s>    (Well, actually only connections to it .. but anyway.)
+11:54 -!- andibmu [~andi@94.134.93.101] has joined #debian
+11:54 -!- andibmu is "Andreas B. Mundt" on #debian-meeting #debian #debian-next #debian-offtopic #debian-edu #debian-lan
+11:56 <mangoginger>   I just ran netstat -lnap and see this tcp 0 0 127.0.0.1:5432 0.0.0.0:* LISTEN 1165/postgres ... So no connection tcp have made a socket to the program as it's listening... I do have a basic understanding of how the system works but deep knowledge I don't :)
+12:03 <mangoginger>   Thanks for the input richard_h and rudi_s - I'm installing the stable release in boxes and give up trying to workout if a intruder is causing my laptop troubles.. :)
+12:04 <rudi_s>    np
+12:05 -!- earthundead [~earthunde@188.170.78.193] has quit [Remote host closed the connection]
+12:07 -!- eegiks [~quassel@114.94.95.92.rev.sfr.net] has joined #debian
+12:07 -!- eegiks is "eegiks" on #bcache #kernelnewbies #qemu @#SDL #virt #debian-ubuntu #virtualization #uml #debian
+12:10 -!- tobiaswiese [~tobiaswie@new-babbage.server.tobiaswiese.net] has quit [Quit: Leaving]
+12:11 -!- tobiaswiese [~tobiaswie@new-babbage.server.tobiaswiese.net] has joined #debian
+12:11 -!- tobiaswiese is "Tobias Wiese" on #debian
+12:13 <richard_h> gnome-boxes?
+12:14 <richard_h> package 'boxes' doesn't seem relevant :-)
+12:15 <mangoginger>   richard_h, as long as I get a functional system I don't care if it's in boxes or not... :)
+12:19 -!- DanB288_ [~textual@49.204.96.109] has joined #debian
+12:19 -!- DanB288_ is "Textual User" on #debian
+12:19 -!- DanB288 [~textual@49.204.96.109] has quit [Read error: Connection reset by peer]
+12:24 -!- scm [~scm@193.148.18.88] has quit [Quit: -a- Connection Timed Out]
+12:25 -!- zebrag [~inkbottle@aaubervilliers-654-1-98-245.w86-212.abo.wanadoo.fr] has quit [Quit: Konversation terminated!]
+12:25 -!- zebrag [~inkbottle@aaubervilliers-654-1-98-245.w86-212.abo.wanadoo.fr] has joined #debian
+12:25 -!- zebrag is "inkbottle" on #oftc #debian-offtopic #debian-kde #debian-next #debian #kernelnewbies
+12:26 -!- dr_bot [~dr_bot@000294a2.user.oftc.net] has quit [Quit: Leaving]
+12:27 -!- scm [~scm@193.148.18.88] has joined #debian
+12:27 -!- scm is "scm" on #debian
+12:29 -!- voyager1 [~voyager1@0002a22b.user.oftc.net] has quit [Quit: ...]
+12:30 -!- thiras [~thiras@24.133.81.19] has quit [Ping timeout: 480 seconds]
+12:31 -!- gioyik [~gioyik@86MAAAARQ.tor-irc.dnsbl.oftc.net] has joined #debian
+12:31 -!- gioyik is "Giovanny" on #perf #gentoo #privacytech #rust #biz #C #llvm #mm #kernelnewbies #bpftrace #tor-project #debian
+12:33 -!- Konomi [~Konomi@00020287.user.oftc.net] has joined #debian
+12:33 -!- Konomi is "Konomi" on #debian #debian-next
+12:35 <Konomi>    unattended-upgrades started spitting this error: https://paste.debian.net/hidden/372c8e75/
+12:35 <Konomi>    any ideas anyone?
+12:37 <richard_h> do you get similar results from an ordinary upgrade?
+12:38 <Konomi>    nope https://paste.debian.net/hidden/3101ddd7/ looks good to me
+12:39 -!- deltron [~deltron@00018077.user.oftc.net] has quit [Ping timeout: 480 seconds]
+12:41 -!- dmm [~dmm@209.58.129.100] has quit [Remote host closed the connection]
+12:42 -!- dmm [~dmm@209.58.129.100] has joined #debian
+12:42 -!- dmm is "snake" on #debian
+12:45 <Konomi>    https://paste.debian.net/hidden/6aaa1f29/ conf file
+12:46 <richard_h> I'm no more help, I'm afraid - I don't use unattended-upgrades
+12:46 -!- zleap [~Pau@00028cc7.user.oftc.net] has quit [Quit: Leaving]
+12:47 <Konomi>    https://paste.debian.net/hidden/5ca5ce62/ - sudo unattended-upgrade --dry-run --verbose
+12:48 -!- ax562 [~ax562@0002ac27.user.oftc.net] has quit [Ping timeout: 480 seconds]
+12:51 -!- LouWestin [~Lou@louwestin.user.oftc.net] has quit [Quit: The light at the end of the tunnel has been turned off.]
+12:51 <Konomi>    `aptitude search ~i~ahold` reports no packages held so shrug
+12:52 -!- LouWestin [~Lou@2600:3c00::f03c:92ff:fedd:c7fa] has joined #debian
+12:52 -!- LouWestin is "Lou the Dungeon Capturer" on #oftc #linode #debian-next #debian
+12:53 <richard_h> different tools (can sometimes) use different databases of held packages; I don't know whether aptitude's is the relevant one here
+12:54 <sney>  that python3-uno "recommended but is not going to be installed" situation is a little strange, maybe unattended-upgrades doesn't know how to handle it.
+12:54 <sney>  try resolving that situation or just apt-mark hold the package, and see if u-a goes back to normal
+12:55 <Konomi>    they're just front ends to dpkg but apt has no issues either: https://paste.debian.net/hidden/67c6ebbe/ - sudo apt upgrade
+12:55 <Konomi>    I'
+12:55 <Konomi>    I'll try holding just to check
+12:58 -!- dmm [~dmm@209.58.129.100] has quit [Remote host closed the connection]
+12:58 -!- svedrin [~quassel@tiamat.funzt-halt.net] has quit [Quit: https://quassel-irc.org - Komfortabler Chat. Überall. ]
+12:59 -!- svedrin [~quassel@tiamat.funzt-halt.net] has joined #debian
+12:59 -!- svedrin is "Michael Ziegler,,," on #debian
+13:00 -!- DanB288_ [~textual@49.204.96.109] has quit [Quit: My MacBook has gone to sleep. ZZZzzz…]
+13:00 -!- DanB288 [~textual@49.204.96.109] has joined #debian
+13:00 -!- DanB288 is "Textual User" on #debian
+13:03 -!- coc0nut [~coc0nut@128.90.163.167] has joined #debian
+13:03 -!- coc0nut is "realname" on #debian
+13:04 <Konomi>    holding ure made it complain about a few more packages but now it at least wants to upgrade
+13:05 <Konomi>    it complains about libreoffice-core, libreoffice-gtk2 and uno-libs3 but at least it's not exception bombing?
+13:07 -!- secntech [~secntech@0002a124.user.oftc.net] has joined #debian
+13:07 -!- secntech is "tp" on #tor-project #suckless #redditprivacy #Qubes_OS #privacytech #freedombox #debian #cryptoparty
+13:07 -!- kslt1 [~ksierka@c-107-2-222-110.hsd1.co.comcast.net] has quit [Quit: leaving]
+13:08 -!- DanB288 [~textual@49.204.96.109] has quit [Ping timeout: 480 seconds]
+13:09 -!- netx [~netx@23-24-2-197-static.hfc.comcastbusiness.net] has quit [Ping timeout: 480 seconds]
+13:11 -!- hele_ [~hele@88-115-23-57.elisa-laajakaista.fi] has joined #debian
+13:11 -!- hele_ is "hele" on #debian-next #debian
+13:12 -!- ax56234 [~NickServ@0002affd.user.oftc.net] has quit [Ping timeout: 480 seconds]
+13:14 -!- roshanavand_ [~roshanava@185.209.196.134] has joined #debian
+13:14 -!- roshanavand_ is "realname" on #debian
+13:15 -!- voyager1 [~voyager1@0002a22b.user.oftc.net] has joined #debian
+13:15 -!- voyager1 is "user" on #debian
+13:16 -!- ax56234 [~NickServ@107-223-11-13.lightspeed.sntcca.sbcglobal.net] has joined #debian
+13:16 -!- ax56234 is "+" on #linux #debian-next #debian
+13:17 <daviiid>   hello - wrt 984426, which happened to a machine that i admin remotely, i wanted to ask, if i can have someone to reboot the machine using an 'older' kernel, is there a way to reinstall the boot repord - or is this operation only possible using a usb key, rescue mode ... ?
+13:17 -!- jrklein [~cloud@34.234.31.16] has joined #debian
+13:17 -!- jrklein is "Jason Klein" on #debian
+13:18 -!- aldemir [~spokcland@168.232.214.71] has joined #debian
+13:18 -!- aldemir is "realname" on #debian
+13:18 -!- jrklein [~cloud@34.234.31.16] has quit []
+13:18 <sney>  if the older entry is able to boot, you should be able to fix grub from there
+13:19 <Konomi>    got through the dry run this time: https://paste.debian.net/hidden/3ed69877/
+13:19 -!- jrklein [~cloud@34.234.31.16] has joined #debian
+13:19 -!- jrklein is "Jason Klein" on #debian
+13:19 <aldemir>   Bom abado a todos
+13:19 <aldemir>   sabado
+13:19 <daviiid>   sney: ok, but how?
+13:20 -!- aldemir [~spokcland@168.232.214.71] has quit []
+13:20 <sney>  daviiid: by following whatever workarounds were listed in the bug thread, I don't remember
+13:20 <sney>  manually call grub-install again?
+13:21 <daviiid>   sney: ok, will re read - didn't catch that, but just update-grub won't be sufficient then i guess
+13:21 -!- roshanavand [~roshanava@185.209.196.154] has quit [Ping timeout: 480 seconds]
+13:22 -!- ol [~quassel@2406:e003:810:b301:8e89:a5ff:feca:57fe] has joined #debian
+13:22 -!- ol is "Ol" on #debian
+13:23 -!- gth1ago [~gth1ago@2804:828:f211:4d7e:988b:3b90:56b0:2596] has joined #debian
+13:23 -!- gth1ago is "realname" on #debian-br #debian
+13:24 <Konomi>    sney: going to post a bug report to upstream and see waht they think
+13:25 -!- zebrag [~inkbottle@aaubervilliers-654-1-98-245.w86-212.abo.wanadoo.fr] has quit [Quit: Konversation terminated!]
+13:25 -!- zebrag [~inkbottle@aaubervilliers-654-1-98-245.w86-212.abo.wanadoo.fr] has joined #debian
+13:25 -!- zebrag is "inkbottle" on #oftc #debian-offtopic #debian-kde #debian-next #debian #kernelnewbies
+13:25 -!- ax56234 [~NickServ@107-223-11-13.lightspeed.sntcca.sbcglobal.net] has quit [Ping timeout: 480 seconds]
+13:29 -!- al_ [~al@2600:1700:3c00:f560::42] has joined #debian
+13:29 -!- al_ is "realname" on #debian
+13:29 <Konomi>    https://github.com/mvo5/unattended-upgrades/issues/292
+13:29 -!- al_ [~al@2600:1700:3c00:f560::42] has quit []
+13:32 -!- coc0nut [~coc0nut@128.90.163.167] has quit [Ping timeout: 480 seconds]
+13:33 -!- DanB288 [~textual@49.204.96.109] has joined #debian
+13:33 -!- DanB288 is "Textual User" on #debian
+13:36 -!- Ericounet [~Eric@2a01:e0a:d0:3c20:ef83:5271:e764:c0e2] has quit [Quit: Je m'en vais ...]
+13:37 -!- deltron [~deltron@00018077.user.oftc.net] has joined #debian
+13:37 -!- deltron is "deltron" on #debian #sd
+13:37 -!- wololoer [~user@00022ff6.user.oftc.net] has joined #debian
+13:37 -!- wololoer is "user" on #qemu #kvm #virt #suckless #openjdk #debian-next #debian
+13:37 <Konomi>    when you're like "could I just replace unattended-upgrades with a systemd timer of aptitude update && aptitude safe-upgrade"
+13:43 -!- DanB288 [~textual@49.204.96.109] has quit [Ping timeout: 480 seconds]
+13:44 <richard_h> Konomi: that doesn't let you keep a list of packages not to upgrade automatically
+13:45 -!- netx [~netx@23-24-2-197-static.hfc.comcastbusiness.net] has joined #debian
+13:45 -!- netx is "netx" on #debian
+13:47 -!- richard_h [~richard@2406:e001:8:a900:6e62:6dff:fe05:ae29] has quit [Quit: Leaving.]
+13:50 <Konomi>    I was going to say I don't use that feature or I could negatively pin if I wanted that but since they left ~
+13:58 -!- wololoer [~user@00022ff6.user.oftc.net] has quit [Quit: WeeChat 3.0.1]
+13:59 -!- wololoer [~user@00022ff6.user.oftc.net] has joined #debian
+13:59 -!- wololoer is "user" on #qemu #kvm #virt #suckless #openjdk #debian-next #debian
+14:00 -!- gioyik [~gioyik@86MAAAARQ.tor-irc.dnsbl.oftc.net] has quit [Remote host closed the connection]
+14:02 -!- mangoginger [~les@cpc158557-nmal25-2-0-cust204.19-2.cable.virginm.net] has quit [Ping timeout: 480 seconds]
+14:04 -!- ax56234 [~NickServ@2600:1010:b006:e09f:58c0:8d84:f617:ee78] has joined #debian
+14:04 -!- ax56234 is "+" on #linux #debian-next #debian
+14:05 -!- dr_bot [~dr_bot@000294a2.user.oftc.net] has joined #debian
+14:05 -!- scm [~scm@193.148.18.88] has quit [Ping timeout: 480 seconds]
+14:05 -!- dr_bot is "realname" on #debian-next #debian
+14:06 -!- gth1ago [~gth1ago@2804:828:f211:4d7e:988b:3b90:56b0:2596] has quit [Remote host closed the connection]
+14:06 -!- gth1ago [~gth1ago@2804:828:f211:4d7e:988b:3b90:56b0:2596] has joined #debian
+14:06 -!- gth1ago is "realname" on #debian #debian-br
+14:06 -!- ax5623 [~ax562@0002aef0.user.oftc.net] has joined #debian
+14:06 -!- ax5623 is "realname" on #linux #debian #debian-next
+14:06 -!- pamaury_ [~pamaury@2a02:c7f:60fd:1100:8286:9881:abe9:3d42] has joined #debian
+14:06 -!- pamaury_ is "Amaury Pouly" on #oftc #debian #debian-next
+14:08 -!- maschinenhans [~Hans@200116b82a3eab00bdc7484dc06322ca.dip.versatel-1u1.de] has quit [Ping timeout: 480 seconds]
+14:13 -!- ksierka [~ksierka@c-107-2-222-110.hsd1.co.comcast.net] has joined #debian
+14:13 -!- ksierka is "Karl Sierka" on #debian
+14:13 -!- join_sub1ine [~join_subl@135-23-248-163.cpe.pppoe.ca] has joined #debian
+14:13 -!- join_sub1ine is "/join #subline | etherpad.opendev.org/subline | Su" on #debian-meeting #debian-ni #debian-devel-br #debconf-hamburg #emdebian #math @#healthcare #ircnow #physics @#scarborough @#markham #launches #debian-academy #mobian #debian-au #packaging @#debian-canada @#debian-subline #debian-lts #space #salsaci #debian-next #debian-social #debconf-fosdem #debconf-germany @#debconf-subline @#debconf-canada @#debconf-toronto #minidebconf-online #osm-ca @#vaccine @#subline
+14:13 -!- ksierka is now known as kslt1
+14:14 -!- admiral [~admiral@178.76.193.156] has joined #debian
+14:14 -!- admiral is "realname" on #debian
+14:15 <admiral>   hello
+14:15 -!- IPFreely [~wh0kares@2a0b:f4c2:2::1] has joined #debian
+14:15 -!- IPFreely is "wh0kares" on #freedombox #debian #Qubes_OS
+14:18 -!- kslt1 [~ksierka@c-107-2-222-110.hsd1.co.comcast.net] has quit []
+14:18 -!- kslt1 [~ksierka@c-107-2-222-110.hsd1.co.comcast.net] has joined #debian
+14:18 -!- kslt1 is "Karl Sierka" on #debian
+14:19 -!- mangoginger [~les@cpc158557-nmal25-2-0-cust204.19-2.cable.virginm.net] has joined #debian
+14:19 -!- mangoginger is "realname" on #debian
+14:23 -!- maschinenhans [~Hans@200116b82ac11000d56f0c8e2fb15a37.dip.versatel-1u1.de] has joined #debian
+14:23 -!- maschinenhans is "realname" on #debian
+14:25 -!- zebrag [~inkbottle@aaubervilliers-654-1-98-245.w86-212.abo.wanadoo.fr] has quit [Quit: Konversation terminated!]
+14:25 -!- zebrag [~inkbottle@aaubervilliers-654-1-98-245.w86-212.abo.wanadoo.fr] has joined #debian
+14:25 -!- zebrag is "inkbottle" on #oftc #debian-offtopic #debian-kde #debian-next #debian #kernelnewbies
+14:27 -!- les_ [~les@cpc121276-nmal25-2-0-cust174.19-2.cable.virginm.net] has joined #debian
+14:27 -!- les_ is "realname" on #debian
+14:27 <grove> I have a machine with a zfs pool where `zpool status` list device names (i.e. sd[a-f] - the pool was made on FreeBSD and imported on Debian, so I haven't had much chance to control that). Now I want to put more disks in the machine (in time, to replace some of the disks in the pool), that might change device names (I don't control what order the cotroller presents the disks to Linux - or can I ...
+14:28 <grove> ... do that in it's "BIOS", I have to check) do I need t take any precautions? (E.g. export the pool and import it when I've attached those new disks)
+14:28 -!- les_ [~les@cpc121276-nmal25-2-0-cust174.19-2.cable.virginm.net] has quit [Read error: Connection reset by peer]
+14:28 -!- les_ [~les@cpc121276-nmal25-2-0-cust174.19-2.cable.virginm.net] has joined #debian
+14:28 -!- les_ is "realname" on #debian
+14:29 -!- les__ [~les@cpc121276-nmal25-2-0-cust174.19-2.cable.virginm.net] has joined #debian
+14:29 -!- les__ is "realname" on #debian
+14:29 -!- ac_laptop [~ac_laptop@186.2.247.129] has quit [Quit: WeeChat 3.0]
+14:29 -!- netx [~netx@23-24-2-197-static.hfc.comcastbusiness.net] has quit [Quit: Bye]
+14:30 -!- ac_laptop2 [~ac_laptop@186.2.247.129] has joined #debian
+14:30 -!- ac_laptop2 is "ac_laptop" on #packaging #debian-next #debian
+14:30 -!- join_sub1ine [~join_subl@135-23-248-163.cpe.pppoe.ca] has quit []
+14:33 -!- les [~les@cpc121276-nmal25-2-0-cust174.19-2.cable.virginm.net] has joined #debian
+14:33 -!- les is "realname" on #debian
+14:33 -!- les is now known as Guest1149
+14:34 -!- mangoginger [~les@cpc158557-nmal25-2-0-cust204.19-2.cable.virginm.net] has quit [Ping timeout: 480 seconds]
+14:34 -!- Guest1149 [~les@cpc121276-nmal25-2-0-cust174.19-2.cable.virginm.net] has quit [Read error: Connection reset by peer]
+14:35 -!- abdulocracy3 [~meabduloc@79.184.123.35.ipv4.supernova.orange.pl] has joined #debian
+14:35 -!- abdulocracy3 is "@me:abdulocra.cy" on #debian
+14:35 -!- abdulocracy1 [~meabduloc@79.184.123.35.ipv4.supernova.orange.pl] has quit [Ping timeout: 480 seconds]
+14:36 -!- les_ [~les@cpc121276-nmal25-2-0-cust174.19-2.cable.virginm.net] has quit [Ping timeout: 480 seconds]
+14:37 -!- {4144}| is now known as {4144}
+14:38 -!- ax5623 [~ax562@0002aef0.user.oftc.net] has quit [Remote host closed the connection]
+14:39 -!- les__ [~les@cpc121276-nmal25-2-0-cust174.19-2.cable.virginm.net] has quit [Ping timeout: 480 seconds]
+14:39 -!- scm [~scm@37.120.244.101] has joined #debian
+14:39 -!- scm is "scm" on #debian
+14:41 -!- ax562 [~ax562@0002ac27.user.oftc.net] has joined #debian
+14:41 -!- ax562 is "realname" on #linux #debian #debian-next
+14:41 -!- scm [~scm@37.120.244.101] has quit []
+14:42 -!- scm [~scm@37.120.244.101] has joined #debian
+14:42 -!- scm is "scm" on #debian
+14:45 -!- Cyrus is now known as Guest1150
+14:46 -!- abdulocracy1 [~meabduloc@79.184.123.35.ipv4.supernova.orange.pl] has joined #debian
+14:46 -!- abdulocracy1 is "@me:abdulocra.cy" on #debian
+14:47 -!- Cyrus [~Cyrus@cyrus.user.oftc.net] has joined #debian
+14:47 -!- Cyrus is "Cyrus" on #debian
+14:48 -!- jesus [~jesus@189.217.211.189] has joined #debian
+14:48 -!- jesus is "realname" on #debian
+14:48 <jesus> hi
+14:48 -!- abdulocracy3 [~meabduloc@79.184.123.35.ipv4.supernova.orange.pl] has quit [Ping timeout: 480 seconds]
+14:48 <jesus> hello
+14:48 -!- diogenes_oftc [~diogenes_@188.208.122.230] has quit [Quit: vergissmeinnicht]
+14:48 -!- jesus [~jesus@189.217.211.189] has quit []
+14:49 -!- Guest1150 [~Cyrus@cyrus.user.oftc.net] has quit [Ping timeout: 480 seconds]
+14:50 -!- user [~user@8A4AAAARR.tor-irc.dnsbl.oftc.net] has joined #debian
+14:50 -!- user is "user" on #debian
+14:50 -!- user is now known as Guest1152
+14:50 -!- Mister00X [~quassel@0002a863.user.oftc.net] has quit []
+14:51 -!- fstd_ [~fstd@xdsl-85-197-62-163.nc.de] has joined #debian
+14:51 -!- fstd_ is "fstd" on #gentoo #oftc #linode #debian #kernelnewbies
+14:52 <Guest1152> is there any list where I can check which packages have an update or upgrade release?
+14:54 -!- jstein [~jstein@xdsl-87-78-8-167.nc.de] has joined #debian
+14:54 -!- jstein is "Jonas Stein" on @#fsfe #debian @#mint #kernelnewbies
+14:55 -!- fstd [~fstd@xdsl-78-35-89-58.nc.de] has quit [Ping timeout: 480 seconds]
+14:56 <filePeter> Guest1152: Maybe packages.qa.debian.org? e.g. https://packages.qa.debian.org/m/mutt.html
+14:59 -!- dmm [~dmm@209.58.129.100] has joined #debian
+14:59 -!- dmm is "snake" on #debian
+14:59 <Guest1152> gonna check that
+15:01 <filePeter> Guest1152: Or do you want it systemspecific? maybe »apt list --upgradable « give the output you are interested in? I’m not entirely sure what kind of information you like to get from what kind source (terminal? browser? system tray? email?)
+15:02 -!- Netsplit reticulum.oftc.net <-> charon.oftc.net quits: jipege4, caseih, Kaiserpinguin, titirca, nyov, Gabriel_7, fralle__, finn[m], jipege, tomaw, (+127 more, use /NETSPLIT to show all of them)
+15:02 -!- abdulocracy1 [~meabduloc@79.184.123.35.ipv4.supernova.orange.pl] has quit [Ping timeout: 480 seconds]
+15:02 -!- abdulocracy1 [~meabduloc@79.184.148.58.ipv4.supernova.orange.pl] has joined #debian
+15:02 -!- abdulocracy1 is "@me:abdulocra.cy" on #debian
+15:02 -!- Netsplit over, joins: XeryusTC, carnil_, admiral, pamaury_, voyager1, topyli, style, Talkless, kathenas, hedy (+11 more)
+15:02 -!- gattuso is "Got ZNC?" on #xen #uml #ipv6 #pwmt #QuakeForge #i2p #ii #polimi
+15:02 -!- Netsplit over, joins: gattuso, xamanu, shiki, Astra, sidmo_, woky, marian, FLD, bentham, Ivy
+15:02 -!- tomaw is "Tom Wesley <tom@tomaw.net>" on #spi #ovirt #suckless #debian-offtopic #debian-ipv6 #perl #irssi #debian-es #help #sd #supybot #OpenBSD #debian-django #thrustvps
+15:02 -!- Netsplit over, joins: FloodServ, tomaw, Spitfire_, ericnoan, brunoramos, zumbi, jacksoow, Hackerpcs, ach, edcragg (+96 more)
+15:02 -!- carnil_ is "Salvatore Bonaccorso" on #debian #debian-devel-changes #debian-perl
+15:02 -!- XeryusTC is "XeryusTC" on #debian #openttd @#openttdcoop.dev @#coopetition
+15:03 -!- brunoramos is "ZNC - https://znc.in" on #debian-next #oftc #debian #packaging #debian-perl #help #debian-xfce
+15:03 -!- ericnoan is "ericnoan" on #ceph #tor-project #Qubes_OS #linode #tor-dev #debian #redditprivacy #suckless #freedombox #openttd
+15:03 -!- Spitfire_ is "Do you know how to pick up the pieces and go home?" on #linode #oftc #debian #perl
+15:04 -!- Netsplit charon.oftc.net <-> coulomb.oftc.net quits: anong, animal, Kaiserpinguin, squat, woky, rotty, unixpro1970, larjona, traumschule, the4oo4, (+56 more, use /NETSPLIT to show all of them)
+15:04 -!- Netsplit over, joins: admiral, pamaury_, voyager1, RiteshRajSarraf[m], titi, TimWolla
+15:04 -!- gattuso is "Got ZNC?" on #xen #i2p #uml #virtualization #polimi #ii #QuakeForge #pwmt #ipv6
+15:04 -!- Netsplit over, joins: gattuso, tomaw, Spitfire_, ericnoan, brunoramos, sidmo_, woky, marian, FLD, jacksoow (+50 more)
+15:04 -!- tomaw is "Tom Wesley <tom@tomaw.net>" on #tor-dev #bitlbee #gentoo #debian #virt #linux #spi #ovirt #suckless #debian-offtopic #debian-ipv6 #debian-es #perl #debian-django #OpenBSD #supybot #sd #help #irssi #freenode #thrustvps
+15:04 -!- brunoramos is "ZNC - https://znc.in" on #oftc #debian #packaging #debian-perl #debian-xfce #help
+15:04 -!- Spitfire_ is "Do you know how to pick up the pieces and go home?" on #linode #oftc #debian #perl
+15:04 -!- ericnoan is "ericnoan" on #ceph #tor-project #Qubes_OS #linode #tor-dev #debian #redditprivacy #suckless #freedombox #openttd
+15:04 -!- bentham [~bentham@7YZAAAM64.tor-irc.dnsbl.oftc.net] has quit [Remote host closed the connection]
+15:04 -!- trinbene [~trinbene@0002a066.user.oftc.net] has quit [Read error: Connection reset by peer]
+15:04 -!- trinbene [~trinbene@billsf.tor-exit.calyxinstitute.org] has joined #debian
+15:04 -!- trinbene is "trinbene" on #packaging #kernelnewbies #iovisor #debian #brouter #bpftrace
+15:04 -!- bentham is "Jeremy Bentham" on #oftc
+15:04 -!- bentham [~bentham@185.220.101.197] has joined #debian
+15:05 -!- jmatos [~jmatos@00028665.user.oftc.net] has quit [Quit: Quitting.]
+15:06 <Guest1152> I just made an apt update and some packages where upgradable.I just want more info about this upgradable packages like since when where this upgrades releases or ready for upgrade
+15:06 -!- jmatos [~jmatos@2001:8a0:7db0:6a00:dea6:32ff:fe3c:2dbe] has joined #debian
+15:06 -!- jmatos is "nil" on #vmdb2 #oftc #debian-raspberrypi #debian-next #debian
+15:07 -!- sergio [~sergio@186-78-151-93.baf.movistar.cl] has joined #debian
+15:07 -!- sergio is "Sergio" on #debian #debian-next
+15:08 -!- sergio is now known as sazamoracl
+15:08 <Guest1152> since when were this upgrades available I should say for clarification
+15:08 <sney>  you can 'apt changelog packagename' in order to see the latest changelog entries and when it was uploaded
+15:09 -!- voyager1 [~voyager1@0002a22b.user.oftc.net] has quit [Ping timeout: 480 seconds]
+15:09 -!- DanB288 [~textual@49.204.96.109] has joined #debian
+15:09 -!- DanB288 is "Textual User" on #debian
+15:12 -!- joemaro_ [~joemaro@p200300c54f3a270f9df9058b4971a824.dip0.t-ipconnect.de] has joined #debian
+15:12 -!- joemaro_ is "realname" on #debian #debian-next
+15:15 <bauen1>    by the way, is there an easier way to review changelogs by source package ? so i have some upgradable packages in apt and want to review all the changelogs, but obviously there will be a lot of duplication
+15:16 -!- Cougar [~Cougar@pool-68-134-92-210.bltmmd.fios.verizon.net] has quit [Quit: Leaving]
+15:16 -!- voyager1 [~voyager1@0002a22b.user.oftc.net] has joined #debian
+15:16 -!- voyager1 is "user" on #tor-dev #tor-project #mobian #debian
+15:18 -!- joemaro [~joemaro@p200300c54f3a27ef79ab11995a8bb548.dip0.t-ipconnect.de] has quit [Ping timeout: 480 seconds]
+15:19 -!- titi [~smuxi@lfbn-lil-1-329-25.w81-49.abo.wanadoo.fr] has quit [Remote host closed the connection]
+15:22 -!- kromaz [~kromaz@2601:280:4500:a6b7:ac8b:1fa4:d247:5dfa] has quit [Quit: Leaving]
+15:24 -!- asterismo [~santiago@2800:a4:103f:1f00:c907:925a:40e6:c56b] has quit [Ping timeout: 480 seconds]
+15:24 -!- eventhorizon5 [~smuxi@c-98-228-26-70.hsd1.il.comcast.net] has quit [Read error: Connection reset by peer]
+15:25 -!- zebrag [~inkbottle@aaubervilliers-654-1-98-245.w86-212.abo.wanadoo.fr] has quit [Quit: Konversation terminated!]
+15:25 -!- zebrag [~inkbottle@aaubervilliers-654-1-98-245.w86-212.abo.wanadoo.fr] has joined #debian
+15:25 -!- zebrag is "inkbottle" on #oftc #debian-offtopic #debian-kde #debian-next #debian #kernelnewbies
+15:28 -!- claudinius [~quassel@2001:41d0:fe36:3500:71b5:1958:44e4:d1d0] has joined #debian
+15:28 -!- claudinius is "claudinius,,," on #debian
+15:28 -!- claudinius [~quassel@2001:41d0:fe36:3500:71b5:1958:44e4:d1d0] has quit []
+15:29 -!- eventhorizon5 [~smuxi@c-98-228-26-70.hsd1.il.comcast.net] has joined #debian
+15:29 -!- eventhorizon5 is "Ryan" on #debian
+15:33 -!- zleap [~zleap3@00028cc7.user.oftc.net] has joined #debian
+15:33 -!- zleap is "realname" on #minidebconf-online #debian-academy #debian
+15:33 -!- Guest1152 [~user@8A4AAAARR.tor-irc.dnsbl.oftc.net] has quit [Quit: Guest1152]
+15:33 <sazamoracl>    bauen1: apt-get changelog {package} ?
+15:33 <sazamoracl>    man apt-get
+15:34 -!- testian [~quassel@4.87.60.188.dynamic.wline.res.cust.swisscom.ch] has quit [Quit: http://quassel-irc.org - Chat comfortably. Anywhere.]
+15:34 -!- testi [~quassel@2a02:120b:c3c5:7040:3ea8:2aff:fe9f:20b4] has joined #debian
+15:34 -!- testi is "Dietrich Helexien" on @#docker @#xrdp #hardware @#roccat #debian #debian-next
+15:34 -!- testi [~quassel@2a02:120b:c3c5:7040:3ea8:2aff:fe9f:20b4] has quit []
+15:35 <bauen1>    sazamoracl: that only works for binary packages :/
+15:37 -!- testi [~quassel@2a02:120b:c3c5:7040:3ea8:2aff:fe9f:20b4] has joined #debian
+15:37 -!- testi is "Dietrich Helexien" on @#xrdp @#roccat @#docker #debian-next #hardware #debian
+15:37 <bremner>   changelogs are by source package though
+15:37 <bremner>   oh, I see what you are asking.
+15:38 -!- Mister00X [~quassel@193.27.14.91] has joined #debian
+15:38 -!- Mister00X is "Mr.X" on #debian #debian-next
+15:38 -!- mutyman [~mutyman@77.78.31.120] has joined #debian
+15:38 -!- mutyman is "realname" on #debian
+15:38 -!- mutyman [~mutyman@77.78.31.120] has quit []
+15:38 -!- sazamoracl [~sergio@186-78-151-93.baf.movistar.cl] has quit [Quit: sazamoracl]
+15:39 -!- joemaro_ [~joemaro@p200300c54f3a270f9df9058b4971a824.dip0.t-ipconnect.de] has quit [Ping timeout: 480 seconds]
+15:39 -!- admiral [~admiral@178.76.193.156] has quit [Remote host closed the connection]
+15:42 -!- jarrett [~jarrett@68-20-28-116.lightspeed.hstntx.sbcglobal.net] has joined #debian
+15:42 -!- jarrett is "jarrett" on #debian
+15:44 -!- jarrett [~jarrett@68-20-28-116.lightspeed.hstntx.sbcglobal.net] has left #debian []
+15:45 -!- marcus-d [~marcus@89-158-243-153.rev.numericable.fr] has joined #debian
+15:45 -!- marcus-d is "marcus-d" on #linux #qemu #debian
+15:46 -!- gioyik [~gioyik@86MAAAATO.tor-irc.dnsbl.oftc.net] has joined #debian
+15:46 -!- gioyik is "Giovanny" on #perf #gentoo #privacytech #rust #biz #C #llvm #mm #kernelnewbies #bpftrace #tor-project #debian
+15:48 -!- trinbene [~trinbene@0002a066.user.oftc.net] has quit [Remote host closed the connection]
+15:49 -!- trinbene [~trinbene@0002a066.user.oftc.net] has joined #debian
+15:49 -!- trinbene is "trinbene" on #suckless #packaging #kernelnewbies #iovisor #debian-offtopic #debian #brouter #bpftrace
+15:52 -!- acidhouse [~acidhouse@135.pool85-52-230.static.orange.es] has joined #debian
+15:52 -!- acidhouse is "AcidHouse" on #debian
+15:52 -!- acidhouse [~acidhouse@135.pool85-52-230.static.orange.es] has quit []
+15:58 -!- andibmu [~andi@94.134.93.101] has quit [Quit: Lost terminal]
+16:03 -!- ol [~quassel@2406:e003:810:b301:8e89:a5ff:feca:57fe] has quit [Ping timeout: 480 seconds]
+16:04 -!- catman370 [~catman@pool-74-105-144-233.nwrknj.fios.verizon.net] has joined #debian
+16:04 -!- catman370 is "catman" on #debian #linux
+16:07 -!- valde3 [~valde@srv2.valde.fr] has joined #debian
+16:07 -!- valde3 is "Quentin" on #debian
+16:09 -!- titi [~smuxi@lfbn-lil-1-329-25.w81-49.abo.wanadoo.fr] has joined #debian
+16:09 -!- titi is "Your Name" on #debian
+16:09 -!- srgrint [~srgrint@15.201.159.143.dyn.plus.net] has joined #debian
+16:09 -!- srgrint is "Simon Richard Grint" on #debian
+16:09 -!- valde [~valde@srv2.valde.fr] has quit [Ping timeout: 480 seconds]
+16:09 -!- valde3 is now known as valde
+16:11 -!- catman370 [~catman@pool-74-105-144-233.nwrknj.fios.verizon.net] has quit [Quit: See you later..]
+16:12 -!- joemaro_ [~joemaro@p200300c54f3a270f189898ef00edb345.dip0.t-ipconnect.de] has joined #debian
+16:12 -!- joemaro_ is "realname" on #debian #debian-next
+16:13 -!- catman370 [~catman@pool-74-105-144-233.nwrknj.fios.verizon.net] has joined #debian
+16:13 -!- catman370 is "catman" on #linux #debian
+16:14 -!- marcus-d [~marcus@89-158-243-153.rev.numericable.fr] has quit [Ping timeout: 480 seconds]
+16:16 -!- ax5623 [~ax562@0002aef0.user.oftc.net] has joined #debian
+16:16 -!- ax5623 is "realname" on #debian-next #debian #linux
+16:17 -!- freshtube [~freshtube@193.138.218.213] has quit [Ping timeout: 480 seconds]
+16:18 -!- ax562 [~ax562@0002ac27.user.oftc.net] has quit [Ping timeout: 480 seconds]
+16:21 -!- asterismo [~santiago@2800:a4:103f:1f00:c907:925a:40e6:c56b] has joined #debian
+16:21 -!- asterismo is "Santiago" on #debian
+16:23 -!- illym [~illym@2a01cb0400f8a600f9ad8532eedf093b.ipv6.abo.wanadoo.fr] has joined #debian
+16:23 -!- illym is "illym" on #debian
+16:25 -!- zebrag [~inkbottle@aaubervilliers-654-1-98-245.w86-212.abo.wanadoo.fr] has quit [Quit: Konversation terminated!]
+16:25 -!- kenyon [~quassel@darwin.kenyonralph.com] has quit [Quit: https://quassel-irc.org - Chat comfortably. Anywhere.]
+16:25 -!- zebrag [~inkbottle@aaubervilliers-654-1-98-245.w86-212.abo.wanadoo.fr] has joined #debian
+16:25 -!- zebrag is "inkbottle" on #oftc #debian-offtopic #debian-kde #debian-next #debian #kernelnewbies
+16:27 -!- Yanek [~loic@2a01:e0a:1b6:62c0::c5c5:cd98] has joined #debian
+16:27 -!- Yanek is "realname" on #debian
+16:27 -!- kenyon [~quassel@darwin.kenyonralph.com] has joined #debian
+16:27 -!- kenyon is "Kenyon Ralph" on #debian-ipv6 #linode #debian
+16:30 -!- choozy [~quassel@2001:1c02:1e12:c500:439c:227:4159:7c8e] has joined #debian
+16:30 -!- choozy is "Choozy VAHFG" on #mobian #debian #debian-mali
+16:30 -!- aidalgol_ is now known as aidalgol
+16:31 -!- ottavio [~m0ttv@00029a13.user.oftc.net] has quit [Quit: Leaving]
+16:32 <superkuh>  Is there a patch set out there somewhere for gtk-3 for Debian so it operates like it did pre-2015 when it got rid of text entry for file open/close dialogs and also predictive typing suggestion?
+16:34 <superkuh>  I keep trying to edit gtkfilechooserwidget.c and gtkfilechooserwidget.ui from the debian 10 source and testing but the best I can get is for the location filename-entry bar to show up on first application gtkfilechooser widget use but not subsequent ones.
+16:35 -!- srgrint [~srgrint@15.201.159.143.dyn.plus.net] has quit [Quit: srgrint]
+16:35 -!- f10_ [~flo@ip5b402e34.dynamic.kabel-deutschland.de] has quit [Ping timeout: 480 seconds]
+16:36 -!- pamaury_ [~pamaury@2a02:c7f:60fd:1100:8286:9881:abe9:3d42] has quit [Ping timeout: 480 seconds]
+16:37 -!- alex11 [~alex11@bras-base-mtrlpq5302w-grc-37-76-71-166-141.dsl.bell.ca] has quit [Quit: Leaving]
+16:37 -!- alex11 [~alex11@bras-base-mtrlpq5302w-grc-37-76-71-166-141.dsl.bell.ca] has joined #debian
+16:37 -!- alex11 is "your worst nightmare" on #debian-next #debian
+16:38 -!- ax5623 [~ax562@0002aef0.user.oftc.net] has quit [Read error: Connection reset by peer]
+16:38 -!- alex11 [~alex11@bras-base-mtrlpq5302w-grc-37-76-71-166-141.dsl.bell.ca] has quit []
+16:39 -!- alex11 [~alex11@bras-base-mtrlpq5302w-grc-37-76-71-166-141.dsl.bell.ca] has joined #debian
+16:39 -!- alex11 is "your worst nightmare" on #debian-next #debian
+16:39 -!- voyager1 [~voyager1@0002a22b.user.oftc.net] has quit [Ping timeout: 480 seconds]
+16:39 -!- ax562 [~ax562@0002ac27.user.oftc.net] has joined #debian
+16:39 -!- ax562 is "realname" on #debian-next #debian #linux
+16:39 -!- e-baley [~e-baley@67.218.251.194] has quit [Quit: e-baley]
+16:39 -!- freshtube [~freshtube@185.45.15.202] has joined #debian
+16:39 -!- freshtube is "realname" on #debian
+16:43 -!- DanB288 [~textual@49.204.96.109] has quit [Quit: My MacBook has gone to sleep. ZZZzzz…]
+16:44 -!- maschinenhans [~Hans@200116b82ac11000d56f0c8e2fb15a37.dip.versatel-1u1.de] has quit [Ping timeout: 480 seconds]
+16:44 -!- thiras [~thiras@24.133.81.19] has joined #debian
+16:44 -!- thiras is "Ant Somers" on #debian
+16:45 -!- Mezz [~Mezz@dsl-hkibng31-54fabd-233.dhcp.inet.fi] has quit [Read error: Connection reset by peer]
+16:46 -!- illym [~illym@2a01cb0400f8a600f9ad8532eedf093b.ipv6.abo.wanadoo.fr] has quit [Quit: illym]
+16:47 -!- jipege4 [~quassel@2a01:cb19:85fa:2d00:d599:7aa0:8679:dab7] has quit [Quit: No Ping reply in 180 seconds.]
+16:48 -!- Blacker47 [~Blacker47@00014f22.user.oftc.net] has quit [Quit: Life is short. Get a V.90 modem fast!]
+16:49 -!- Yanek [~loic@2a01:e0a:1b6:62c0::c5c5:cd98] has left #debian [Leaving]
+16:49 -!- jipege4 [~quassel@2a01:cb19:85fa:2d00:abae:3528:c422:77f6] has joined #debian
+16:49 -!- jipege4 is "jipege" on #debian #debian-l10n-fr
+16:49 -!- igormuzetti [~igormuzet@187.114.45.99] has quit []
+16:51 -!- czesmir_ [~stefan@aeeq14.neoplus.adsl.tpnet.pl] has joined #debian
+16:51 -!- czesmir_ is "Stefan" on #debian-next #debian
+16:52 -!- igormuzetti [~igormuzet@187.114.45.99] has joined #debian
+16:52 -!- igormuzetti is "igor" on #debian
+16:53 -!- maschinenhans [~Hans@200116b82ac11000f1791cb422523126.dip.versatel-1u1.de] has joined #debian
+16:53 -!- maschinenhans is "realname" on #debian
+16:57 -!- alpernebbi [~quassel@00029ccd.user.oftc.net] has quit [Quit: alpernebbi]
+16:58 -!- czesmir [~stefan@aedk133.neoplus.adsl.tpnet.pl] has quit [Ping timeout: 480 seconds]
+16:58 -!- gth1ago [~gth1ago@2804:828:f211:4d7e:988b:3b90:56b0:2596] has quit []
+16:59 -!- trinbene [~trinbene@0002a066.user.oftc.net] has quit [Remote host closed the connection]
+16:59 -!- trinbene [~trinbene@0002a066.user.oftc.net] has joined #debian
+16:59 -!- trinbene is "trinbene" on #suckless #packaging #kernelnewbies #iovisor #debian-offtopic #debian #brouter #bpftrace
+17:01 -!- secntech [~secntech@0002a124.user.oftc.net] has quit [Read error: Connection reset by peer]
+17:05 -!- pavlushka [~pavlushka@00021abb.user.oftc.net] has quit [Remote host closed the connection]
+17:05 -!- sazamoracl [~sergio@186-78-151-93.baf.movistar.cl] has joined #debian
+17:05 -!- sazamoracl is "Sergio" on #debian #debian-next
+17:08 -!- mode/#debian [+l 732] by debhelper
+17:09 -!- sazamoracl [~sergio@186-78-151-93.baf.movistar.cl] has quit []
+17:09 -!- ax562 [~ax562@0002ac27.user.oftc.net] has quit [Read error: No route to host]
+17:10 -!- rasmus-mk [~rasmus@c83-253-223-217.bredband.comhem.se] has quit [Quit: Konversation terminated!]
+17:11 -!- asterismo [~santiago@2800:a4:103f:1f00:c907:925a:40e6:c56b] has quit [Ping timeout: 480 seconds]
+17:13 -!- titi [~smuxi@lfbn-lil-1-329-25.w81-49.abo.wanadoo.fr] has quit [Read error: Connection reset by peer]
+17:13 -!- ax56234 [~NickServ@2600:1010:b006:e09f:58c0:8d84:f617:ee78] has quit []
+17:14 -!- SG1 [~SG1@cpe-76-84-153-210.neb.res.rr.com] has joined #debian
+17:14 -!- SG1 is "realname" on #debian
+17:18 -!- SG1 [~SG1@cpe-76-84-153-210.neb.res.rr.com] has quit []
+17:19 -!- craigevil [~craig@00012e49.user.oftc.net] has quit [Quit: leaving]
+17:20 -!- craigevil [~craig@00012e49.user.oftc.net] has joined #debian
+17:20 -!- craigevil is "craig" on #debian-next #debian-offtopic #debian
+17:21 -!- voyager1 [~voyager1@0002a22b.user.oftc.net] has joined #debian
+17:21 -!- asterismo [~santiago@2800:a4:1046:9600:c907:925a:40e6:c56b] has joined #debian
+17:21 -!- voyager1 is "user" on #debian
+17:21 -!- asterismo is "Santiago" on #debian
+17:22 -!- Cougar_227 [~Cougar@pool-68-134-92-210.bltmmd.fios.verizon.net] has joined #debian
+17:22 -!- Cougar_227 is "realname" on #debian
+17:26 -!- nchapkanski [~AdminUser@91-148-186-85.plvd.ddns.bulsat.com] has joined #debian
+17:26 -!- nchapkanski is "Nikolay Chapkanski,,," on #debian
+17:28 -!- amoe [~amoe@visarend.solasistim.net] has joined #debian
+17:28 -!- amoe is "David Banks" on #debian
+17:32 <nchapkanski>   Hi
+17:32 -!- queso [~queso@cpe-71-77-41-168.nc.res.rr.com] has quit [Quit: leaving]
+17:41 -!- joemaro_ [~joemaro@p200300c54f3a270f189898ef00edb345.dip0.t-ipconnect.de] has quit [Ping timeout: 480 seconds]
+17:43 <choozy>    nchapkanski: Hi
+17:44 -!- marcus-d [~marcus@89-158-243-153.rev.numericable.fr] has joined #debian
+17:44 -!- marcus-d is "marcus-d" on #linux #qemu #debian
+17:45 -!- marcus-d [~marcus@89-158-243-153.rev.numericable.fr] has quit []
+17:46 -!- nchapkanski [~AdminUser@91-148-186-85.plvd.ddns.bulsat.com] has quit [Quit: https://quassel-irc.org - Chat comfortably. Anywhere.]
+17:47 -!- wcpan [~quassel@2400:8902::f03c:91ff:fee0:f952] has quit [Quit: http://quassel-irc.org - Chat comfortably. Anywhere.]
+17:47 -!- wcpan [~quassel@2400:8902::f03c:91ff:fee0:f952] has joined #debian
+17:47 -!- wcpan is "wcpan" on #dot #linode #debian
+17:54 -!- marian [~marian@dslb-002-200-110-142.002.200.pools.vodafone-ip.de] has quit [Quit: WeeChat 3.0.1]
+17:54 -!- marian [~marian@dslb-002-200-110-142.002.200.pools.vodafone-ip.de] has joined #debian
+17:54 -!- marian is "marian" on #debian
+17:55 -!- ao2 [~ao2@host-82-55-141-84.retail.telecomitalia.it] has quit [Quit: Leaving]
+18:02 -!- dvs [~hibbard@00012127.user.oftc.net] has joined #debian
+18:02 -!- dvs is "realname" on #debian
+18:03 -!- igormuzetti [~igormuzet@187.114.45.99] has quit []
+18:03 -!- towo` [~towo@00012f0f.user.oftc.net] has quit [Quit: Leaving]
+18:04 -!- Talkless [~Talkless@62.80.227.49] has quit [Quit: Konversation terminated!]
+18:05 -!- Logg [~Logg@76.72.182.181] has quit [Ping timeout: 480 seconds]
+18:06 -!- voyager1 [~voyager1@0002a22b.user.oftc.net] has quit [Quit: ...]
+18:08 -!- mode/#debian [+l 723] by debhelper
+18:12 -!- edeak [~edeak@25.14.63.94.rev.vodafone.pt] has joined #debian
+18:12 -!- edeak is "realname" on #debian
+18:13 -!- TAL42_ is now known as TAL42
+18:16 -!- helios21 [~quassel@lichtvoll.de] has quit [Quit: http://quassel-irc.org - Chat comfortably. Anywhere.]
+18:18 -!- umlaeute [~zmoelnig@umlaeute.mur.at] has quit [Ping timeout: 480 seconds]
+18:19 -!- helios21 [~quassel@lichtvoll.de] has joined #debian
+18:19 -!- helios21 is "Martin Steigerwald,,," on #debian
+18:19 -!- Out`Of`Control [~Evil@2a03:4000:48:57b:48ca:2dff:fe39:ea55] has joined #debian
+18:19 -!- Out`Of`Control is "Evil" on #ufo #freedombox #osm-ru #bash #debian #debian-next
+18:21 -!- umlaeute [~zmoelnig@umlaeute.mur.at] has joined #debian
+18:21 -!- umlaeute is "IOhannes m zm\xF6lnig" on #debian #debian-multimedia
+18:25 -!- mentor [~m@00010c5b.user.oftc.net] has joined #debian
+18:25 -!- mentor is "Matthew W.S. Bell" on #debian
+18:25 -!- zebrag [~inkbottle@aaubervilliers-654-1-98-245.w86-212.abo.wanadoo.fr] has quit [Quit: Konversation terminated!]
+18:25 -!- zebrag [~inkbottle@aaubervilliers-654-1-98-245.w86-212.abo.wanadoo.fr] has joined #debian
+18:25 -!- zebrag is "inkbottle" on #oftc #debian-offtopic #debian-kde #debian-next #debian #kernelnewbies
+18:26 -!- Statj_ [~Statj@80.107.124.152] has joined #debian
+18:26 -!- Statj_ is "SJ" on #debian
+18:27 -!- quasineutral [~quasineut@quasineutral.com] has quit [Quit: The Lounge - https://thelounge.chat]
+18:28 -!- d4nk [~gnu@4G4AAAKG7.tor-irc.dnsbl.oftc.net] has quit [Remote host closed the connection]
+18:28 -!- quasineutral [~quasineut@quasineutral.com] has joined #debian
+18:28 -!- quasineutral is "quasineutral" on #debian
+18:31 -!- Statj [~Statj@0002864f.user.oftc.net] has quit [Ping timeout: 480 seconds]
+18:31 -!- Statj_ is now known as Statj
+18:32 -!- mzf [~mzf@0002ab8d.user.oftc.net] has quit [Quit: Leaving]
+18:35 -!- f10_ [~flo@ip5b402e34.dynamic.kabel-deutschland.de] has joined #debian
+18:35 -!- f10_ is "f10" on #debian
+18:35 <graytron>  choozy: that's a weird skip :)
+18:37 -!- hele_ [~hele@88-115-23-57.elisa-laajakaista.fi] has quit [Ping timeout: 480 seconds]
+18:37 <choozy>    Skip?
+18:40 -!- abdulocracy1 [~meabduloc@79.184.148.58.ipv4.supernova.orange.pl] has quit [Ping timeout: 480 seconds]
+18:43 -!- Mister00X [~quassel@0002a863.user.oftc.net] has quit []
+18:49 -!- zleap [~zleap3@00028cc7.user.oftc.net] has quit [Quit: Leaving]
+18:50 -!- jathan [~jathan@000253e1.user.oftc.net] has quit [Quit: WeeChat 2.3]
+18:55 -!- dvs [~hibbard@00012127.user.oftc.net] has quit [Remote host closed the connection]
+18:56 -!- abdulocracy1 [~meabduloc@79.184.148.58.ipv4.supernova.orange.pl] has joined #debian
+18:56 -!- abdulocracy1 is "@me:abdulocra.cy" on #debian
+18:56 -!- filePeter [~filePeter@ip1f123c27.dynamic.kabel-deutschland.de] has quit [Quit: leaving]
+18:57 -!- snd [~snd@000198d4.user.oftc.net] has quit [Quit: \ö/]
+19:00 -!- f10_ [~flo@ip5b402e34.dynamic.kabel-deutschland.de] has quit [Ping timeout: 480 seconds]
+19:01 -!- snd [~snd@88it.de] has joined #debian
+19:01 -!- snd is "Dennis Braun" on #packaging #oftc #minidebconf-online @#hiphop #elektroid #debian.de-offtopic #debian-sso #debian-next #bash #debian #debconf-hamburg
+19:04 -!- pamaury_ [~pamaury@2a02:c7f:60fd:1100:8286:9881:abe9:3d42] has joined #debian
+19:04 -!- pamaury_ is "Amaury Pouly" on #oftc #debian #debian-next
+19:04 -!- Logg [~Logg@71.203.251.70] has joined #debian
+19:04 -!- Logg is "realname" on #debian
+19:07 -!- umlaeute [~zmoelnig@umlaeute.mur.at] has quit [Ping timeout: 480 seconds]
+19:09 -!- topyli [~topyli@esm-84-240-127-217.netplaza.fi] has quit [Ping timeout: 480 seconds]
+19:11 -!- RedSoxFan07 [~Thunderbi@d-159-250-218-50.ct.cpe.atlanticbb.net] has joined #debian
+19:11 -!- RedSoxFan07 is "RedSoxFan07" on #debian-next #debian
+19:11 -!- umlaeute [~zmoelnig@89.106.215.196] has joined #debian
+19:11 -!- umlaeute is "IOhannes m zm\xF6lnig" on #debian
+19:15 -!- corn13read [~corn13rea@c-73-240-62-20.hsd1.or.comcast.net] has joined #debian
+19:15 -!- corn13read is "bread" on #debian
+19:16 -!- corn13read [~corn13rea@c-73-240-62-20.hsd1.or.comcast.net] has quit []
+19:20 -!- totonika [~toto@aftr-37-201-215-255.unity-media.net] has quit [Read error: Connection reset by peer]
+19:24 -!- Logg [~Logg@71.203.251.70] has quit [Ping timeout: 480 seconds]
+19:24 <graytron>  choozy: from 4.19.0-14 to 4.19.0-16
+19:33 -!- Logg [~Logg@76.72.182.181] has joined #debian
+19:33 -!- Logg is "realname" on #debian
+19:35 -!- dvs [~hibbard@00012127.user.oftc.net] has joined #debian
+19:35 -!- dvs is "realname" on #debian
+19:38 -!- pierrepc [~pierrepc@2a01:cb10:8727:7100:2146:4c09:f0d:a0f7] has joined #debian
+19:38 -!- pierrepc is "pierrepc" on #debian
+19:39 -!- pi_ [~pi@177.70.148.51] has joined #debian
+19:39 -!- pi_ is "realname" on #debian
+19:39 <pi_>   hello
+19:39 <pierrepc>  bonjour à tout le monde
+19:40 -!- pi_ [~pi@177.70.148.51] has quit []
+19:40 <dvs>   oi?
+19:43 -!- pierrepc [~pierrepc@2a01:cb10:8727:7100:2146:4c09:f0d:a0f7] has quit []
+19:47 -!- awal1 [~awal1@bras-base-mtrlpq0315w-grc-18-70-55-155-143.dsl.bell.ca] has joined #debian
+19:47 -!- awal1 is "realname" on #debian-devel-changes #debian-next #debian
+19:52 <choozy>    grayton: Ah yes
+19:57 -!- Mister00X [~quassel@0002a863.user.oftc.net] has joined #debian
+19:57 -!- Mister00X is "Mr.X" on #debian-offtopic #debian-next #debian
+20:00 -!- choozy [~quassel@2001:1c02:1e12:c500:439c:227:4159:7c8e] has quit [Quit: https://quassel-irc.org - Chat comfortably. Anywhere.]
+20:00 -!- _cr_ [~quassel@srv.ncxs.de] has quit [Read error: Connection reset by peer]
+20:00 -!- _cr_ [~quassel@srv.ncxs.de] has joined #debian
+20:00 -!- _cr_ is "Carsten Rosenberg" on #debian @#clamav
+20:07 -!- Cienisty [cloak@0002a23d.user.oftc.net] has quit [Quit: Ping timeout (120 seconds)]
+20:07 -!- Cienisty [cloak@0002a23d.user.oftc.net] has joined #debian
+20:07 -!- Cienisty is "Cienisty" on #debian #osm-pl #cyclosm
+20:08 -!- ax562 [~ax562@0002ac27.user.oftc.net] has joined #debian
+20:08 -!- ax562 is "realname" on #linux #debian #debian-next
+20:11 -!- Martin78arg [~ary@181.44.41.218] has joined #debian
+20:11 -!- Martin78arg is "Ariel Martin Bellio" on #debian-es #debian
+20:11 -!- phebus [~phebus@c-73-113-180-252.hsd1.tn.comcast.net] has quit [Quit: POKE 1,0]
+20:13 -!- czesmir_ [~stefan@aeeq14.neoplus.adsl.tpnet.pl] has quit [Quit: Lost terminal]
+20:14 -!- arT [~user@181.44.41.218] has joined #debian
+20:14 -!- arT is "Preguntamelo por /query" on #debian-es #debian
+20:14 -!- Martin78arg [~ary@181.44.41.218] has left #debian []
+20:14 -!- pamaury_ [~pamaury@2a02:c7f:60fd:1100:8286:9881:abe9:3d42] has quit [Ping timeout: 480 seconds]
+20:15 -!- scm [~scm@37.120.244.101] has quit [Quit: -a- Connection Timed Out]
+20:15 -!- keep [~keep@168.227.113.101] has joined #debian
+20:15 -!- keep is "KeeP" on #debian
+20:15 -!- keep [~keep@168.227.113.101] has quit []
+20:15 -!- liquidsnake [~liquidsna@00025245.user.oftc.net] has joined #debian
+20:15 -!- liquidsnake is "realname" on #MXLinux #linux #debian +#retroshare
+20:19 -!- scm [~scm@37.120.244.101] has joined #debian
+20:19 -!- scm is "scm" on #debian
+20:21 -!- f10_ [~flo@ip5b402e34.dynamic.kabel-deutschland.de] has joined #debian
+20:21 -!- f10_ is "f10" on #debian
+20:24 -!- arT is now known as ArT3
+20:25 -!- alex_ [~alex11@bras-base-mtrlpq5302w-grc-37-76-71-166-141.dsl.bell.ca] has joined #debian
+20:25 -!- alex_ is "your worst nightmare" on #debian #debian-next
+20:25 -!- ArT3 is now known as ar3
+20:25 -!- zebrag [~inkbottle@aaubervilliers-654-1-98-245.w86-212.abo.wanadoo.fr] has quit [Quit: Konversation terminated!]
+20:25 -!- zebrag [~inkbottle@aaubervilliers-654-1-98-245.w86-212.abo.wanadoo.fr] has joined #debian
+20:25 -!- zebrag is "inkbottle" on #oftc #debian-offtopic #debian-kde #debian-next #debian #kernelnewbies
+20:26 -!- leonardo [~leonardo@2607:5300:61:c67::196] has quit [Ping timeout: 480 seconds]
+20:28 -!- alex11 is now known as Guest1158
+20:28 -!- alex_ is now known as alex11
+20:30 -!- Guest1158 [~alex11@bras-base-mtrlpq5302w-grc-37-76-71-166-141.dsl.bell.ca] has quit [Ping timeout: 480 seconds]
+20:31 -!- Human_G33k [~HumanG33k@82-64-99-84.subs.proxad.net] has joined #debian
+20:31 -!- Human_G33k is "realname" on #open-source-java #debian-gitlab #debian-java #debian-kde #suckless #debian-next #debian-meeting #debian-devel-changes #debian-desktop #debian-debsources #debian
+20:32 -!- asterismo [~santiago@2800:a4:1046:9600:c907:925a:40e6:c56b] has quit [Ping timeout: 480 seconds]
+20:33 -!- liquidsnake [~liquidsna@00025245.user.oftc.net] has quit [Quit: Leaving]
+20:33 -!- Mister00X [~quassel@0002a863.user.oftc.net] has quit [Quit: "I'll be back" — Arnold Schwarzenegger]
+20:36 -!- CharClerc [~oftc-webi@92.119.18.202] has joined #debian
+20:36 -!- CharClerc is "OFTC WebIRC Client" on #debian
+20:37 -!- craigevil [~craig@00012e49.user.oftc.net] has quit [Ping timeout: 480 seconds]
+20:38 -!- bcwood [~bcwood@2a02:c7f:5838:9800:7939:ce49:4dcc:e19f] has joined #debian
+20:38 -!- bcwood is "realname" on #debian
+20:39 -!- bcwood [~bcwood@2a02:c7f:5838:9800:7939:ce49:4dcc:e19f] has quit []
+20:40 -!- cron [~cron@2.sub-174-250-14.myvzw.com] has joined #debian
+20:40 -!- cron is "realname" on #debian #kernelnewbies #C
+20:40 -!- craigevil [~craig@00012e49.user.oftc.net] has joined #debian
+20:40 -!- craigevil is "craig" on #debian-next #debian-offtopic #debian
+20:40 -!- Roman3349 [~Thunderbi@host-89-203-169-159.ip.topnet.cz] has quit [Ping timeout: 480 seconds]
+20:41 -!- CharClerc [~oftc-webi@92.119.18.202] has quit [Remote host closed the connection]
+20:42 -!- tranceeskape [~usman@47-222-1-1.plptcmtk03.res.dyn.suddenlink.net] has quit [Ping timeout: 480 seconds]
+20:45 -!- craigevi1 [~craig@37.120.205.84] has joined #debian
+20:45 -!- craigevi1 is "craig" on #debian-next #debian
+20:51 -!- tranceeskape [~usman@47-222-1-1.plptcmtk03.res.dyn.suddenlink.net] has joined #debian
+20:51 -!- tranceeskape is "realname" on #debian #ceph #ceph-devel #ceph-dashboard
+20:53 -!- haritz [~hrz@00028e96.user.oftc.net] has quit [Quit: ZNC 1.6.5+deb1+deb9u2 - http://znc.in]
+20:56 -!- thiras [~thiras@24.133.81.19] has quit [Ping timeout: 480 seconds]
+21:00 -!- haritz [~hrz@62.3.70.206] has joined #debian
+21:00 -!- haritz is "Haritz Mendizabal" on #virt #qemu #mm #linux #C #biz #debian #debian-zh
+21:04 -!- IPFreely [~wh0kares@2a0b:f4c2:2::1] has quit []
+21:14 -!- mode/#debian [+o themill] by ChanServ
+21:14 -!- themill changed the topic of #debian to: Current Debian release is buster, 10.9 point release /msg dpkg 10.9; /msg dpkg buster; /msg dpkg stretch->buster; /msg dpkg apt suite changed | Stretch has limited LTS support: /msg dpkg stretch-lts ; /msg dpkg 9.13 | NO FLOOD: /msg dpkg paste | offtopic: #debian-offtopic | testing/unstable: #debian-next | chanlogs: /msg dpkg irclog
+21:14 -!- mode/#debian [-o themill] by themill
+21:15 -!- j_f-f [~quassel@mail2.snct-dialer.de] has quit [Remote host closed the connection]
+21:15 -!- user01 [~user01@2600:1702:1f40:6040::3a] has joined #debian
+21:15 -!- user01 is "realname" on #debian
+21:16 <user01>    hi having an issue splitting hd audio shnsplit, looks like there was a bug open https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=950803
+21:16 <judd>  Bug https://bugs.debian.org/950803 in shntool (pending): «shntool: shnsplit refuses to split 24 bits wav and flac files, 16 bit ok»; severity: normal; opened: 2020-02-06; last modified: 2020-03-24.
+21:18 <user01>    looks like there was a patch at some point
+21:18 -!- j_f-f [~quassel@mail2.snct-dialer.de] has joined #debian
+21:18 -!- j_f-f is "J\xF6rg Frings-F\xFCrst" on #debian #debconf-miniauditorio #debconf18-taiwan #debian-xfce #debian-ubuntu #debian-games
+21:19 -!- craigevil is now known as Guest1159
+21:19 -!- craigevi1 is now known as craigevil
+21:20 <user01>    weird audacious reads it correctly hmmm
+21:20 -!- M4he [~mahe@p4ff9b1db.dip0.t-ipconnect.de] has joined #debian
+21:20 -!- M4he is "Mahe" on #debian
+21:21 <sney>  there's a branch on salsa with that patch included, but no movement on main or the actual package. try emailing the maintainer, they may have simply forgotten to upload the changes
+21:22 -!- asterismo [~santiago@2800:a4:1046:9600:b561:12fb:bed1:5d28] has joined #debian
+21:22 <user01>    ok thanks
+21:22 -!- asterismo is "Santiago" on #debian
+21:22 -!- grzesiek11 [~quassel@77-255-178-110.adsl.inetia.pl] has quit [Read error: Connection reset by peer]
+21:22 -!- grzesiek11 [~quassel@77-255-178-110.adsl.inetia.pl] has joined #debian
+21:22 -!- grzesiek11 is "Grzesiek11" on #debian #debian-next #debian-pl
+21:25 -!- mahe [~mahe@p4ff9bf3d.dip0.t-ipconnect.de] has quit [Ping timeout: 480 seconds]
+21:25 -!- M4he is now known as mahe
+21:25 -!- zebrag [~inkbottle@aaubervilliers-654-1-98-245.w86-212.abo.wanadoo.fr] has quit [Quit: Konversation terminated!]
+21:25 -!- zebrag [~inkbottle@aaubervilliers-654-1-98-245.w86-212.abo.wanadoo.fr] has joined #debian
+21:25 -!- zebrag is "inkbottle" on #oftc #debian-offtopic #debian-kde #debian-next #debian #kernelnewbies
+21:29 -!- boson [~dr_bot@4JHAAAKQW.tor-irc.dnsbl.oftc.net] has joined #debian
+21:29 -!- boson is "realname" on #debian #debian-next
+21:29 -!- ar3 [~user@181.44.41.218] has quit [Remote host closed the connection]
+21:29 -!- sidmo__ [~sidmo@p5b3d8c3d.dip0.t-ipconnect.de] has joined #debian
+21:29 -!- sidmo__ is "sidmo" on #debian-next #debian
+21:29 -!- dr_bot [~dr_bot@000294a2.user.oftc.net] has quit [Remote host closed the connection]
+21:30 -!- guits__ [~guits@143.208.14.111] has quit [Ping timeout: 480 seconds]
+21:31 -!- ee2455 [~ee2455@0001c7c0.user.oftc.net] has left #debian [Leaving]
+21:32 -!- edeak [~edeak@25.14.63.94.rev.vodafone.pt] has quit [Remote host closed the connection]
+21:33 -!- maschinenhans [~Hans@200116b82ac11000f1791cb422523126.dip.versatel-1u1.de] has quit [Ping timeout: 480 seconds]
+21:33 -!- sidmo_ [~sidmo@00026de1.user.oftc.net] has quit [Ping timeout: 480 seconds]
+21:33 -!- bentham is now known as Guest1160
+21:33 -!- bentham is "Jeremy Bentham" on #oftc
+21:33 -!- bentham [~bentham@7YZAAANNA.tor-irc.dnsbl.oftc.net] has joined #debian
+21:35 -!- catman370 [~catman@pool-74-105-144-233.nwrknj.fios.verizon.net] has quit [Quit: See you later..]
+21:35 -!- Guest1160 [~bentham@8L3AAAJFA.tor-irc.dnsbl.oftc.net] has quit [Ping timeout: 480 seconds]
+21:38 -!- mode/#debian [+l 714] by debhelper
+21:42 -!- maschinenhans [~Hans@200116b82a611500f1791cb422523126.dip.versatel-1u1.de] has joined #debian
+21:42 -!- maschinenhans is "realname" on #debian
+21:44 -!- haritz [~hrz@00028e96.user.oftc.net] has quit [Quit: ZNC 1.6.5+deb1+deb9u2 - http://znc.in]
+21:51 -!- asterismo [~santiago@2800:a4:1046:9600:b561:12fb:bed1:5d28] has quit [Ping timeout: 480 seconds]
+21:54 -!- Haudegen [~quassel@178.115.237.87.static.drei.at] has quit [Quit: Bin weg.]
+21:58 -!- guits__ [~guits@143.208.14.111] has joined #debian
+21:58 -!- guits__ is "guits" on #debian #kernel-br #debian-php #debian-nerds #debian-latam #debian-hugs #debian-games #debian-devel-br #debian-br #br #bash
+21:59 -!- guits__ [~guits@143.208.14.111] has quit [Remote host closed the connection]
+21:59 -!- Crowley [~androirc@187-26-149-79.3g.claro.net.br] has joined #debian
+21:59 -!- Crowley is "Felipe" on #debian
+21:59 -!- sevu [~sevu@dynamic-089-012-236-181.89.12.pool.telefonica.de] has joined #debian
+21:59 -!- sevu is "realname" on #moocows #debian
+22:03 -!- Crowley [~androirc@187-26-149-79.3g.claro.net.br] has quit [Quit: AndroIRC - Android IRC Client ( http://www.androirc.com )]
+22:03 -!- voyager1 [~voyager1@0002a22b.user.oftc.net] has joined #debian
+22:03 -!- voyager1 is "user" on #debian
+22:04 -!- shiki [~sevu@x4db7d996.dyn.telefonica.de] has quit [Ping timeout: 480 seconds]
+22:06 -!- RedSoxFan07 [~Thunderbi@d-159-250-218-50.ct.cpe.atlanticbb.net] has quit [Quit: RedSoxFan07]
+22:08 -!- pjain [~ircus1@ec2-18-216-12-226.us-east-2.compute.amazonaws.com] has joined #debian
+22:08 -!- pjain is "ZNC - https://znc.in" on #debian @#testchan
+22:11 -!- plains [~plains@0002b0c4.user.oftc.net] has quit [Quit: ZNC 1.8.2+deb1+focal2 - https://znc.in]
+22:12 -!- plains [~plains@132.145.162.195] has joined #debian
+22:12 -!- plains is "plains" on #redditprivacy #debian
+22:16 -!- Surfer2011_ [~quassel@i59F7C924.versanet.de] has joined #debian
+22:16 -!- Surfer2011_ is "Surfer2011" on #debian
+22:18 -!- pjain [~ircus1@ec2-18-216-12-226.us-east-2.compute.amazonaws.com] has quit [Quit: ZNC 1.8.2 - https://znc.in]
+22:20 -!- cron [~cron@2.sub-174-250-14.myvzw.com] has quit [Quit: Leaving]
+22:24 -!- Brigo [~Brigo@40.181.60.213.dynamic.reverse-mundo-r.com] has quit [Ping timeout: 480 seconds]
+22:24 -!- Surfer2011 [~quassel@83.135.232.145] has quit [Ping timeout: 480 seconds]
+22:24 -!- pjain [~ircus1@ec2-18-216-12-226.us-east-2.compute.amazonaws.com] has joined #debian
+22:24 -!- pjain is "pjain" on #debian
+22:25 -!- zebrag [~inkbottle@aaubervilliers-654-1-98-245.w86-212.abo.wanadoo.fr] has quit [Quit: Konversation terminated!]
+22:25 -!- ol [~quassel@2406:e003:810:b301:8e89:a5ff:feca:57fe] has joined #debian
+22:25 -!- ol is "Ol" on #debian
+22:25 -!- zebrag [~inkbottle@aaubervilliers-654-1-98-245.w86-212.abo.wanadoo.fr] has joined #debian
+22:25 -!- zebrag is "inkbottle" on #oftc #debian-offtopic #debian-kde #debian-next #debian #kernelnewbies
+22:27 -!- secntech [~secntech@0002a124.user.oftc.net] has joined #debian
+22:27 -!- secntech is "tp" on #tor-project #suckless #redditprivacy #Qubes_OS #privacytech #freedombox #debian #cryptoparty
+22:29 -!- voyager1 [~voyager1@0002a22b.user.oftc.net] has quit [Quit: ...]
+22:38 -!- kathenas [~kathenas@2a02:c7f:9234:0:1d0f:dff7:8660:fe64] has quit [Quit: Leaving]
+22:39 -!- demo [~demo@92.37.245.197] has joined #debian
+22:39 -!- demo is "realname" on #debian
+22:39 -!- demo [~demo@92.37.245.197] has quit []
+22:39 -!- craigevil [~craig@00012e49.user.oftc.net] has quit [Ping timeout: 480 seconds]
+22:40 -!- Guest1159 [~craig@00012e49.user.oftc.net] has quit [Ping timeout: 480 seconds]
+22:51 -!- jstein [~jstein@xdsl-87-78-8-167.nc.de] has quit [Quit: quit]
+22:52 -!- indy [~indy@0001c91b.user.oftc.net] has quit [Ping timeout: 480 seconds]
+22:58 -!- mode/#debian [+l 707] by debhelper
+22:58 -!- ol [~quassel@2406:e003:810:b301:8e89:a5ff:feca:57fe] has quit [Ping timeout: 480 seconds]
+23:03 -!- ac_laptop2 [~ac_laptop@186.2.247.129] has quit [Ping timeout: 480 seconds]
+23:17 -!- caipira [~caipira@4JHAAAKU0.tor-irc.dnsbl.oftc.net] has joined #debian
+23:17 -!- caipira is "realname" on #debian
+23:17 -!- Airwave [~Airwave@0001a5d2.user.oftc.net] has quit [Quit: WeeChat 2.3]
+23:18 -!- caipira [~caipira@4JHAAAKU0.tor-irc.dnsbl.oftc.net] has quit []
+23:24 -!- zem [~krikkit@00016a79.user.oftc.net] has joined #debian
+23:24 -!- zem is "Marvin" on #debian #ceph #debian-next
+23:25 -!- zem_ [~krikkit@188.252.207.225] has quit [Ping timeout: 480 seconds]
+23:27 -!- nyov is now known as Guest1168
+23:27 -!- nyov [~nyov@nyov.user.oftc.net] has joined #debian
+23:27 -!- nyov is "nyov" on #debian-offtopic #oftc #debian #luakit
+23:33 -!- Airwave [~Airwave@ti0006a400-4877.bb.online.no] has joined #debian
+23:33 -!- Airwave is "Airwave" on #pentadactyl #debian
+23:34 -!- Guest1168 [~nyov@nyov.user.oftc.net] has quit [Ping timeout: 480 seconds]
+23:43 -!- maschinenhans [~Hans@200116b82a611500f1791cb422523126.dip.versatel-1u1.de] has quit [Ping timeout: 480 seconds]
+23:47 -!- roshanavand__ [~roshanava@193.27.14.87] has joined #debian
+23:47 -!- roshanavand__ is "realname" on #debian
+23:52 -!- maschinenhans [~Hans@200116b82a611500ede18402bc4b8123.dip.versatel-1u1.de] has joined #debian
+23:52 -!- maschinenhans is "realname" on #debian
+23:54 -!- roshanavand_ [~roshanava@185.209.196.134] has quit [Ping timeout: 480 seconds]
+23:54 -!- YuGiOhJCJ [~YuGiOhJCJ@00021b1f.user.oftc.net] has joined #debian
+23:54 -!- YuGiOhJCJ is "YuGiOhJCJ" on #oolite #oftc @#yugiohjcj #qemu #llvm #debian 

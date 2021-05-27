@@ -1,0 +1,12 @@
+sublime-irc
+--------------
+
+Thank you for installing sublime-irc, an IRC log file syntax highlighter for
+Sublime Text.
+
+You're almost there, you'll only need to close and reopen all IRC related
+files (.txt, .log ...) and select the 'IRC' syntax from the menu.
+
+If you have any questions, comments, concerns, bugs, or patches, please open an
+issue or pull request over on GitHub (https://github.com/barnumbirr/sublime-irc).
+You can also find me on Twitter @barnumbirr.

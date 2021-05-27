@@ -1,0 +1,1112 @@
+# https://irclogs.ubuntu.com/2021/04/22/%23ubuntu.txt
+
+[00:00] <cbreak> that might tell you the pointpoint, or "legacy"
+[00:01] <woodonia> Value -Â Â  Source -
+[00:01] <cbreak> so ... is it a zvol?
+[00:02] <cbreak> zfs get type rpool/keystore
+[00:02] <cbreak> if it says "volume", then it's a volume, not a dataset
+[00:02] <woodonia> ... You would be correct... it's apparently a zvol
+[00:03] <cbreak> probably contains either raw data, or a filesystem
+[00:04] <sarnold> iirc ext4
+[00:08] <cbreak> maybe you can run file on it to identify
+[00:09] <cbreak> could be a luks container for example :)
+[00:13] <woodonia> haha, when trying to mount the zvolÂ  "uknown filesystem type 'crypto_LUKS'
+[00:35] <sneakyimp> so I have given up on the GTX 470. I removed it. I updated my video card drivers to the latest and now the audio off the motherboard isn't working.
+[00:41] <sarnold> sneakyimp: quite a lot of audio things can be sorted by running pavucontrol and clicking around a bit .. I hope this one's easier :)
+[00:49] <sneakyimp> sarnold: thanks yet again! my system doesn't recognize pavucontrol from CLI...is that a package i should install? i can hear a bit of a click when i try to play a sound but nothing comes out...sounds like something turns the circuitry on but the software doesn't end up sending any audio to it
+[00:50] <sneakyimp> system recognizes the device, just won't play any sound. https://paste.ubuntu.com/p/QpCq79ct43/
+[00:51] <sarnold> sneakyimp: it's in package pavucontrol
+[00:52] <woodonia> Looks like the recovery key feature isn't working properly... the LUKS2 header shows only a single key for the encrypted device, and the 16 digit "recovery key" is not being accepted as a passphrase.
+[00:53] <sarnold> sneakyimp: there's a lot of layers going on at once.. there's alsa, the kernel interface; there's pulseaudio, a layer above alsa; there's also whatever applications you're using; they all have to be set up right
+[00:54] <sneakyimp> the bar graphs in the audio control panels show the level jumping up and down (i'm playing a video) but the sound doesn't come out. i've tested the speakers by playing my iphone thru the connector cable
+[00:55] <kill-animals> woodonia: Don't listen to xkcd. He has some of the worst takes on things. For a password, what you ought to do is instead of remembering a password, you remember an algorythm that depending on the application, website, login, etc, that password changes.
+[00:55] <sarnold> that doens't work great for disk unlocking :)
+[00:56] <sarnold> sneakyimp: the 'usual' fix is that you'll find audio is set to come out your hdmi port rather than speaker port -- or vice versa :)
+[00:56] <kill-animals> sarnold: Just brute force it.
+[00:56] <woodonia> True - I mostly just use keepass with lots of entropy (for almost everything)... but for this I figured it'd be good
+[00:56] <sneakyimp> sarnold: pavucontrol has hdmi as "off" and shows the bar graph leaping for the Line Out (plugged in) device
+[00:57] <kill-animals> You used I'm guessing 3 words, like "FroggingStaplerCrack"
+[00:57] <woodonia> Done a lot of learning on ZFS, LUKS, etc.Â  :)
+[00:57] <woodonia> kill-animals 4 - and I know it came to 25 characters... 99% certain on 19 of the characters
+[00:58] <kill-animals> woodonia: Give xfs a try. It is killing it in the latest benchmarks, well ahead of zfs
+[00:58] <woodonia> I'll take a look at it!
+[00:58] <kill-animals> woodonia: Well there you go.
+[00:59] <sarnold> oh wow, if you're *that* close tothe password, yeah, brute-forcing it is a real possibility :)
+[00:59] <kill-animals> ^
+[00:59] <kill-animals> That actually sounds like a good interview question
+[01:00] <woodonia> Definitely... but I still think that if the ubiquti installer gave me a recovery key... which I saved... I should be able to recover using it... but no dice so far :)
+[01:01] <kill-animals> woodonia: Can you program?
+[01:01] <woodonia> Nope... pharmacist by trade.Â  I just goof around on computers
+[01:01] <woodonia> I wish I could, though.Â  I like FLOSS
+[01:02] <kill-animals> woodonia: What kind of programming would you like to learn?
+[01:04] <woodonia> My thought is always python - seems to be the most "intro" one, but bash scripting is what i've tinkered around with the most
+[01:06] <kill-animals> woodonia: Python ironically is probably the worst intro language to learn. Speaking from experience. It was memed as `print "easiest language for an intro to programming"` because that is all it took to write your first hello world program.
+[01:07] <woodonia> hahahaha
+=== Leenux8 is now known as Leenux
+[01:09] <kill-animals> The biggest reason is that just about everything you learn in python, you will have to unlearn, because nothing is transferable to any other language. The syntax is unique, every programming technique has a "pythonic way" completely different from the C languages, and its slow.
+[01:10] <woodonia> IDLE always seemed slow...Â  I've been trying to teach myself emacs as well, and was thinking about perl or lisp
+[01:10] <kill-animals> woodonia: For emacs, you do realize that bash is running in emacs mode by default, right?
+[01:11] <kill-animals> its a good way to start. Thats how I got into Vim, by switching the terminal to `set -o vi`
+[01:11] <woodonia> Yup.Â  I taught myself (basic) vim... and then really fell in love with the possibilities of org-mode
+[01:12] <kill-animals> woodonia: A lot of people swear by perl. I think its fine to learn.
+[01:12] <woodonia> I tried vimwiki and taskwarrior... but then found spacemacs, which is pretty great.Â  It's a bit cumbersome, so I was trying to learn how to make emacs into spacemacs... with only the features I wanted... but that's really hard :)
+[01:12] <kill-animals> I tend to think the strictly proper way is to start with C, and graduate to Qt/C++ for higher level programming.
+[01:13] <kill-animals> woodonia: Spacemacs? Sounds cool
+[01:13] <kill-animals> its off topic. You can come into #sqt if you want to discuss it more.
+[01:34] <alloy> hey people!
+[01:34] <alloy> any idea when xubuntu 21.04 will be released?
+[01:36] <sarnold> 'thursay'
+[01:37] <sarnold> which depending upon where you are, might be today or tomorrow
+[01:37] <alloy> I've just bought a new ssd for my laptop and don't see the point in installing on it when a new version coming out soon
+[01:37] <alloy> yeah, I'm in AU, so it's the 22nd today :)
+[01:38] <alloy> sarnold, do they tend to push it out the same as upstream, or is there a delay?  (I've never tried to get a distro on the exact day, but the above reason dictates it :) )
+=== alloy_alloy_allo is now known as alloy
+[01:40] <sarnold> alloy: there's no real 'upstream' here, ubuntu is entirely freestanding for this sort of thing
+[01:40] <sarnold> alloy: debian release schedules are more or less entirely unconnected to ubuntu release schedules
+[01:41] <alloy> sarnold, ah, yeah thanks. I understand the first line - that's good.  Not sure about the second line re: debian though, how's that relevant?
+[01:41] <alloy> was it just an fyi?
+=== zbenjamin_ is now known as zbenjamin
+[01:57] <Vivekananda> Hello Everyone, coming to irc after a bit. I have ubuntu 18.04 trying to figure out my thunderbolt generation and also why it is not connecting to a display using thunderbolt.
+[02:03] <woodonia> alloy You could use the latest daily release candidate, and it'll just update to normal in a few days
+=== Guest95977 is now known as catalase
+[04:23] <Intelo> Is it possible to give a mouse and keyboard to each desktop? I have multiple monitors and want to plug multiple keyboards/mice and make each person control his own desktop screen. (Kind of multi seat) ?
+[04:41] <matsaman> Intelo: sure buy why
+[04:42] <viktor_> hi all. I'm trying to run Thunderbird on startup, but minimized or in the backgroud. Point is to check mail right away without it being "in my face". I tried a mini startup script "sleep 20 && ; thunderbird --headless", but that doesn't seem to even start TB. I found a recommended addon "Firetray". But it's not supported on my version and I'd rather not start downgrading. Any suggestions?
+[04:42] <matsaman> Intelo: multiseat, LTSP, or just a custom X config
+[04:43] <Intelo> matsaman: can you elaborate? what are you pointing at?
+[04:44] <Intelo> those are terminologies. I want to know about implmentation
+[04:44] <matsaman> Intelo: if you look for 'multiseat' you will find what you want
+[04:44] <matsaman> LTSP is all about it
+[04:44] <Intelo> matsaman:  I already did
+[04:45] <matsaman> viktor_: something like this maybe: http://www.webupd8.org/2011/02/how-to-start-applications-minimized.html
+[04:45] <matsaman> Intelo: gj
+[04:45] <Intelo> matsaman:  and it requires multiple head based GPU. I want to do "seat per desktop:"
+[04:45] <matsaman> no it doesn't require multiple GPUs
+[04:46] <Intelo> ok..
+[04:47] <matsaman> so if you see documentation on how to do this that says you need multiple GPUs, that's the wrong documentation
+[04:55] <viktor_> matsaman: then it would always start minimized. maybe i'm nitpicking.
+[05:59] <sneakyimp> HELP. In trying to get my video card drivers in order, I nearly nuked my workstation. I had to use boot-repair and now I get no grub boot menu when i start up -- the Windows 10 boot has disappeared. Here's the paste from boot-repair: https://paste.ubuntu.com/p/kYR8MsgB4Y/
+=== jgrim95 is now known as jgrim9
+[06:26] <TheBigK02> sneakyimp: whats the actual problem ur trying to resolve right now.
+=== jgrim91 is now known as jgrim9
+=== mIk3_09 is now known as mIk3_08
+[07:05] <sneakyimp> TheBigK02: i have a dual boot machine. it stopped booting today while i was trying to resolve a video card problem. I booted to an ubuntu live disk and ran boot-repair and this has restored my ability to boot to ubuntu 20.04, but the windows 10 boot doesn't appear as an option at boot. no grub menu. if i hold down shift key to get grub menu, there's no windows option
+[07:05] <sneakyimp> TheBigK02: I think the windows boot is on sda
+[07:07] <TheBigK02> did u run update-grub already?
+[07:07] <TheBigK02> it should detect ur windows installation
+[07:09] <sneakyimp> TheBigK02: yes, I did
+[07:09] <TheBigK02> sneakyimp: are u using UEFI?
+[07:09] <sneakyimp> TheBigK02: I'm not sure what that is supposed to do, or what preparation I might need to do before running it. it looks like ubuntu has trouble reading the contents of sda
+[07:10] <TheBigK02> sneakyimp: are u able to mount ur windows partition ?
+[07:10] <sneakyimp> TheBigK02: to be honest, i'm not sure about UEFI. I think there's a bios option where I can select windows uefi or 'other os'
+[07:11] <sneakyimp> TheBigK02: i'm not sure if I'm properly mounting it. I open the file browser, click 'other locations' and sda appears as '1.0 TB Volume'
+[07:11] <sneakyimp> i click that and it says Folder is Empty
+[07:12] <sneakyimp> TheBigK02: it does appear to be mounted, though: https://paste.ubuntu.com/p/yPBXwMqxV3/
+[07:13] <TheBigK02> sudo mokutil --sb-state <- what is replied there?
+[07:16] <sneakyimp> TheBigK02: ok gonna try that...in the meantime, some fdisk output: https://paste.ubuntu.com/p/n6FSgtQmhq/
+[07:17] <sneakyimp> TheBigK02: `sudo mokutil --sb-state` yields 'EFI variables are not supported on this system'
+[07:17] <cbreak> :(
+[07:18] <TheBigK02> why sad... so ur using BIOS and not UEFI
+[07:19] <sneakyimp> TheBigK02: here's the update-grub output...nothing special https://paste.ubuntu.com/p/b9tqdys78m/
+[07:20] <TheBigK02> oki... im actually not quite sure how update-grub detects windows on BIOS... since ur partitons are fine, it should be fairly easy to be fixed
+[07:21] <sneakyimp> TheBigK02: so should i try boot-repair again? This looks sort of appropriate...the 'repair windows boot files' bit and 'place the boot flag on XX' https://askubuntu.com/questions/217904/unable-to-boot-into-windows-after-installing-ubuntu-how-to-fix/921722#921722
+[07:22] <TheBigK02> since ur already in a running linux system, i dont think its necessary...
+[07:22] <sneakyimp> TheBigK02: if you inspect the pastebin from the first boot-repair attempt, you'll see that it says "The default repair of the Boot-Repair utility will purge (in order to unsign) and reinstall the grub2 of sdb6 into the MBRs of all disks (except live-disks and removable disks without OS). "
+[07:22] <sneakyimp> first boot-repair pastebin here https://paste.ubuntu.com/p/kYR8MsgB4Y/
+[07:23] <saunders> I'm on Ubunt 16.x and have an external SATA hdd which is connected via a USB adapter cable.  How can I make the external hdd bootable and use it to install Ubuntu 20.10 to the internal hdd?
+[07:24] <sneakyimp> saunders: you should upgrade to something newer, but i think the instructions for a 'USB stick' would also apply to a USB drive https://ubuntu.com/tutorials/create-a-usb-stick-on-ubuntu#1-overview
+[07:24] <cbreak> yes. I'd expect that dd-ing the iso would work
+[07:25] <saunders> because it's such an old OS, however, cannot install software
+[07:25] <saunders> cbreak: yes, that was my thought.  Not sure how to do that, however.
+[07:26] <sneakyimp> TheBigK02: not sure what you mean to suggest about 'already runningin a linux system' -- if boot-repair is the wrong approach, i haven't got any clue how to try and repair this
+[07:26] <TheBigK02> saunders: u can either do a reinstall or also an upgrade. both options are there
+[07:27] <TheBigK02> sneakyimp: im not sure if u want to boot into a livesystem again or run boot-repair on ur right now running system
+[07:27] <TheBigK02> what does sudo os-prober print ?
+[07:27] <saunders> I'm downloading the ISO.  Use dd to write to the external (USB/SATA) hdd?  then just boot from USB?
+[07:27] <cbreak> saunders: that's the general idea
+[07:27] <TheBigK02> saunders: thats the way.. but be aware that the dd will overwrite ur partitions. all data is lost
+[07:28] <cbreak> normally one would use usb SSDs for this
+[07:28] <cbreak> in stick form
+[07:28] <cbreak> but spinning actual disks should work the same
+[07:28] <cbreak> well, slower of course... but...
+[07:29] <sneakyimp> TheBigK02: is it safe to run boot-repair from my workstation ubuntu? it's very precious to me.
+[07:30] <TheBigK02> dd is also referred as disk destroyer ;D
+[07:31] <TheBigK02> sneakyimp: i do not have much experience with this utility.. but since u ran it i dont think u can break more when u run it again :D
+[07:31] <TheBigK02> sneakyimp: can u run os-prober and see what it prints?
+[07:31] <TheBigK02> sneakyimp: no windows in sight?
+[07:32] <sneakyimp> TheBigK02: a moot point i guess...the 'Repair windows boot files' option is greyed out
+[07:33] <TheBigK02> sneakyimp: urghs... did u do weird things to ur windows partition with this utility? i wouldnt do that... ur windows shouldnt be touched from ur linux... unless u have no other choice
+[07:34] <sneakyimp> TheBigK02: the command os-prober doesn't seem to to a thing on my machine
+=== nckx is now known as raghavgururajan9
+=== raghavgururajan9 is now known as nckx
+[07:35] <sneakyimp> TheBigK02: sudo os-prober returns nothing at all
+[07:36] <TheBigK02> i would give it a shot by just adding those lines manually for now:
+[07:36] <TheBigK02> https://pastebin.info/?1e7535551dfcce2f#FSzpoJixu98oLob3vkRXfanUkmZtExMGig8xijbm4vKj
+[07:36] <TheBigK02> u might need to adjust the hd line
+[07:37] <TheBigK02> since i dont know in which drive u have ur windows installation
+[07:37] <sneakyimp> i *think* windows is on sda
+[07:37] <sneakyimp> where does that pastebin go?
+[07:37] <TheBigK02> then 0 is fine
+[07:38] <TheBigK02> i just got those lines out of /usr/share/doc/grub2-common/examples/grub.cfg
+[07:38] <TheBigK02> u can copy paste the windows part there and put it manually in the grub.cfg
+[07:39] <TheBigK02> be aware that update-grub will overwrite that file again
+[07:39] <TheBigK02> its just a test if that windows boots
+[07:39] <sneakyimp> i'm no grub jockey
+[07:39] <sneakyimp> you mean i should add that snip to /boot/grub/grub.cfg?
+[07:39] <TheBigK02> yes
+[07:41] <sneakyimp> TheBigK02: grub.cfg is a big file...put it at the beginning? the end? somewhere in particular?
+[07:41] <TheBigK02> depends where u want that menuentry
+[07:42] <TheBigK02> check for the section where those menuentries are
+[07:42] <TheBigK02> and there u add at the end
+[07:44] <sneakyimp> ok there's only one main menuentry -- Ubuntu -- but it has a submenu with menuentry items that follow
+[07:44] <TheBigK02> u put that below of that
+[07:45] <TheBigK02> i think grub.cfg is fairly straight forward. i believe u can make that work :)
+[07:45] <TheBigK02> after that u reboot and u should find that menu entry in that grub and see if that boots ur windows
+[07:46] <sneakyimp> TheBigK02: thanks. bbiab. wish me luck
+[07:47] <saunders> how, specifically, is dd used to write the Ubuntu ISO to an external hdd?                                              â”‚
+[07:47] <saunders> â”‚(00:35:56) sneakyimp: TheBigK02: sudo os-prober returns nothing at all                                                â”‚
+[07:47] <saunders> â”‚(00:36:36) TheBigK02: i would give it a shot by just adding those lines manually for now:                             â”‚
+[07:47] <saunders> â”‚(00:36:38) TheBigK02: https://pastebin.info/?1e7535551dfcce2f#FSzpoJixu98oLob3vkRXfanUkmZtExMGig8xijbm4vKj            â”‚
+[07:47] <saunders> â”‚(00:36:57) TheBigK02: u might need to adjust the hd line                                                              â”‚
+[07:47] <saunders> â”‚(00:37:07) TheBigK02: since i dont know in which drive u have ur windows installation                                 â”‚
+[07:47] <saunders> â”‚(00:37:27) sneakyimp: i *think* windows is on sda                                                                     â”‚
+[07:48] <larkfisherman> Does anyone know if uninstalling snapd will break anything in my system? I see that "gnome-3-28-1804", "gnome-3-34-1804" and "gtk-common-themes" are installed through snap. Are they important for the default Ubuntu 20.04 shell?
+[07:49] <TheBigK02> larkfisherman: there are only essential for everything related to snap
+[07:49] <TheBigK02> larkfisherman: why would u want to remove snapd tho
+[07:55] <sneakyimp> TheBigK02: no dice with grub.cfg change. The "Microsoft Windows" menu option was there, but selecting it just yield "no such partition...press any key to continue"
+[07:55] <TheBigK02> okay. then the hd section has to change
+[07:55] <TheBigK02> lets see if we can find that out
+[07:56] <sneakyimp> also, i had to hold down the shift key to get the boot menu...i'd like to make it display automatically for five seconds
+[07:58] <TheBigK02> u change /etc/default/grub for that
+[07:58] <TheBigK02> GRUB_TIMEOUT is the variable for that
+[07:58] <TheBigK02> and then u run update-grub. that would also remove that manually added windows section
+[07:59] <sneakyimp> GRUB_TIMEOUT is already 10
+[07:59] <sneakyimp> GRUB_TIMEOUT_STYLE=hidden
+[07:59] <sneakyimp> i think that's a problem
+[08:00] <EriC^^> what's the problem you're having?
+[08:00] <EriC^^> you're making a custom windows entry?
+[08:00] <sneakyimp> EriC^^: trying to get my lost windows boot back
+[08:01] <EriC^^> it was working, you installed ubuntu now its gone?
+[08:01] <EriC^^> what's the backstory :D
+[08:03] <TheBigK02> EriC^^: scroll up. he did some stuff with video cards and then he ran boot-repair
+[08:03] <TheBigK02> and then his windows disappeared from the grub. but its mountable
+[08:03] <TheBigK02> hes using BIOS and im not quite sure how the detection of windows is done there
+[08:03] <TheBigK02> so i thought giving a manual entry a shot... but that seemed to be the wrong partition
+[08:03] <sneakyimp> EriC^^: windows 10 installed first, long ago as a baby windows 7. maybe uefi? I installed ubuntu years ago and they lived happily side by side. i installed new video card this week and was trying to get it to play nice with other video card but ubuntu says NO and so i have to remove other video card and then computer stops booting entirely after getting new video card drivers installed. so i run boot-repair and ub
+[08:03] <sneakyimp> ery important) but windows is gone gone
+[08:04] <sneakyimp> but the precious windows 10 with all the old precious legacy software needs to come back
+[08:04] <EriC^^> alright, checking the boot-repair log
+[08:05] <sneakyimp> EriC^^: thank you!
+[08:07] <EriC^^> no worries
+[08:08] <EriC^^> sneakyimp: type 'sudo parted -ls | nc termbin.com 9999' it'll paste the output and give you a link, share it here please
+[08:08] <sneakyimp> EriC^^: FYI I tried a second run at boot-repair to see if we could check the box for 'Repair Windows boot files' and cannot, it's greyed out
+[08:09] <sneakyimp> Eric^^: https://termbin.com/4003
+[08:10] <EriC^^> sneakyimp: which hdd has windows, the 3tb one or 1.5tb?
+[08:10] <sneakyimp> Eric^^: pretty sure windows on sda, linux on sdb, and the sdc and sdd are data storage and backup drives
+[08:10] <EriC^^> eek
+[08:11] <sneakyimp> the larger drives are newer ones
+[08:12] <EriC^^> sneakyimp: hmm that sounds bad, somehow the filesystem says fat32, it should be ntfs
+[08:12] <EriC^^> anyways, try 'sudo mount /dev/sda1 /mnt'
+[08:12] <sneakyimp> EriC^^: as i mentioned before, this computer was originally windows 7. that drive might be 10 years old?
+[08:13] <sneakyimp> ok sudo mount /dev/sda1 /mnt run
+[08:13] <sneakyimp> i want to say this emptiness there is a new development
+[08:13] <EriC^^> i hope it's some odd mistake, i sincerely doubt it used fat32
+[08:14] <EriC^^> sneakyimp: try "ls -l /mnt" what do you see?
+[08:14] <sneakyimp> today's experience strongly smacks of data corruption
+[08:14] <sneakyimp> Eric^^: that ls command says 'total 0' :'(
+[08:15] <EriC^^> maybe windows was on the 3tb one?
+[08:15] <EriC^^> sneakyimp: try 'sudo umount /mnt && sudo mount /dev/sdc2 /mnt'
+[08:17] <sneakyimp> Eric^^: question: will that have any effect on how these drives usually get mounted?
+[08:17] <sneakyimp> sdc, i'm nearly certain, is mostly a data drive
+[08:18] <EriC^^> yeah it's 99.9% likely so, try sudo mount /dev/sdd1 /mnt instead
+[08:18] <sneakyimp> well, would it be acceptable to just click on these drives in the file explorer and have it mount them that way?
+[08:19] <EriC^^> tbh it's also very likely since it lacks a 'boot' flag on the partition, just tryint to cover all grounds
+[08:19] <EriC^^> sneakyimp: sure go for it
+[08:20] <sneakyimp> Eric^^: ok sdc2 and sdd1 are mounted in their usual fashion: https://paste.ubuntu.com/p/5sKf8WwFH6/
+[08:25] <sneakyimp> Eric^^: neither sdc2 nor sdd1 have a windows OS installed on them, but i wouldn't be surprised if one or two of them somehow got a boot record or something on them. I've been easing this machine forward for years...swapping out drives and stuff.
+[08:26] <EriC^^> sneakyimp: do you have a backup of sda?
+[08:27] <sneakyimp> EriC^^: No. IIRC, it would just have the OS on it and the applications. I kept data on sdc, and occasionally copied that data to sdd for redundancy
+[08:27] <sneakyimp> sdb is a rather new SSD drive on which Ubuntu is installed
+[08:28] <sneakyimp> drive sdc is typically a share space for both windows and ubuntu.
+[08:28] <EriC^^> i see, try 'sudo apt-get install testdisk'
+[08:28] <sneakyimp> ok we have testdisk
+[08:29] <EriC^^> at this point, it looks like somehow a fresh fat32 filesystem was written over sda, somehow
+[08:29] <EriC^^> if you're lucky, the partition of windows maybe was further down the disk and wasnt affected much by the write, or at least you might be able to copy important files from it easily
+[08:30] <EriC^^> sneakyimp: type 'sudo testdisk /dev/sda'
+[08:30] <sneakyimp> ok, having typed that, being prompted to 'select a media'
+[08:31] <sneakyimp> only one option -- /dev/sda....shall i proceed?
+[08:31] <EriC^^> yeah
+[08:31] <sneakyimp> is this something like gparted?
+[08:31] <sneakyimp> i.e., gonna take awhile?
+[08:31] <EriC^^> nah, it'll just quickly look for lost partitions
+[08:32] <sneakyimp> Eric^^: it sayeth "EFI GPT paritition table has been detected"
+[08:32] <EriC^^> go for "Intel" instead of the default efi gpt
+[08:32] <sneakyimp> is this decision irreversible? i'd bet my right arm i had UEFI turned on at some point
+[08:33] <EriC^^> ok 1 sec
+[08:33] <EriC^^> yes everything is reversible, we're not actually writing anything at this point, but earlier, you had ubuntu and windows living happily you said right?
+[08:33] <EriC^^> windows showed up in grub and booted from there?
+[08:34] <sneakyimp> yes ubuntu came after windows, so the grub menu was ubuntu's doing i believe
+[08:34] <sneakyimp> default was ubuntu
+[08:34] <sneakyimp> very fast boot
+[08:34] <EriC^^> and was windows in the grub menu of ubuntu?
+[08:34] <sneakyimp> option for 'windows boot loader' or something like that
+[08:34] <sneakyimp> yes
+[08:34] <EriC^^> aha great
+[08:34] <sneakyimp> so you still want me to choose intel?
+[08:34] <EriC^^> type 'ls /sys/firmware/efi' in ubuntu, does it show files or say file not found
+[08:35] <sneakyimp> well we're still in test disk?
+[08:35] <sneakyimp> open another terminal for that...
+[08:35] <EriC^^> open another terminal if possible
+[08:35] <sneakyimp> ls: cannot access '/sys/firmware/efi': No such file or directory
+[08:35] <sneakyimp> tried sudo as well
+[08:36] <EriC^^> aha, that means that ubuntu is not actually using uefi
+[08:36] <EriC^^> so likely windows was using legacy as well if it showed up in grub
+[08:36] <sneakyimp> that jibes with an earlier command: $ sudo mokutil --sb-state
+[08:36] <sneakyimp> EFI variables are not supported on this system
+[08:37] <sneakyimp> so in TestDisk, i shall go ahead with 'Intel' option, yes?
+[08:37] <sneakyimp> rather than EFI GPT?
+[08:37] <EriC^^> yeah
+[08:37] <sneakyimp> prompted for analyze/advanced/geometry/options/mbr code/delete/quit
+[08:37] <EriC^^> i think til now, likely something wrote a fresh gpt partition to sda instead of its old msdos partition table, and made a fresh single fat32
+[08:38] <sneakyimp> analyse?
+[08:38] <EriC^^> yeah go for analyse
+[08:38] <EriC^^> then hit quick search
+[08:38] <sneakyimp> Eric^^: that sounds perfectly feasible -- i suspect it might have been boot-repair that did so
+[08:39] <EriC^^> nah, i dont think it can even do such a thing, plus i think you'd have been using boot-repair cause it already wasnt booting(?)
+[08:39] <sneakyimp> ok quick search yields one partition: https://paste.ubuntu.com/p/6cw2q59q2c/
+[08:40] <EriC^^> sneakyimp: press enter, then try to run a deep search
+[08:40] <sneakyimp> doing so
+[08:41] <sneakyimp> Eric^^: this will take a good long while
+[08:41] <EriC^^> are any interesting partitions showing up?
+[08:41] <sneakyimp> there are two identical lines, FAT32 LBA    0   32  33 121601 blah blah
+[08:42] <EriC^^> ok
+[08:42] <sneakyimp> no additional ones yet, but search is slow
+[08:42] <sneakyimp> we've only just reached 1%
+[08:42] <EriC^^> dang
+[08:43] <EriC^^> i wonder if windows usually partitions the same for all win7 installs and we could just try mounting the main os fs location
+[08:44] <sneakyimp> you know, it wouldn't suprise me if the windows OS was on this sda drive, but the boot records somewhere else
+[08:44] <EriC^^> do you happen to have an old gparted screenshot or parted output by any chance?
+[08:44] <sneakyimp> Eric^^: I doubt it....will sniff around
+[08:48] <EriC^^> sneakyimp: try 'sudo parted /dev/sdc unit s print | nc termbin.com 9999'
+[08:50] <sneakyimp> https://termbin.com/kan2
+[08:55] <EriC^^> sneakyimp: try 'sudo umount /mnt && sudo mount -o offset=$((264192 * 512)) /dev/sda /mnt'
+[08:55] <sneakyimp> oh hang on...
+[08:56] <EriC^^> that will try to mount any fs at that location, in case it had one there like sdc has
+[08:56] <sneakyimp> what did we mount previously at /mnt?
+[08:56] <EriC^^> sda1 iirc
+[08:56] <sneakyimp> ls -l /mnt yields one dir
+[08:56] <sneakyimp>  boot-sav
+[08:57] <EriC^^> df /mnt should show whats mounted
+[08:57] <EriC^^> that's the log of boot-repair i think
+[08:58] <sneakyimp> interestin...
+[08:59] <sneakyimp> that mount command yields: https://paste.ubuntu.com/p/pgjj9Y4v6S/
+[08:59] <TomyWork> since the last kernel update (70 -> 72) my kubuntu 18.04 can no longer connect to certain CIFS shares (all of them DFS)
+[08:59] <TomyWork> might have something to do with this change that was already reverted upstream: https://patches.linaro.org/patch/420089/
+[09:01] <EriC^^> sneakyimp: ah, nevermind then
+[09:04] <sneakyimp> EriC^^: I am truly grateful for your kind assistance. It's 2AM here. I'm going to have to stop for the evening (insomniac wife reasons)
+[09:05] <sneakyimp> Eric^^: should anything occur to you, i posted on a forum: https://askubuntu.com/questions/1333096/computer-stopped-booting-ran-boot-repair-no-grub-menu-windows-10-option-gone
+[09:05] <EriC^^> sneakyimp: no problem, i'd let the testdisk deep search run if you can, it might show the partition and you can maybe get the files back
+[09:05] <sneakyimp> Eric^^: any broad suggestions about next steps if testdisk finds anything?
+[09:06] <TomyWork> https://packages.ubuntu.com/source/bionic-updates/linux-signed-hwe-5.4 I'd like to try out hat fix, uhh why is the source only 14.4 kb in total?
+[09:07] <EriC^^> sneakyimp: you can press 'p' over the partition to list the files, then use 'c' or copy them over, after that restore it/write it to the partition table and maybe assess if the fs is still good and you want to use it (though i guess there are no guarantees that the fat32 didnt overwrite any important parts and now its unreliable)
+[09:08] <EriC^^> i'd just get the important files back and run for the hills, then reinstall windows cleanly
+[09:12] <sneakyimp> Eric^^: thank you for the advice. i'll regard the drive with plenty of suspicion
+[09:13] <sneakyimp> goodnight!
+[09:14] <EriC^^> sneakyimp: no problem, thanks you too
+[09:14] <TomyWork> ah, linux-hwe-5.4 is the correct package. obviously we can't have the full source for a canonical-signed kernel (which would include the keys, I suppose) since that'd defeat the purpose of signing it
+[09:17] <TomyWork> https://kernel.ubuntu.com/git/ubuntu/ubuntu-disco.git/commit/snapcraft.yaml?id=f32feaaa4ad5f63b8d6b6a65a25f9b85ed3d1e4b this reads like an april fools. snapcraft.yml added to the kernel with version 4.20?
+[09:31] <TheBigK02> hmm... i have upgraded to 21.04 ... i know its a little bit early ... but the new kernel changed something for me. im using cpufrequtils to load powersave cpu governor for my intel cpu. that makes my cpu not activate my fans all the time which is silent working station... since new kernel the same govenor is loaded but the cpu frequency is now defaulting to 1800 mhz and not 800mhz as before. any hints how i can find why that
+[09:31] <TheBigK02> changes ?
+[09:31] <TheBigK02> i booted the old kernel to see if that changes the behaviour like i used to and it does
+[09:32] <TheBigK02> my temps are fine... so i think the power draw is similar... but im the curious type of guy to see if theres some sort of explanation without greping the the kernel :D
+[09:59] <ash_worksi> why doesn't `mkpasswd --method=help` show `yescrypt` ?
+[10:03] <TheBigK02> ash_worksi: for me it does... some dependency not there?
+[10:03] <ash_worksi> TheBigK02: oh? what version are you using?
+[10:03] <ash_worksi> I mean, of Ubuntu?
+[10:04] <TheBigK02> 5.5.8 ... i upgraded today to 21.04... but its not supported yet i think
+[10:04] <ash_worksi> I see
+[10:06] <ash_worksi> I see, mine is 5.5.6
+[10:06] <ash_worksi> I'll try upgrading whois
+[10:07] <ash_worksi> wait... does `sudo apt upgrade whois` upgrade that package?
+[10:07] <TheBigK02> first u can do apt-cache policy whois to see if there a new version even avaibale
+[10:07] <TheBigK02> if its not.. then u dont need to do anything
+[10:08] <TheBigK02> if im correct mkpasswd is depending on glibc...
+[10:08] <TheBigK02> and glibc is core part of ur OS...
+[10:08] <ash_worksi> I already ran the command above which apparently is upgrading things like libreOffice
+[10:09] <ash_worksi> also, ftr, I'm on Ubuntu 20.
+[10:09] <ash_worksi> .04
+[10:10] <ash_worksi> if there were a newer version available, what _should_ I have done to upgrade it?
+[10:11] <TheBigK02> ash_worksi: i would recommend always doing general system upgrades... then u dont have to do anything
+[10:11] <TheBigK02> in shell u do apt update && apt dist-upgrade...
+[10:11] <TheBigK02> sudo if ur normal user, im sorry ;)
+[10:11] <ash_worksi> well, that'd move me to the latest ubuntu, yes?
+[10:11] <ash_worksi> I generally stick to `full-upgrade`
+[10:11] <TheBigK02> thats same
+[10:12] <ash_worksi> oh?
+[10:12] <TheBigK02> ash_worksi: only do-release-upgrade would change the release
+[10:12] <ash_worksi> oh yea
+[10:12] <ash_worksi> well, anyway, what I ran didn't upgrade whois
+[10:12] <ash_worksi> erm, mkpasswd
+[10:12] <TheBigK02> well then u have the current version
+[10:12] <TheBigK02> for ur release obviously
+[10:13] <ash_worksi> yeah
+[10:14] <TheBigK02> what ur actually wanting to achieve... stronger hashes in ur /etc/shadow or what
+[10:16] <ash_worksi> I was just following along with a tutorial on a container OS which recommended generating password hashes with mkpasswd
+[10:16] <ash_worksi> they recommended yesscrypt as the method
+[10:16] <ash_worksi> out of curiousity, what other methods are listed for you?
+[10:17] <TheBigK02> https://paste.ubuntu.com/p/Zrc7j7yYsh/
+[10:18] <ash_worksi> I was gonna say: mkpasswd --method=help | awk '{printf "%s ", $1}' :P
+[10:19] <ash_worksi> I see
+[10:19] <TheBigK02> its related to the OS-Release I would say. i asked someone with same installed whats in it and he has also no yescrypt
+[10:19] <ash_worksi> not that I understand this arena fully, but do you happen to know if argon2 is generally preferred over yescrypt?
+[10:20] <TheBigK02> no crypto expert... sorry... i would research that as well if i needed to know ;)
+[10:21] <ash_worksi> thanks anyway :)
+[10:23] <TheBigK02> i would check which method the /etc/shadow uses
+[10:23] <TheBigK02> and then use that.. u cant be wrong with that i would say
+[10:39] <TomyWork> how much space does building a ubuntu kernel usually take?
+[10:40] <TomyWork> it just ate all of my remaining 17G and then failed with "disk full"
+[10:48] <larkfisherman> TheBigK02: Sorry for long delay - I want to remove snapd because it has automatic updates that cannot be disabled. It ate all my mobile data last night. Then I went on a discussion site and saw that the developers don't really care about user freedom and have a "we know better than you, dumb shits" attitude ala windows 10, so I decided not to use it because I don't trust developers that can't trust users.
+[10:53] <metbsd> what's the name of default ubuntu kernel for 20.04 lts?
+[10:53] <metbsd> i deleted it by accident
+[10:54] <EriC^^> metbsd: linux-image-generic
+[10:54] <ogra> linux-generic rather
+[10:54] <metbsd> thanks
+[10:55] <larkfisherman> linux-generic-hwe-20.04 on my machine
+[10:56] <ogra> yeah, if you installed from the 20.04.2 image you will get the hwe kernel ba default
+[10:56] <metbsd> what is hwe
+[10:56] <ogra> *by
+[11:02] <DJones> !hwe | metbsd
+[11:02] <ubottu> metbsd: The Ubuntu LTS enablement stacks provide newer kernel and X support for existing LTS releases, see https://wiki.ubuntu.com/Kernel/LTSEnablementStack
+[11:04] <superschnell> Hi all. I'm trying to understand network configuration. It seems that a fixed LAN without any confiration is symply named "Wired Connection 1" in NetworkManager and then a dhcpd service is started on its behalf? Because there is no .nmconnection file
+[11:05] <TheBigK02> larkfisherman: u might wanna consider switching distros... since its quite obvious that ubuntu moves debian packages away to snap. for example chomiums ubuntu release is distributed by snap...
+[11:16] <Hamidreza> Hi guys, I enter blkid on my server and saw UUID_SUB="5ff58eb8-9879e85a-e512-5cb9019340f4" TYPE="VMFS_volume_member"
+[11:16] <Hamidreza> but it should be UUID ......
+[11:17] <Hamidreza> and type of my disk should be xfs
+[11:17] <Hamidreza> Now I enter mkfs.xfs /dev/sdb but it doesn't do anything/
+[11:17] <Hamidreza> How can I fix my problem?
+[11:20] <cbreak> Hamidreza: sdb is a full device
+[11:20] <cbreak> don't you want to partition it first?
+[11:20] <Hamidreza> cbreak, No I want to use whole block
+[11:21] <cbreak> that's extremely unusual
+[11:21] <Hamidreza> NO
+[11:21] <cbreak> I strongly recommend against it
+[11:21] <cbreak> you will suffer A LOT without having a partition table
+[11:21] <Hamidreza> ceph will use whole block of disks
+[11:21] <cbreak> so?
+[11:21] <cbreak> you want to use xfs
+[11:21] <Hamidreza> cbreak, why will I suffer?
+[11:21] <cbreak> which is a file system
+[11:22] <cbreak> Hamidreza: because every OS expects a partition table
+[11:22] <cbreak> including linux
+[11:22] <Hamidreza> look, I have 6 disk and I want to format it to xfs
+[11:22] <Hamidreza> And use it for object storage
+[11:22] <cbreak> my recommendation: partition them, format the partition. done.
+[11:23] <larkfisherman> TheBigK02: That sucks. I really liked the Ubuntu's attention to user experience. Welp, snapd is free software, I can just rip out the auto-updates myself, I guess. It's a good excuse to finally sit down and learn Go :)
+[11:23] <Hamidreza> cbreak, what is UUID_SUB ?
+[11:23] <Hamidreza> How can I format it?
+[11:23] <Hamidreza> it should be UUID
+[11:24] <cbreak> your devices have different ways to be identified
+[11:24] <cbreak> UUID_SUB is one of them
+[11:24] <cbreak> UUID is an other
+[11:24] <Hamidreza> the type is TYPE="VMFS_volume_member"
+[11:24] <Hamidreza> I want to be xfs
+[11:25] <Hamidreza> Not TYPE="VMFS_volume_member"
+[11:25] <cbreak> what's the full line?
+[11:25] <Hamidreza> blkid: /dev/sdb: UUID_SUB="5ff58eb8-9879e85a-e512-5cb9019340f4" TYPE="VMFS_volume_member"
+[11:26] <cbreak> does lsblk tell you anything interesting?
+[11:27] <Hamidreza> No: sdb      8:16   0  7.3T  0 disk
+[11:27] <cbreak> so, I'd just partition that thing
+[11:27] <cbreak> but you can also just overwrite it
+[11:27] <Hamidreza> I try it
+[11:27] <cbreak> you presumably don't care about the data on it?
+[11:27] <Hamidreza> No
+[11:27] <cbreak> dd if=/dev/zero of=/dev/sdb bs=4M count=1 # something like this
+[11:28] <Hamidreza> it is new disk!
+[11:28] <cbreak> then, I'd partition it with gpt
+[11:28] <cbreak> with one single partition for data
+[11:28] <cbreak> and use that for what ever you want
+[11:28] <cbreak> single xfs file system probably
+[11:29] <cbreak> (I use zfs in that way, a gpt partition table, big single partition for zfs to use, small efi partition)
+[11:29] <Hamidreza> what will this command do ? (I mean dd)?
+[11:29] <cbreak> it'll read from /dev/zero (which will all be zero bytes)
+[11:29] <cbreak> and write to the device you tell it (/dev/sdb)
+[11:29] <cbreak> it'll read a single block, of 4 MB size
+[11:30] <Hamidreza> what do you mean of "it'll read a single block, of 4 MB size"?
+[11:30] <Hamidreza> I can't understand
+[11:30] <cbreak> 4MB is 4*1024*1024 bytes
+[11:30] <cbreak> it will read that many zero bytes from /dev/zero
+[11:30] <Hamidreza> ok
+[11:30] <cbreak> and write them to /dev/sdb
+[11:31] <Hamidreza> and what about count=0 ?
+[11:31] <Hamidreza> count=1 *
+[11:31] <cbreak> number of blocks
+[11:31] <cbreak> in this case: 1 block of 4MB size
+[11:31] <Hamidreza> Now it works
+[11:32] <Hamidreza> why the mkfs.xfs not worked alone?
+[11:32] <cbreak> it probably thought there's something else on that device
+[11:32] <Hamidreza> ok but I formated it with mkfs.xfs !!
+[11:33] <cbreak> without a partition table with meta data, filesystems are annoying
+[11:33] <Hamidreza> I have a question
+[11:34] <Hamidreza> I want to use whole 8TB of my disk,
+[11:34] <Hamidreza> First I should use GPT for patition table
+[11:34] <Hamidreza> and then format the whole block to xfs?
+[11:34] <cbreak> fdisk can partition oh the cli
+[11:35] <cbreak> you'd create a partition table, then a single partition spanning the whole disk
+[11:35] <cbreak> then format that partition
+[11:36] <Hamidreza> If I dont do this, I mean if I format the whole block to xfs without crating a partition
+[11:36] <Hamidreza> what would happend?
+[11:36] <cbreak> I'm not sure all systems could easily work with that
+[11:37] <Hamidreza> because I dont need partition , all I want is just whole space of my disk so I dont need partition table
+[11:37] <cbreak> for example, systems might not accept disks without partition table
+[11:37] <cbreak> you need a partition table to tell the OS what file system is there
+[11:37] <cbreak> and that there even is a file system
+[11:37] <cbreak> (maybe)
+[11:37] <cbreak> it can maybe work without... but it's unusual and certainly unreliable
+[11:38] <cbreak> and really: why not a partition table?
+[11:38] <cbreak> you only sacrifice a few MB
+[11:38] <Hamidreza> because we will need partition table when we want to partition our disk and take part it , but when I want whole drive , why should I do that?
+[11:39] <cbreak> ?
+[11:39] <cbreak> which part of my statement was unclear?
+[11:39] <cbreak> because it lets the OS find out easily what is on the disk
+[11:40] <Hamidreza> !
+[11:41] <Hamidreza> SO without partition table it couldn't?
+[11:41] <cbreak> it can guess
+[11:41] <cbreak> or it can be told
+[11:41] <Hamidreza> partition table just says where is all partition of my disk
+[11:41] <cbreak> but there's a reason why disks are basically always partitioned, in general use
+[11:41] <cbreak> Hamidreza: no
+[11:41] <Hamidreza> data will handle by filesystem
+[11:41] <cbreak> it also contains UUIDs for the disk itself, and every partition
+[11:42] <cbreak> and information about the type of every partition
+[11:42] <cbreak> as well as other flags which you don't need to worry about
+[11:42] <cbreak> but the important part is that it tells the OS that there is data on the disk
+[11:42] <cbreak> and where, and what type
+[11:43] <cbreak> in your use case, it'd tell the OS that there's a single partition, spanning the whole disk, with type XFS
+[11:43] <cbreak> so the OS knows how to mount it
+[11:45] <Hamidreza> So If I dont use partition table and just use xfs , os couldn't understand there is data on my disk? and where is it?
+[11:45] <cbreak> it might not understand that there's xfs on the disk
+[11:45] <cbreak> or anything at all
+[11:46] <Hamidreza> pleas look at this link: https://pastebin.ubuntu.com/p/Z3tX2BVBj6/
+[11:47] <Hamidreza> I formated my disk to xfs without GPT , is this damage data shows because of partition table?
+[11:47] <cbreak> look at the output of `findmnt`
+[11:47] <cbreak> it's a lot more useful than df
+[11:48] <cbreak> what damage?
+[11:48] <Hamidreza> cbreak, it is not showing disk available space
+[11:48] <Hamidreza> did U see the link that I send?
+[11:49] <cbreak> yes. It tells you there are 32TB free
+[11:49] <cbreak> on your 5.5TB disk
+[11:49] <cbreak> must be very efficient storage you use...
+[11:49] <cbreak> honestly: findmnt
+[11:49] <Hamidreza> How can I see this info from findmnt?
+[11:50] <cbreak> pastebin it :)
+[11:50] <cbreak> let's see what it says
+[11:50] <Hamidreza> https://pastebin.ubuntu.com/p/gsrzQKM3wm/
+[11:51] <cbreak> looks like it's normally mounted
+[11:51] <Hamidreza> but How can I see available space or used space ?
+[11:51] <cbreak> the size problems are not from the missing partition table
+[11:52] <cbreak> maybe just a bug in xfs
+[11:52] <cbreak> a partition table would help you with the mounting, and avoid accidentally overwriting the disk
+[11:52] <Hamidreza> missing partition table just will cause unknowing by os?
+[11:53] <cbreak> maybe.
+[11:53] <Hamidreza> is your suggestion a best practice for big scale?
+[11:53] <Hamidreza> I mean everybody do this as you said?
+[11:54] <cbreak> I don't do anything at the super big scale
+[11:54] <cbreak> only up to a few hundred TB
+[11:54] <cbreak> you might want to do something different if you really need something special
+[11:54] <cbreak> but I doubt it
+[11:55] <Hamidreza> OK, but what is the ubuntu suggesion?
+[11:55] <Hamidreza> where is the refrence of your seggestion?
+[11:56] <cbreak> my suggestion is based on experience, not repeating something I read somewhere
+[11:57] <Hamidreza> you said that uuid of disk and type of partiotion will save on partition table, now when I dont use partition table where would it save this data ? :)
+[11:58] <cbreak> there are several places where IDs are stored
+[11:58] <Hamidreza> for example uuid of my disk or my disk formated to xfs!
+[11:58] <cbreak> partition UUIDs and disk UUIDs are part of the information the partition table contains
+[11:58] <cbreak> if you don't have a partition table, then you don't have those values
+[11:58] <cbreak> file systems themselves usually also have UUIDs
+[11:58] <cbreak> those are stored in the file system itself
+[11:58] <cbreak> but obviously, they can only be read if the filesystem is understood
+[11:59] <cbreak> so it's useless if you don't know what filesystem is stored there
+[11:59] <cbreak> then there are device specific IDs
+[11:59] <cbreak> like the serial numbers you can read from the hard disk firmware
+[11:59] <wyoung> hdparm <3
+[11:59] <cbreak> or the PCI subsystem bus path, which you can get from the OS
+[12:00] <cbreak> when using ZFS, you'd really avoid ever using the linux device names for anything
+[12:00] <cbreak> so you wouldn't use /dev/sda1
+[12:00] <cbreak> you'd use reliable names, found in /dev/disk/by-xxx
+[12:00] <wyoung> You use /dev/mapper/myAwesomeVolume right?
+[12:01] <cbreak> for example, /dev/disk/by-id contains serial-number derived names
+[12:01] <cbreak> and /dev/disk/by-partuuid contains partition uuid derived names
+[12:01] <cbreak> by-path contains PCI Path derived names
+[12:02] <cbreak> obviously, some of those only work with a partition table
+[12:02] <cbreak> others will work independently of it
+[12:03] <Hamidreza> why did you say findmnt is better that df?
+[12:04] <Hamidreza> I can not even see disk usage via findmnt
+[12:04] <cbreak> because it shows a lot more useful information
+[12:04] <cbreak> for example, it shows the hierarchy
+[12:04] <cbreak> it shows the file system
+[12:04] <cbreak> it shows the mount options
+[12:05] <Hamidreza> but what about disk space ?( disk usage)
+[12:05] <cbreak> for that, you'd use something like df
+[12:06] <cbreak> but disk space is not important now
+[12:06] <cbreak> I wanted to know what exactly those devices were, and how they were mounted
+[12:06] <cbreak> and findmnt tells that
+[12:07] <Hamidreza> cbreak, in the dd command if I use bs=400M count=10 what will happen? why did you use 4M and count=1?
+[12:07] <cbreak> it'll write more blocks, and larger
+[12:07] <cbreak> partition tables and other headers are at the head of the disk
+[12:08] <cbreak> overwriting the head is sufficient to kill the data on it, usually
+[12:09] <Hamidreza> aha,4M is enough to kill metadata of disk
+[12:16] <Hamidreza> cbreak, How can I say disk block size when I'm creating partition?
+[12:16] <cbreak> you don't need to
+[12:16] <cbreak> block size is a property that is known to the OS
+[12:17] <Hamidreza> I want to be big
+[12:17] <Hamidreza> beacause my file are big
+[12:17] <Hamidreza> so this will optimize my disk performance
+[12:17] <cbreak> how you interact with the disk is governed by your file system
+[12:18] <cbreak> I could tell you how to configure that with zfs, but I don't know xfs
+[12:18] <cbreak> the partition table really just tells the OS what's on the disk and where
+[12:18] <cbreak> it has no performance impact, unless you screw up the alignment :)
+[12:20] <Hamidreza> why are you using zfs? do you suggest me to use it?
+[12:20] <cbreak> I like it.
+[12:20] <cbreak> I don't suggest you use it
+[12:20] <cbreak> it's a powerful and reliable file system
+[12:21] <cbreak> this power and reliability doesn't come for free
+[12:22] <BluesKaj> Hi folks
+[12:22] <Hamidreza> cbreak, what would be good number of block_size for big file?
+[12:24] <remline> Hamidreza: You can check the "mkfs.xfs" man page to see the block size options for XFS. cf. the -b switch.
+[12:24] <cbreak> for zfs, I'd chose 1MB
+[12:25] <cbreak> (if I optimize for stream read or stream write, or storage efficiency)
+[12:25] <Hamidreza> remline, I read it, it is 4KB by default for xfs but I want to know best practice
+[12:26] <Hamidreza> cbreak, If I do it like you 1MB, what will I loose vs 4KB?
+[12:26] <cbreak> no idea how that works with xfs
+[12:26] <cbreak> zfs default is 128kb
+=== bildramer1 is now known as bildramer
+[13:01] <imbezol> hey guys. i've created a /etc/netplan/01-netcfg.yaml file with my required networking config. i can use netplan apply and it does what it should. when i reboot it does not get applied on boot up. i have completely removed and purged cloud-init so i don't believe it's a factor at this point. any ideas?
+[13:20] <Milencho> Hi there, anyone from channel that use apple airpods as headphones with micro and ubuntu OS? (bluetooth)
+[13:35] <rneese> morning
+[13:57] <sneakyimp> EriC^^: dunno if you are around, but TestDisk found some partitions
+[13:58] <EriC^^> hey sneakyimp
+[13:59] <Linneris> Hello! I'm trying to upgrade from Ubuntu 20.10 to 21.04, but do-release-upgrade says "No new release found."
+[13:59] <EriC^^> awesome can you take a screen shot or copy paste the info? just so that we have a backup of their locations
+[13:59] <rossw> Linneris, I don't think it's actually released yet
+[13:59] <leftyfb> Linneris: it's not out yet.
+[13:59] <rory> !isitoutyet
+[13:59] <ubottu> Nawh, Ubuntu 21.04 is not out yet.. :3
+[14:00] <leftyfb> Linneris: 21.04 will be release today. No specific time
+[14:00] <Linneris> Ah, thanks. Phoronix has hurried with its announcement, then
+[14:01] <metbsd> is there shotkey to enable/disable touchpad
+[14:01] <sneakyimp> Eric^^: yessir! https://paste.ubuntu.com/p/cHTRkCstZ9/
+[14:01] <sneakyimp> Eric^^: i tried listing some and it says they appear to be damaged
+[14:01] <BluesKaj> Linneris, if you're in a hurry try:  do-release-upgrade -d
+[14:02] <leftyfb> interesting: https://ubuntu.com//blog/ubuntu-21-04-is-here
+[14:03] <Deano59> !isitoutyet
+[14:03] <ubottu> Nawh, Ubuntu 21.04 is not out yet.. :3
+[14:03] <Deano59> leftyfb: made me sad lol
+[14:03] <leftyfb> yeah, I just checked, it's definitely not released yet. Someone has got ahead of themselves
+[14:05] <Linneris> Thanks!
+[14:05] <EriC^^> sneakyimp: interesting
+[14:06] <metbsd> how do i enable/disable touchpad
+[14:06] <metbsd> my touch pad has a on/off switch on left top corner of touchpad
+[14:06] <metbsd> it's not working in ubuntu
+[14:06] <metbsd> so i'm looking for alternative way to turn it on/off
+[14:07] <rory> metbsd, in software it can be done in Mouse settings https://i.imgur.com/g5v3F8C.jpg
+[14:07] <leftyfb> metbsd: try enabling it with the button and rebooting. If that doesn't work, run "dmesg -Tw" in a terminal and toggle the switch and see what gets logged
+[14:08] <rory> there is this software for putting an indicator in the notification area for quicker toggling https://github.com/atareao/Touchpad-Indicator
+[14:08] <sneakyimp> Eric^^: I have this vague recollection of partitioning the drive to support multiple boots on it and then later some efforts to reclaim unused partitions into bigger ones. some messy stuff
+[14:08] <metbsd> can i make a short key to turn on/off
+[14:09] <metbsd> it's hp dv6
+[14:09] <TheBigK02> metbsd: i would think so. But it depends which desktop u use
+[14:09] <metbsd> gnome
+[14:09] <metbsd> ubuntu
+[14:09] <EriC^^> sneakyimp: it's very odd, it lists the ntfs partition, but the end at 6055325453 would mean its a 3000gb disk, but its just 1000gb
+[14:09] <leftyfb> metbsd: did you see my suggestion above?
+[14:10] <metbsd> i saw. there's no button
+[14:10] <metbsd> <metbsd> my touch pad has a on/off switch on left top corner of touchpad
+[14:10] <metbsd> it's not working
+[14:10] <metbsd> not implement or something
+[14:11] <EriC^^> sneakyimp: the ntfs one is 500gb, but it starts somewhere small still
+[14:11] <sneakyimp> Eric^^: I don't see the number 6055325453...i see 3 distinct numbers
+[14:11] <sneakyimp> 60553
+[14:11] <sneakyimp> 254
+[14:11] <sneakyimp> 53
+[14:11] <leftyfb> metbsd: please follow my suggestion
+[14:12] <EriC^^> sneakyimp: what happens in testdisk if you press "p" over the ntfs partition that starts at 12 223 20
+[14:12] <sneakyimp> Eric^^: Can't open filesystem. Filesystem seems damaged.
+[14:12] <sneakyimp> with the only option being 'quit'
+[14:13] <metbsd> your method does not apply in my case. there is NO button to push
+[14:13] <sneakyimp> Eric^^: has TestDisk performed any repairs? And can it do so?
+[14:14] <EriC^^> sneakyimp: try it on the very first partition
+[14:14] <metbsd> it's a double click on touchpad left top corner to turn it on/off in windows
+[14:14] <sneakyimp> Eric^^: try hitting P?
+[14:14] <EriC^^> sneakyimp: i think it's starting to come together, the 1st partition ends at 57239 150 63 where the lower 2 continue, and its size is about 470gb
+[14:14] <EriC^^> yeah sneakyimp
+[14:15] <sneakyimp> Eric^^: hitting P on that first partition also yields 'Can't open filesystem. Filesystem seems damaged.'
+[14:16] <sneakyimp> Eric^^: someone suggested the problem might be that Windows went into hibernation mode: http://askubuntu.com/questions/843153/ubuntu-16-showing-windows-10-partitions
+[14:16] <Rumen> hi there
+[14:17] <EriC^^> sneakyimp: try pressing p over the fat32 one
+[14:17] <sneakyimp> Eric^^: that partition size sounds spot-on
+[14:17] <Rumen> I have a problem with the screen resolution from few weeks and I try literally everything but no success so  far
+[14:18] <EriC^^> it's the only one that the size works out
+[14:18] <Rumen> Anyone can tell me what can be the error I get with "xrandr" here https://pastebin.com/eRGJbest
+[14:18] <EriC^^> sneakyimp: i take it back about the other last 2 they come out to 3100gb
+[14:18] <sneakyimp> Eric^^: hitting 'P' over the FAT32 one yields 'No file found, filesystem may be damaged.'
+=== StathisA_ is now known as StathisA
+[14:20] <sneakyimp> EriC^^: I wonder if these partitions might be ghosts deleted in a prior repartitioning. I'm starting to think that attempts to salvage this drive may be misguided, and that perhaps we should examine SMART data to see if the drive is dying or whether it's still viable.
+[14:20] <[SySteM]> Hello everybody
+[14:21] <EriC^^> sneakyimp: that sounds good, try sudo apt-get install smartmontools; sudo smartctl -a /dev/sda | nc termbin.com 9999
+[14:23] <sneakyimp> Eric^^: https://termbin.com/5a4t
+[14:23] <dbristow> Do we expect 21.04 release today?
+[14:23] <Deano59> Yes.
+[14:23] <[SySteM]> I'm trying to pair my bluetooth headphone/mic to ubuntu but i only have the headphone working. Looks complicated to pair a headphone/mic in bluetooth ? Its " Mi TW headphone 2 Basic". Does anyone have some informations about it?
+[14:23] <dbristow> Or has it been postponed?
+[14:23] <Deano59> It will release
+[14:23] <dbristow> Is there an email I should be expecting?
+[14:24] <Deano59> Idk
+[14:24] <ogra> yes, in the ubuntu-announce mailing list
+[14:24] <dbristow> I will look for a web archive of that.
+[14:24] <rory> wait til it appears on distrowatch
+[14:24] <rory> that's the real release :)
+[14:24] <ogra> not really, thats actually usually too early and rather harmful for the release itself
+[14:25] <Deano59> ^
+[14:25] <ogra> (because it triggers people downloading which in turn delays the mirroring of the isos to all mirrors)
+[14:25] <dbristow> This is the archive: https://lists.ubuntu.com/archives/ubuntu-announce/
+[14:25] <rory> Too early? Distrowatch always links to the official release announcement. So that must have already occured for them to list it.
+[14:26] <EriC^^> sneakyimp: smart data looks good
+[14:26] <rory> if that's an issue they should wait for iso distribution before making the official announcement.
+[14:26] <sneakyimp> Eric^^: SMART looks pretty clean. I'm totally baffled about how the boot option disappeared -- and what, exactly, is missing. Is it a MBR? A disk partition?
+[14:26] <Langley> Hello, I have installed youtube-dl through pip, but I can't use it when using the "youtube-dl" command. I think I manually pointed that command to somewhere else previously. How do I change it to use the pip version?
+[14:26] <dbristow> rory: I have seen distrowatch list old release candidates and such like that.
+[14:26] <ogra> or betas
+[14:26] <rory> Langley, you can check what is being run using: "which youtube-dl"
+[14:26] <rory> Langley, that will show you the full path and may give a clue or you can share it here
+[14:27] <rory> dbristow, oof that sounds very bad
+[14:27] <Langley> rory: Yes, I used that and deleted all the files it pointed at. So now it doesn't point to anything
+[14:27] <EriC^^> sneakyimp: to me, it feels like a 'dd' mishap has occurred, 1) the partition table type is GPT and windows wouldnt allow gpt to work without uefi, so it must have been msdos, 2) the partition locations seem odd as if a 3.1TB disk was involved
+[14:27] <dbristow> Ya, I think it was FreeBSD, they announced the release but pointed to like RC5 or something like that.
+[14:28] <rory> what happens when you try running youtube-dl Langley, what does it say? and what is the output of "which youtube-dl"
+[14:28] <Langley> bash: /usr/local/bin/youtube-dl: No such file or directory
+[14:28] <Langley> 'which' does not give any result at all
+[14:29] <sneakyimp> Eric^^: i don't think I've ever run dd to copy a disk. I *have* shuffled partitions on disks in this machine before to try and get rid of a messy original partition.
+[14:29] <Langley> I basically just need the newest version of youtube-dl somehow, the one in the repos is ancient
+[14:29] <rory> Langley, try this: pip install --upgrade --force-reinstall youtube-dl
+[14:30] <rory> Langley, that ought to install the binary as ~/.local/bin/youtube-dl
+[14:30] <sneakyimp> Eric^^: if i'm not mistaken, i bought this drive in November 2013, and partitioned it expecting to have more than one boot on a single drive. I later decided against multiple partitions on a single drive, having experienced some weirdness with another machine running like that
+[14:31] <Langley> I think my old redirection of youtube-dl is still messing things up, it still says "bash: /usr/local/bin/youtube-dl: No such file or directory". But now 'which' says /home/langley/.local/bin/youtube-dl at least
+[14:33] <remline> Langley: you could also try "type youtube-dl", lest it is a bash alias or something.
+[14:33] <Langley> youtube-dl is hashed (/usr/local/bin/youtube-dl)
+[14:33] <ioria> Langley, close and reopen the terminal
+[14:33] <dbristow> I prefer type, it's a builtin and is more accurate.  Which is sometimes an alias, a binary, a shell function, etc.
+[14:33] <EriC^^> sneakyimp: the first fs seems to make some sense from testdisk's output, at 470gb, the lower ones are huge
+[14:34] <Langley> I solved it by running 'hash -r'
+[14:34] <ioria> same
+[14:34] <Langley> Thank you, it's working now
+[14:34] <EriC^^> sneakyimp: unfortunately the fat32 partition is in that location
+[14:35] <EriC^^> sneakyimp: you can use a software called photorec to retrieve the files back but it wont give the filenames or dir structure
+[14:35] <Langley> I would really urge ubuntu to keep youtube-dl up to date in the repositories, it's useless as it is now
+[14:35] <EriC^^> it should find many files though sneakyimp , and you can select which type of files you want it to get back
+[14:35] <ioria> Langley, check 'snap find yutube-dl'
+[14:36] <ioria> Langley, check 'snap find youtube-dl'
+[14:36] <[SySteM]> Anybody to help me with my bluetooth pairing please ? :)
+[14:43] <Rumen> Question: can I force the screen to load resolution?
+[14:43] <sneakyimp> ERic^^: it would totally make sense that the FAT32 one is real, but how did you surmise that? Just curious
+[14:45] <sneakyimp> Eric^^: I've been very careful for years about keeping system/application disks and data disks separate. I don't think there will be much, if anything at all, that is valuable on the drive in terms of data. The thing it's most valuable for is all the old software on it that I use occasionally. E.g., Adobe Creative Suite 4, which would have cost thousands at the time.
+[14:46] <EriC^^> sneakyimp: the first 2 partitions start at the same place, the ntfs one is 919552000sectors (sector *512bytes) you get 470gb for the size, the other partitions all are huge at 3gb locations ending
+[14:46] <EriC^^> sneakyimp: that sucks about the software, no cd's etc?
+[14:47] <porky> 21.04 is supposed to be released today where is it?
+[14:48] <ogra> patience is golden ðŸ™‚
+[14:48] <EriC^^> sneakyimp: actually hmm, the one you had highlighted in the paste, said 497gb at the bottom, its size in sectors is 497gb, but where it says it ends makes it 3gb or something hmm
+[14:48] <sneakyimp> Eric^^: I do in fact have boxes with the old CDs in them. It sounds like you think the file system on the disk is totally hosed and probably not retrievable. do I have that right?
+[14:50] <EriC^^> sneakyimp: it could be the 3rd one, it starts at around 625mb
+[14:50] <EriC^^> sneakyimp: maybe it's worth a shot to try to run fsck or some ntfs fixing software on it
+[14:51] <EriC^^> sneakyimp: it starts at sector 1222320, try sudo mount -o=$((1222320 * 512)) /dev/sda /mnt
+[14:51] <troozers> being a bit nosy, and not saying i can help at all.... but what's the issue? (i usually take dd's of my disks before any upgrades, etc.)
+[14:52] <EriC^^> sneakyimp: yeah, it looks like a pain, if it was the first partition, fat32 might have overwritten some fs stuff, if it's at 1222320 then maybe it would be easier to fix the fs
+[14:52] <EriC^^> sorry typo in the mount command, sudo mount -o offset=$((1222320 * 512)) /dev/sda /mnt
+[14:53] <NotApplicable> yo sorry if im bargin in here but i have a question
+[14:53] <NotApplicable> How do i uninstall libreoffice if i installed it from source
+[14:53] <NotApplicable> i kinda screwed it up and now im just like, screw it, ima use .deb because the one in repos is outdated
+[14:54] <EriC^^> NotApplicable: it might say in the docs how to uninstall it if whoever made it put that option
+[14:54] <sneakyimp> Eric^^: NTFS signature is missing.
+[14:54] <leftyfb> NotApplicable: why are you installing from source?
+[14:54] <sneakyimp> Eric^^: Failed to mount '/dev/loop20': Invalid argument
+[14:54] <sneakyimp> Eric^^: The device '/dev/loop20' doesn't seem to have a valid NTFS.
+[14:55] <sneakyimp> why is it referring to loop20?
+[14:55] <EriC^^> sneakyimp: hmm, i wonder what happens if you try sudo mount -t ntfs /dev/sda1 /mnt
+[14:55] <NotApplicable> leftyfb i wanted to learn about stuff about compiling it
+[14:55] <leftyfb> NotApplicable: sudo snap install libreoffice # will get you the latest and will keep it up to date
+[14:55] <NotApplicable> and i wanted to see if i would be able to modify it, even just something like saying hello world when opening it
+[14:56] <sneakyimp> Eric^^: NTFS signature is missing.
+[14:56] <sneakyimp> Failed to mount '/dev/sda1': Invalid argument
+[14:56] <sneakyimp> The device '/dev/sda1' doesn't seem to have a valid NTFS.
+[14:56] <NotApplicable> leftyfb ya but how do i remove it
+[14:56] <leftyfb> NotApplicable: as for how to remove the source install, you'll have to read the documentation that came with the source or seek support from libreoffice.org
+[14:57] <sneakyimp> Eric^^: also, this number 1222320 -- where are you getting that? the numbers are spaced out in the TestDisk table: 12 <space> 223 <space> 20
+[14:57] <EriC^^> sneakyimp: yeah that's it, it's just a formating the spaces
+[14:57] <sneakyimp> Eric^^: just want to be sure concatenating them is correct
+[14:57] <EriC^^> yup
+[14:58] <NotApplicable> leftyfb nothing says on how to remove it but i'll ask #libreoffice-dev
+[14:58] <NotApplicable> thanks!
+[14:59] <EriC^^> sneakyimp: in testdisk if you go back to 'advanced' instead of 'analyse' there are some filesystem tools which might help
+[15:01] <sneakyimp> Eric^^: having slept on it, I don't think I trust running it as a system disk unless something magically restores it to its former glory. I'm mostly concerned about understanding what happened to make proper choices moving forward.
+[15:01] <sneakyimp> Eric^^: i.e., i'm prepared to wipe it and reinstall windows -- although that fsck sounded like it might work.
+[15:02] <sneakyimp> Eric^^: I did download a huge 6.2GB windows 10 rescue disk image, but it won't fit on a DVD. I'm wondering how I might tun it into a bootable USB or something? Or how might one go about getting a windows rescue fsck on it?
+[15:03] <sneakyimp> Eric^^: I don't have any other Windows 10 machines
+[15:03] <dbristow> sneakyimp: If you can run Windows, it will copy the Windows 10 image to a thumb drive.
+[15:03] <dbristow> Has to be at least 8G in size, iirc
+[15:04] <dbristow> Sounds like you don't have a working windows machine to do it on
+[15:05] <sneakyimp> dbristow: I can run windows 7, but not windows 10. I managed to download the huge ISO file on my ubuntu machine, and can easily copy it to a USB drive i have handy, but I'm guessing that doesn't amount to a bootable windows disk?
+[15:06] <sneakyimp> I also have a win 7 install disk somewhere, but wonder if you can repair a windows 10 disk?
+[15:06] <dbristow> sneakyimp: I'm not sure if you can simply copy the *.ISO to the thumb drive.  Most newer ISO images allow that, but maybe not Windows
+[15:06] <dbristow> I doubt that a Win 7 install disk can do anything useful to Windows 10
+[15:07] <troozers> if you use ventoy and a usb drive/disk you can use that to host/load the Windows 10 ISO
+[15:08] <EriC^^> sneakyimp: if you were to boot it in uefi mode, you would be able to just create a fat32 on the usb, copy the iso contents over (not .iso itself but the contents), and it would boot
+[15:08] <EriC^^> sneakyimp: otherwise you need some software to make a usb bootable windows for msdos/legacy booting
+[15:09] <EriC^^> sneakyimp: if you do decide to install in uefi mode, you could always easily convert ubuntu to use uefi
+[15:09] <sneakyimp> Eric^^: I have a win 7 machine?
+[15:09] <remline> EriC^^: Neat! Can uefi support multiple .iso files within a single fat32?
+[15:09] <sneakyimp> Eric^^: also, not clear what you mean by 'uefi mode?'
+[15:10] <EriC^^> remline: i mean sure, but by default its going to boot /efi/boot/bootx64.efi , you'd have to manually browse to others in case your uefi supports browsing for a file
+[15:11] <EriC^^> sneakyimp: ah you might not have uefi is what you're saying, hmm
+[15:11] <EriC^^> sneakyimp: your motherboard could support uefi even if its windows 7 i think
+[15:12] <sneakyimp> Eric^^: this machine's BIOS does mention UEFI...i believe you choose 'Windows UEFI' or 'Other OS' for some option
+[15:12] <EriC^^> sneakyimp: try "sudo dmidecode | grep -i uefi"
+[15:13] <sneakyimp> Eric: curious output: UEFI is supported...Invalid entry length (16). Fixed up to 11.
+[15:14] <EriC^^> sneakyimp: i wonder what's the actual used space on /dev/sda1, not sure if you pasted df earlier
+[15:14] <EriC^^> sneakyimp: ah nice, looks like it supports it
+[15:14] <EriC^^> sneakyimp: try sudo umount /mnt && sudo mount /dev/sda1 /mnt
+[15:14] <EriC^^> and have a look at "df -h /mnt"
+[15:15] <EriC^^> who knows
+[15:15] <sneakyimp> Eric^^: ignore sde, it's a pen drive to which i'm copying win 10 iso https://paste.ubuntu.com/p/ZvkwQtBtmf/
+[15:16] <sneakyimp> df -h /mnt currently refers to my ubuntu machine
+[15:16] <sneakyimp> or, rather, it refers to sdb6 which is ubuntu's drive and the root file system
+[15:19] <EriC^^> sneakyimp: try to mount /dev/sda1 /mnt
+[15:20] <sneakyimp> sudo mount /dev/sda1 /mnt ?
+[15:20] <EriC^^> yup
+[15:20] <sneakyimp> sda1 is still busy with TestDisk
+[15:21] <EriC^^> oh
+[15:22] <sneakyimp> TestDisk offers Type, Image Creation, and Quit in the advanced options
+[15:22] <dbristow> Slashdot just announced 21.04
+[15:22] <dbristow> But I don't see the official email yet.
+[15:23] <dbristow> I also don't see anything on distrowatch
+[15:23] <EriC^^> sneakyimp: ah, try to quit testdisk and try to mount again, just in case somehow the data is actually there by some freak incident
+[15:23] <sneakyimp> Eric^^: I've seen some stuff about partitions not being aligned
+[15:24] <EriC^^> aha sneakyimp the partition alignment stuff is more about speed
+[15:24] <sneakyimp> Eric^^: i can mount sda1 just fine, but /mnt is empty
+[15:25] <EriC^^> df -h /mnt shows it no use 0% ?
+[15:25] <porky> looks like 21.04 just reached RTM
+[15:25] <EriC^^> *it's use
+[15:26] <leftyfb> porky: dbristow: you're looking for #ubuntu-release-party
+[15:27] <sneakyimp> Eric^^: use is actually 1%
+[15:27] <sneakyimp> Eric^^: Size 932G, Used 32K, Avail 932G, Use 1%, Mounted on=/mnt
+[15:28] <dbristow> leftyfb: Ahh, thanks.
+[15:45] <troozers> looks like 21.04 is on the mirrors now
+[15:45] <bittin> troozers: yeah still not fully released before the release announcment however
+[16:09] <TomyWork> i have a .deb that i accidentally built with he same version number that's already installed. can i tell dpkg to upgrade it anyway? dpkg -i $package_file_name says "linux-image-5.4.0-72-generic (version 5.4.0-72.80~18.04.1) is present and installed."
+[16:12] <TomyWork> ah whatever, I only need to replace the cifs module anyway. I'll do that without a package installation (yes I realize that is linux-modules and not linux-image)
+[16:25] <mrtrousers> Hello
+[16:25] <mrtrousers> Virtualbox not working properly in ubuntu 20.04, help!
+[16:28] <rory> mrtrousers, what happens when you try?
+[16:28] <Maik> clarify what the issue is, otherwise people aren't able to help mrtrousers
+[16:28] <mrtrousers> It doesnt go into full screen mode, can't drag and drop.. A lot of its functionality is not there..
+[16:28] <rory> You probably need to install the Guest Additions inside the guest OS
+[16:29] <rory> auto-resize, shared clipboard etc need this to be installed
+[16:29] <mrtrousers> I have.. Updated to last virtualbox and isntalled guest additions 6.1.20 too, but still not working..
+[16:29] <rory> What happens when you try to enter fullscreen mode?
+=== PonyBlocks is now known as B-cat
+=== B-cat is now known as Pony-Truck
+[16:30] <mrtrousers> It's a square with black bands on the sides..
+[16:31] <rory> View > Auto-resize guest display - is that enabled?
+[16:31] <mrtrousers> And the auto-resize guest display is greyed out..
+[16:31] <rory> That usually means the guest additions didn't get installed properly, make sure to reboot the guest OS after installing them
+[16:31] <rory> What is the guest OS?
+[16:33] <mrtrousers> Windows 10 I think..
+[16:33] <mrtrousers> Some flavour of windows..
+[16:33] <TomyWork> kwindows? xwindows? lwindows? eduwindows?
+[16:33] <mrtrousers> No, when installing the guest additions the machine got rebooted couple of times..
+[16:33] <mrtrousers> Windows, windows from microsoft..
+[16:34] <rory> Can you hit HostKey+N to bring up the session information? Check that Guest Additions has a version there
+[16:34] <mrtrousers> Ok, i dont know what happened but everything is working now..
+[16:34] <rory> in Runtime Information tab
+[16:34] <rory> mysterious
+[16:34] <mrtrousers> Probably the reboot, lol, really that has driven me crazy for the last 3 hours.
+[16:35] <mrtrousers> Thansk guys.
+[16:35] <rory> turning it off and on again++
+[16:35] <m0ph1ng> Reboot works magic
+[16:35] <TomyWork> (just making a joke cause you used the ubuntu term "flavour", which can be one of ubuntu, kubuntu, xubuntu, lubuntu, edubuntu, etc)
+[16:35] <rory> don't they call them "varients" now, boring
+[16:35] <rory> oh no still flavours
+[16:36] <TomyWork> so... is mint a flavour?
+[16:36] <mrtrousers> Of linux..
+[16:36] <rory> No, Mint is an entirely separate distro based on Ubuntu, like Ubuntu is separate from Debian
+[16:36] <rory> but if it was, it would be the tasiest flavour
+[16:36] <TomyWork> mint as in food flavor
+[16:36] <rory> Linux Mint Choc Chip edition
+[16:37] <TomyWork> so yeah good job mint team, calling your non-flavour after a flavour
+[16:42] <lirrums> someone can help me with the email for the ubuntu members? really I can't understand anything in the post from the wiki: https://wiki.ubuntu.com/UbuntuEmail
+[16:45] <bittin> https://www.twitch.tv/communiteatime
+[16:45] <rory> lirrums, are you already part of the ubuntu members team on launchpad?
+[16:45] <TomyWork> bittin, i think self-promotion is against the channel rules
+[16:46] <rory> lirrums, https://wiki.ubuntu.com/Membership/NewMember
+[16:50] <leftyfb> I've asked this in #ubuntu-server and not getting a response. I'm trying to get systemd-resolved working as a local cache on Ubuntu 16.04. I enabled the service but it doesn't seem to support a stub listener so I'm not sure how I'm supposed to utilize it
+[16:52] <ogra> it might simply not have been ready in 2016
+[16:52] <lirrums> rory I'm Ubuntu member.
+[16:53] <bittin> TomyWork: its not mine stream, its by one of the new Ubuntu Community Managers
+[16:53] <ogra> (iirc 16.04 still shipped with resolvconf by default for that reason)
+[16:53] <leftyfb> ogra: oh really?
+[16:53] <lirrums> rory this my launchpad: https://launchpad.net/~linac
+[16:53] <leftyfb> ogra: ok, so sould I be able to install resolvconf and that should work the same way?
+[16:53] <TomyWork> bittin, in that case, providing context would have been helpful
+[16:54] <ogra> leftyfb, not sure, i know we had some discussions because we used systemd-networkd "ahead of time" in Ubuntu Core 16 back then ... and kind of diverged a little from the main distro
+[16:54] <rory> lirrums, do you have a contact email address set on Launchpad? It should be forwarding emails to that
+[16:55] <ogra> $ apt-cache show resolvconf|grep Task
+[16:55] <ogra> Task: minimal, ubuntu-core, ubuntu-core
+[16:55] <ogra> Task: minimal, ubuntu-core, ubuntu-core
+[16:55] <rory> lirrums, people in here may not have much visibility though. At the bottom of that page it says: Should you require more assistance, please email rt@ubuntu.com with a link to your Launchpad profile and the details of your problem.
+[16:55] <ogra> leftyfb, ^^^ thats on a 16.04 machine
+[16:56] <ogra> so it was installed by the minimal task
+[16:56] <ogra> i.e. a system default
+[16:57] <lirrums> rory I don't have any problem with that, I'm understand the post from the wiki, but I don't know how can create the email, because in the post don't explain good.
+[16:57] <rory> you don't have to do anything - every 48 hours, a script gets run automatically to update all the email addresses
+[16:57] <rory> the email may already exist!
+[16:59] <leftyfb> ogra: doesn't look like resolvconf can do local caching. Am I reading this wrong?
+[16:59] <lirrums> ok, but how can see this works? exist any website or?:( Â sorry, I'm so confuse.
+[16:59] <ogra> no, thats correct
+[17:00] <leftyfb> ogra: ok, thanks. Off to try dnsmasq. Thanks
+[17:00] <ogra> yeah, i guess thats the best way forward (beyond do-release-upgrade indeed ðŸ˜‰ )
+[17:02] <tgarder> I just upgraded to 21.04, Wayland sure feels buttery smooth and works way better on this surface laptop. Nice.
+[17:02] <tgarder> Maybe I should've tried it before instead of just having screen tearing and weird fractional scaling
+[17:04] <leftyfb> !isitout
+[17:04] <ubottu> Nawh, Ubuntu 21.04 is not out yet.. :3
+=== Pony-Truck is now known as PonyMontana
+[17:07] <tgarder> the difference between -c and -d for do-release-upgrade I guess :D
+[17:09] <thebiffman> 21.04 torrents are published here https://ubuntu.com/download/alternative-downloads already leftyfb
+[17:09] <remline> I noticed that the man page for do-release-upgrade needs updating. It doesn't match the output of do-release-upgrade -h.
+[17:09] <leftyfb> thebiffman: it's not released yet
+[17:10] <leftyfb> thebiffman: downloading that now is going to delay the release and potentially download an iso with a bug
+[17:10] <thebiffman> Weird that its on the official page
+[17:10] <thebiffman> I didnt find it by browsing some random place, just clicking the links on the page =)
+[17:11] <thebiffman> https://lists.ubuntu.com/archives/ubuntu-announce/2021-April/000268.html
+[17:11] <thebiffman> "Ubuntu 21.04 (Hirsute Hippo) released"
+[17:11] <leftyfb> theah, looks like it was released 7 minutes ago
+[17:13] <thebiffman> I just sat down and checked after having dinner. Most have more or less hit the exact minute it was published. Crazy
+[17:14] <fluiD> I have two different machines that I use to SSH into my ubuntu server. Both use public key encryption to log in and machine #2 has started getting "Permission denied" and I can't figure out why.
+[17:14] <fluiD> I copied over the ssh public key again, although it never changed. machine #1 can still ssh in just fine.
+[17:15] <fluiD> I've tried ssh -vvv and can see the key being tried
+=== PonyMontana is now known as PonyAway
+[17:22] <fluiD> I tried turning on logging but I'm not seeing anything in the logs.
+[17:25] <rory> fluiD, you would see something in /var/log/auth.log on the server anyway
+[17:25] <rory> fluiD, can you see the private key contents are the same between the working and non-working machine?
+=== dax changed the topic of #ubuntu to: Official Ubuntu Support Channel | IRC Guidelines: https://ubottu.com/y/gl | #ubuntu supports Ubuntu and official flavors; versions 16.04, 18.04, 20.04, 20.10, 21.04 | Unofficial derivatives: use your distro's support channel, not here. | IRC info: https://ubottu.com/y/irc | Pastes to https://paste.ubuntu.com/ | Download: https://ubottu.com/y/dl
+[17:25] <rory> fluiD, are there possibly multiple keys being tried on the non-working machine, so the server kicks you off before getting to try the correct one?
+[17:28] <fluiD> rory, sorry, ignore me. I seem to have forgotten how to use SSH. I was trying to connect to the wrong server.
+[17:29] <rory>      On two occasions I have been asked, 'Pray, Mr. Babbage, if you put into the machine wrong figures, will the right answers come out?' I am not able rightly to apprehend the kind of confusion of ideas that could provoke such a question.
+[17:29] <fluiD> not exactly my best moment
+[17:29] <rory> at least you figured it out quickly lol
+[17:29] <fluiD> not quick enough. I fought for a while before deciding to post here
+=== fluiDD is now known as fluiD
+=== StathisA_ is now known as StathisA
+=== krodelabestiole1 is now known as krodelabestiole
+=== fizzizist1 is now known as fizzizist
+=== megoix8 is now known as megoix
+=== nickware0 is now known as nickware
+=== jrm2 is now known as jrm
+=== fprefect5 is now known as fprefect
+=== popey8 is now known as popey
+=== Dewin|znc is now known as Dewin
+=== fcastillo_ is now known as fcastillo
+=== mycookie2 is now known as mycookie
+[17:49] <litheum> i see arm64 daily builds of 21.04 (https://cdimage.ubuntu.com/daily-live/current/hirsute-desktop-arm64.iso) but i don't see any arm64 desktop download for the 21.04 release. will that come later? am i just missing something?
+=== themayor_ is now known as themayor
+[17:54] <ogra> litheum, http://cdimage.ubuntu.com/releases/21.04/release/ubuntu-21.04-preinstalled-desktop-arm64+raspi.img.xz
+[17:55] <ogra> not sure the non-preinstaled ones were ready in time
+=== PonyAway is now known as PonyTails
+[18:10] <kill-animals> after `sudo apt install typespeed`, running typespeed gives me this error `"typespeed: main: setlocale"' << What can I do to fix it?
+[18:12] <rory> kill-animals, I can help you figure it out, can you please paste the output of "locale" command on https://paste.ubuntu.com and share the URL here?
+[18:13] <kill-animals> thanks okay
+[18:13] <kill-animals> https://www.irccloud.com/pastebin/U10VcjeZ/
+[18:13] <kill-animals> rory: ^
+[18:13] <rory> thanks, checking
+[18:15] <longshanks> hey all :) i want to upgrade my gorrilla to a hippo. I went into software&update and it's set to notify me of new releases but I've not recieved the notifiation yet. any idea how to kick it off?
+[18:15] <rory> kill-animals, to help debug, can you try running once with this: LANG=en_GB.UTF-8 typespeed
+[18:16] <kill-animals> rory: works
+[18:16] <rory> OK feel free to just use that forever
+[18:16] <kill-animals> Wow you are brilliant
+[18:16] <kill-animals> okay lel
+[18:16] <kill-animals> !cookie | rory
+[18:16] <ubottu> rory: Wow! You're such a great helper, you deserve a cookie!
+[18:16] <rory> aww ty
+[18:16] <kill-animals> !cookies | rory
+[18:16] <ubottu> rory: Cookies are delicious delicacies.
+[18:18] <longshanks> gnom gnom. cookies.
+[18:18] <rory> longshanks, look into command: do-release-upgrade
+[18:18] <mgedmin> longshanks: the release notes say "Upgrades from Ubuntu 20.10 to Ubuntu 21.04 are not enabled as it is possible for some systems to end up in an unbootable state if they use EFI version 1.10 - bug 1925010. 22 Release upgrades will be enabled once an updated version of shim is available which is compatible with EFI version 1.10."
+[18:18] <ubottu> bug 1925010 in shim (Ubuntu Hirsute) "shim-signed 15.4 does not boot on EFI 1.10 systems" [High,Confirmed] https://launchpad.net/bugs/1925010
+[18:18] <mgedmin> you can still upgrade by passing -d to update-manager/do-release-upgrade, if you're feeling lucky
+[18:19] <rory> kill-animals, maybe try en_US.UTF-8 actually, it might be more similar to Canadian. Not sure how it's used exactly in that program.
+[18:19] <nicolas17> this release is going well, https://ubuntu.com/download/server#releases -> "Download Ubuntu Server 21.04" -> "Your download of Ubuntu Server 21.04 should start in the background." -> 404 Not Found
+[18:19] <kill-animals> rory: They both work.
+[18:19] <longshanks> mgedmin: Ah, I use efi/gpt but *don't* need shim.
+[18:20] <rory> kill-animals, blame Canada.
+[18:20] <longshanks> Or I can just wait :)
+[18:20] <kill-animals> rory: Okay GenXer
+[18:20] <mgedmin> kill-animals: locales are usually generated when you install the corresponding language pack; or you can run locale-gen
+[18:20] <kill-animals> Thanks Megumine
+[18:21] <kill-animals> Very neat. Running it now
+[18:22] <mgedmin> or you can apt install locales-all and then all possible locales will be always available
+[18:22] <nicolas17> are the torrents final? it's weird that https://releases.ubuntu.com/21.04/ has it and https://torrent.ubuntu.com/releases/hirsute/ doesn't
+[18:22]  * mgedmin is kinda surprised to discover that locales-all is installed on his machine
+[18:23] <nicolas17> oh, getting the .torrent from 'releases', the tracker then says "requested download is not authorized"
+[18:26] <kill-animals> mgedmin: The command locale-gen solved the issue actually.
+[18:27]  * mgedmin forgot the actual syntax needed to use with locale-gen, he generates locales with ansible nowadays
+[18:33] <nicolas17> well when torrent.ubuntu.com decides to allow this .torrent I'll be seeding it already :)
+=== deltab_ is now known as deltab
+[18:35] <cbreak> I hope ryzen zen3 support is improved with that thing :)
+[18:52] <lordcirth> IPFS links: /ipfs/QmUwuoSG9sxKm1hDwVbQ9ujc1rpFrbbgVcquewN9ka6LqK ubuntu-21.04-live-server-amd64.iso, /ipfs/QmNw52hkyuLeUTm6uSe3Ur9PCzDSnNwPPw5R1ZokLYGs85 ubuntu-21.04-desktop-amd64.iso
+[18:54] <nicolas17> I'm not sure how but I'm already seeding the torrent... I guess I got peers via DHT?
+[19:04] <bafman_> hello, how much will be upgrade from 20.10 to 21.04 delayed?
+[19:07] <mgedmin> bafman_: that question interests me greatly as well!  they want a new shim release that fixes the unbootable-on-some-EFI-versions bug (https://launchpad.net/bugs/1925010)
+[19:07] <ubottu> Launchpad bug 1925010 in shim (Ubuntu Hirsute) "shim-signed 15.4 does not boot on EFI 1.10 systems" [High,Confirmed]
+[19:07] <mgedmin> but does a new shim release involve getting it signed by Microsoft?  and if so, how many days does that usually take?
+=== ledeni_ is now known as ledeni
+=== ctrlbreak_MAD is now known as ctrlbreak
+[19:50] <Aarons> soooo i got a issue... some how my root account lost root access but still in the group for root...
+[19:50] <Aarons> how do i go around and fix it to where it will work again
+[19:54] <sarnold> Aarons: what exactly is wrong?
+[19:55] <Aarons> sarnold some how my root got damanged when upgrading and updating. it keeps saying permission denied, error 13 so on
+[19:56] <sarnold> Aarons: pastebin what you're doing?
+[19:58] <leftyfb> Aarons: is it your "root" account that has the issue or your default user account with admin privileges ?
+[19:58] <Aarons> sarnold just trying to add a new user so i can disable root
+[19:58] <Aarons> i am using that account leftyfb
+[19:58] <leftyfb> Aarons: which account?
+[19:59] <leftyfb> Aarons: what does this output?  echo $USER
+[19:59] <Aarons> https://paste.ubuntu.com/p/rKWgvWFCcC/
+[19:59] <pavlos> also, output of id ... will show groups that user belongs to
+[20:00] <Aarons> so echo shows nothing
+[20:00] <leftyfb> Aarons: what version of ubuntu is this?
+[20:00] <Aarons> just black
+[20:00] <sarnold> Aarons: what's the deal with that 'Root' account?
+[20:01] <leftyfb> I just noticed that as well
+[20:01] <litheum> ogra: i'm not looking for raspberry pi, just general arm64
+[20:02] <Aarons> what you mean guys and leftyfb it's 20.04
+[20:02] <leftyfb> Aarons: grep -i root /etc/passwd
+[20:02] <Aarons> now i see the problem
+[20:03] <leftyfb> yeah, you renamed the root account
+[20:03] <Aarons> yeah it says Aaron:/root
+[20:04] <Aarons> well Root:x:0:0:Aaron:/root
+[20:04] <Aarons> so that whole thing go messed up
+[20:04] <Aarons> i blame webmin
+[20:05] <leftyfb> Aarons: reinstall Ubuntu 20.04 from scratch and never insall webmin
+[20:05] <leftyfb> install*
+[20:06] <pavlos> the grep -i should produce this output, root:x:0:0:root:/root:/bin/bash
+[20:07] <Aarons> and thats correct
+[20:07] <Aarons> mine isn'y
+[20:07] <Aarons> isn't
+[20:07] <Aarons> leftyfb, thats the only way to fix it?
+[20:08] <leftyfb> Aarons: Do you know of all the other ways webmin has messed with your system? If the answer is no, then I would highly recommend starting over. Webmin makes a complete mess of a perfectly functioning system to suit it's needs
+[20:08] <leftyfb> Aarons: to fix this particular issue, you'll need to boot to a live cd/usb or to single user mode(not sure this will even work) and fix the /etc/passwd file
+[20:09] <Aarons> okay dam.
+[20:10] <Aarons> is there a way for me to back up folders using ssh?
+[20:10] <leftyfb> Aarons: yup, rsync is a great way
+[20:10] <leftyfb> !rsync | Aarons
+[20:10] <ubottu> Aarons: rsync is a fast remote file copy and synchronization program - For more see: https://help.ubuntu.com/community/rsync
+=== tomreyn_ is now known as tomreyn
+[20:10] <lordcirth> Aarons, rsync uses ssh. You just need rsync on the other end too
+[20:10] <leftyfb> lordcirth: you do not need rsync installed on the server, only ssh
+[20:11] <leftyfb> I should rephrase, you do not need rsync on the "remote" end
+[20:11] <nicolas17> yes you do
+[20:11] <lordcirth> really? I could swear I had to install it on the server once
+[20:11] <nicolas17> you don't need to configure it in any way or have it running as a daemon
+[20:11] <nicolas17> but it has to be installed
+[20:11] <leftyfb> nicolas17: no, you don't
+[20:12] <nicolas17> the rsync client will connect over ssh to the remote server, run rsync server there, and send commands to it
+[20:13] <nicolas17> the manpage says "Note that rsync must be installed on both the source and destination machines."
+[20:14] <Aarons> oh and thank you leftyfb btw
+[20:15] <leftyfb> nicolas17: SOB. You're right. Interesting. I could have sworn i've done this before with it not being installed. TIL. Thanks for correcting me.
+[20:16] <leftyfb> luckily, rsync seems to be installed by default as part of ubuntu-standard
+[20:19] <Kraus> Greetings! I just stuck 21.04 on a VirtualBox VM and am checking out the new pipewire features, and in #pipewire we noticed that although there are three processes running for pipewire, systemd doesn't appear to have anything running. Is that normal? Unsure what's normal for this new system.
+[20:20] <sarnold> Kraus: were you checking with systemctl --system or systemctl --user ?
+[20:20] <Kraus> sarnold: I used systemctl status pipewire.service
+[20:21] <sarnold> Kraus: try systemctl --user status pipewire.service
+[20:21] <Kraus> Ah! There it is. :) I'll pass that on.
+[20:23] <Kraus> Anxious to try this thing out, though I don't know how far I'll get with it being on a VM since the guest machine isn't directly interacting with the audio devices.
+[20:24] <Kraus> I'll see if there's a way to pass the devices through to the guest.
+[20:25] <sneakyimp> I'm sad to report that my windows boot seems gone
+[20:25] <leftyfb> Kraus: if it doesn't require a GUI, then run it in an lxd container instead of virtualbox
+[20:25] <Kraus> Ahhh... I'll look into that.
+[20:25] <sneakyimp> Eric^^: so i tried running chkdsk from a windows 7 installer disk...it said nothing was wrong with the drive -- but nothing was one the drive
+[20:26] <sneakyimp> Eric^^: nothing was *on the drive
+[20:26] <Kraus> leftyfb: GUI, referring to Ubuntu Desktop you mean?
+[20:26] <leftyfb> Kraus: correct. It doesn't look like it's got any desktop requirements
+[20:27] <EriC^^> sneakyimp: ah, yup seems its gone, cd's and new install should save the day though
+[20:27] <Kraus> leftyfb: Pipewire itself probably doesn't, but obviously I'd want to play with it in carla to map my inputs and outputs, and use it with a DAW.
+[20:27] <Kraus> (like Ardour, etc)
+[20:27] <EriC^^> sneakyimp: if there's some files you absolutely need that's on it you can always use photorec to retrieve them just fyi
+[20:28] <Kraus> Maybe what I could do is instead of using a VM I can make a live USB and try it out that way.
+[20:30] <tomreyn> you probably jst need to install guest additions (devices -> install.... menu) on the virtualbox VM window.
+[20:30] <Kraus> I do have that installed. I'm looking around for how to pass a DAC through.
+[20:32] <Kraus> The only Host Audio Drivers I'm seeing are the usual. PulseAudio, ALSA, OSS and null.
+[20:32] <Kraus> That's more of a #virtualbox issue though
+[20:32] <sneakyimp> Eric^^: i don't think there are any vital data files on that drive. I intentionally save all data on separate drive because in my experience it's usually the system drives that experience this sort of problem
+[20:32] <Kraus> err #vbox
+[20:33] <sneakyimp> Eric^^: I truly appreciate your holding my hand through this trying period
+[20:33] <EriC^^> sneakyimp: ah ok, good to hear then
+[20:33] <sneakyimp> Eric^^: if you have any suggestions about best practices for dual boot Win 10 / Ubuntu 20.04 -- especially advice about UEFI -- i'm all ears
+=== umask078 is now known as umask077
+[20:34] <sneakyimp> Eric^^: thought i'd run the TestDisk analyze one more time, this time with EFI GPT setting
+[20:34] <EriC^^> sneakyimp: not really  much to advise on, although i think nvidia and secureboot are related but personally dont know much about the matter
+[20:35] <Kraus> Hmmm... it's a USB device.. so... maybe that's the solution..
+[20:35] <sneakyimp> Eric^^: lots of output this time so far
+[20:35] <EriC^^> you might want to look into it, if it's better to have it on or off for nvidia
+[20:35] <kur1j> where does systemd-resolved get its config to shove into /run/systemd/resolve/resolv.conf?
+[20:36] <EriC^^> sneakyimp: aha, interesting, care to share the results?
+[20:36] <pavlos> kur1j: sudo ln -fs /run/systemd/resolve/resolv.conf /etc/resolv.conf
+[20:37] <kur1j> pavlos: something is automatically generating `/run/systemd/resolve/resolv.conf`
+=== PonyTails is now known as PonyBaloney
+[20:37] <pavlos> kur1j: sudo systemctl restart systemd-resolved
+[20:37] <kur1j> its already symlinked to /etc/resolv.conf
+[20:38] <kur1j> pavlos: restarting systemd-resolved just reverts whatever was changed in `/run/systemd/resolve/resolv.conf /etc/resolv.conf`
+[20:38] <kur1j> nothing in `/etc/systemd/resolved.conf `
+[20:39] <sneakyimp> Eric^^: would love to. it's still running (11/100 complete). FYI, I was able to run the chkdsk /f /r off a win 7 install disk -- and it said there was nothing wrong with the drive. Seems to me that something did a fat32 quick format, leaving some stuff on disk. I suspect it might have been boot-repair (q.v. the pastebin). I think the source of this problem -- failure to boot at all -- might have been due to me fid
+[20:39] <sneakyimp> ettings while trying to get my audio card to work
+[20:41] <pavlos> kur1j: is systemctl status systemd-resolved working correctly?
+[20:41] <kur1j> yes
+[20:43] <kur1j> pavlos: whats happening is my DHCP server is sending my local DNS server ip out on DHCP, however I keep getting nameserver <mylocalip> and nameserver 8.8.8.8 in the resolv.conf file
+[20:43] <kur1j> from someone futzing with trying to manually set DNS settings somewhere
+[20:43] <kur1j> I've checked network/interfaces file
+[20:43] <kur1j> ive checked the /run/systemd/resolv/resolv.conf file
+[20:43] <kur1j> the /etc/systemd/resolved.conf
+[20:43] <EriC^^> sneakyimp: yup somehow it became fat32, i guess it's anyones guess
+[20:44] <kur1j> and everywhere I can find reference to 8.8.8.8 but its not anywhere I can see
+[20:46] <kur1j> welp found it...
+[20:46] <kur1j> netplan
+[20:46] <kur1j> 1) our users are idiot thats the first problem. 2) DNS configuration is the most infuriating thing Ubuntu...period
+[20:47] <kur1j> 10 different ways to change it
+[20:47] <kur1j> and systemd-resolved tries to read from all of them but doesn't tell you where from and which one is overriding which
+[20:47] <kur1j> NetworkManager, netplan, network/interfaces,
+[20:48] <kur1j> configuration files to override settings in systemd-resolved as fall back
+[21:03] <summonner> if you run    systemd-resolve --status
+[21:03] <summonner> then you'll see what is set as global, and what is set as local. local would override the global
+[21:05] <summonner> you either have to spend some time learning the new config or install something else like dnsmasq to handle this and stop/disable the systemd-resolve service
+[21:05] <leftyfb> summonner: there is no "global" and "local" nameserver
+[21:07] <summonner> I never said there was
+[21:08] <summonner> I was talking about the configuration
+[21:08] <leftyfb> summonner: clients have 1 or more nameservers specified. Any of them will be used randomly. All of them should be able to resolve hosts/domains in the same manner or you're doing it wrong. For instance, if you set a local DNS server (router) and 8.8.8.8, you will get intermittent failures for local hostnames on your network since 8.8.8.8 will be hit randomly and will try to resolve local hostname it does not know about
+[21:17] <kiwichap> hello I am trying to fetch a file but it says
+[21:20] <kiwichap> nevermind it's mysteriously working
+[22:22] <sebsebseb> hi
+[22:44] <sneakyimp> Eric^^: the TestDisk analyze (deeper search) has completed: https://paste.ubuntu.com/p/RWz86fHn68/
+[22:47] <sneakyimp> eric^^: i expect this looks extremely messy. i can remember adjusting the partitions on this drive numerous times while actually using the drive very little over the years. i'm not sure how TestDisk works, but expect most of these items are old partition data that has been replaced during a more recent partitioning.
+[22:53] <jjbuggle> new ubuntu!  My question:  I have been using Xubuntu LTS for awhile, and had planned on doing that.  But I'm also starting to take up flutter development.  Should I upgrade to the new release, for the Flutter SDK?  Any hints or inclinations in that regard?
+[22:55] <oerheks> jjbuggle, no, as Flutter is a snap, you can use any ubuntu version
+[22:55] <oerheks> https://ubuntu.com/blog/getting-started-with-flutter-on-ubuntu
+[22:55] <oerheks> https://snapcraft.io/flutter
+[22:55] <sarnold> jjbuggle: if you're using the flutter snap, it probably doesn't matter much
+[22:56] <sarnold> jjbuggle: if you're compiling flutter from source, or getting it via another packaging mechanism, there may or may not be reasons to upgrade, or reasons to stay put
+[22:59] <EriC^^> sneakyimp: checking
+[23:01] <EriC^^> sneakyimp: any luck pressing 'p' on the first bunch?
+[23:03] <jjbuggle> hmmmm, I believe you, but I still have doubts.  I'm still wondering why it is announced for 21.04, flutter.  I've already been using flutter for a month now, installed via snap.  Anyway, I may end up upgrading if I ever decide to test running an app on Ubuntu.  Thanks all.
+[23:04] <cube1> Is a new scheduler being used in 21.04 or something? I'm watching twitch while compiling at 100% CPU usage, a huge improvement.
+[23:04] <cube1> IIRC
+[23:05] <cube1> I can actually use my computer. Ayyyyy!
+[23:06] <jjbuggle> ooo, that's cool
+[23:07] <sarnold> cube1: woo :)
+[23:07] <jjbuggle> this is a little offtopic, but I doubt the kernel is using a "new" scheduler.  My understanding is that the just want to add tweaks to the one they got
