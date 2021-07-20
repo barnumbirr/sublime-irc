@@ -2,8 +2,6 @@
 ---
 # https://www.sublimetext.com/docs/syntax.html
 name: IRC
-file_extensions:
-  - .txt
 scope: text.irc
 
 contexts:
