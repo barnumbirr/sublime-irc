@@ -21,8 +21,8 @@ IRC log file syntax highlighting for Sublime Text.
 
     | Platform      | Install Command                                                |
     | --------------| -------------------------------------------------------------- |
-    | OS X          | `cmd+shift+p` → Package Control: Install Package → IRC Syntax  |
-    | Linux/Windows | `ctrl+shift+p` → Package Control: Install Package → IRC Syntax |
+    | OS X          | <kbd>Cmd</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd> → Package Control: Install Package → IRC Syntax  |
+    | Linux/Windows | <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd> → Package Control: Install Package → IRC Syntax |
 
 3. Reopen all IRC log files and select the 'IRC' syntax from the menu.
 
@@ -58,4 +58,15 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
+```
+
+## Buy me a coffee?
+
+If you feel like buying me a coffee (or a beer?), donations are welcome:
+
+```
+BTC : bc1qq04jnuqqavpccfptmddqjkg7cuspy3new4sxq9
+DOGE: DRBkryyau5CMxpBzVmrBAjK6dVdMZSBsuS
+ETH : 0x2238A11856428b72E80D70Be8666729497059d95
+LTC : MQwXsBrArLRHQzwQZAjJPNrxGS1uNDDKX6
 ```
