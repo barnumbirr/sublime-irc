@@ -38,9 +38,26 @@ IRC log file syntax highlighting for Sublime Text.
 
 2. Clone this repository into `IRC Syntax` directory
 
-    ```bash
-    git clone git://github.com/barnumbirr/sublime-irc.git 'IRC Syntax'
-    ```
+```bash
+$ git clone git://github.com/barnumbirr/sublime-irc.git 'IRC Syntax'
+```
+
+## Configuration
+
+### Uniquely colored nicknames
+
+Navigate to `Preferences → Customize Color Scheme` and add the following to your
+theme rules:
+
+```json
+    {
+        "name": "IRC Nickname",
+        "scope": "string.unquoted.username.irc",
+        "foreground": ["#7F00FF", "#FF0000"]
+    },
+```
+
+These foreground colors should be readable in most themes.
 
 ## License:
 
