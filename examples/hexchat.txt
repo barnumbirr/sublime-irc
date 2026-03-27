@@ -1,0 +1,301 @@
+Jun 15 08:00:12 * tux42 (tux42@gateway/web/freenode/ip.203.0.113.7) has joined #linux
+Jun 15 08:00:18 <tux42> morning all
+Jun 15 08:00:45 * kerneldev (kdev@kernel.example.org) has joined #linux
+Jun 15 08:00:59 <kerneldev> hey tux42
+Jun 15 08:01:22 <tux42> anyone here running 6.8 yet?
+Jun 15 08:01:50 <kerneldev> yeah, built it from source last night. the new scheduling changes are interesting
+Jun 15 08:02:14 <tux42> nice, I'm still on 6.6 LTS. any regressions?
+Jun 15 08:02:38 <kerneldev> nothing major so far. had to rebuild my nvidia modules obviously
+Jun 15 08:03:01 * sysadmin_jane (jane@corp-fw.megacorp.example.com) has joined #linux
+Jun 15 08:03:10 <sysadmin_jane> good morning
+Jun 15 08:03:28 <kerneldev> morning jane
+Jun 15 08:03:55 <sysadmin_jane> anyone have experience with btrfs send/receive for backups?
+Jun 15 08:04:22 <tux42> yeah I use it for my homelab. works great once you get the snapshot management sorted
+Jun 15 08:04:51 <sysadmin_jane> we're looking at replacing our rsync-based backup for about 40TB of data
+Jun 15 08:05:18 <kerneldev> btrfs send is incremental so it'll be way faster than rsync for subsequent runs
+Jun 15 08:05:47 <sysadmin_jane> that's what I was hoping. any gotchas?
+Jun 15 08:06:12 <tux42> make sure you have enough space for snapshots. and use btrbk for managing them, don't roll your own
+Jun 15 08:06:34 <tux42> https://github.com/digint/btrbk
+Jun 15 08:06:55 <sysadmin_jane> bookmarked, thanks
+Jun 15 08:07:30 <kerneldev> also watch your metadata space. btrfs balance if things get tight
+Jun 15 08:08:02 * netguru (netguru@192.168.1.50) has joined #linux
+Jun 15 08:08:15 <netguru> hey folks, got a weird networking issue
+Jun 15 08:08:40 <tux42> shoot
+Jun 15 08:09:05 <netguru> nftables rules aren't surviving reboot even though I have nftables.service enabled
+Jun 15 08:09:33 <sysadmin_jane> are you saving them to /etc/nftables.conf?
+Jun 15 08:09:58 <netguru> I thought systemd handled that automatically
+Jun 15 08:10:22 <sysadmin_jane> nope, you need to run nft list ruleset > /etc/nftables.conf after making changes
+Jun 15 08:10:50 <netguru> oh. that explains a lot. thanks sysadmin_jane
+Jun 15 08:11:15 <kerneldev> the nftables wiki has a good writeup on persistence: https://wiki.nftables.org/wiki-nftables/index.php/Simple_rule_management
+Jun 15 08:11:42 <netguru> reading it now
+Jun 15 08:12:30 * dockerfan (dock@containers.example.net) has joined #linux
+Jun 15 08:12:45 <dockerfan> morning #linux
+Jun 15 08:13:10 <tux42> hey dockerfan
+Jun 15 08:13:38 <dockerfan> anyone switched from docker to podman recently? worth the hassle?
+Jun 15 08:14:05 <sysadmin_jane> we did at work. rootless containers are the main win
+Jun 15 08:14:32 <dockerfan> how's the docker-compose compatibility?
+Jun 15 08:14:58 <sysadmin_jane> podman-compose works for simple stuff. for complex setups we moved to podman pods with kube yaml
+Jun 15 08:15:25 <kerneldev> podman generate kube is pretty handy for that migration
+Jun 15 08:15:50 <dockerfan> I have about 15 compose files to migrate. sounds painful
+Jun 15 08:16:18 <tux42> start with the simple ones, get your feet wet
+Jun 15 08:16:45 <sysadmin_jane> also check out https://podman-desktop.io/ if you want a GUI to help manage things
+Jun 15 08:17:12 <dockerfan> will do, thanks
+Jun 15 08:18:30 * tux42 has left #linux (bbiab, coffee run)
+Jun 15 08:25:00 * secops_mike (mike@vpn-gw.secfirm.example.com) has joined #linux
+Jun 15 08:25:18 <secops_mike> morning. anyone following the xz situation?
+Jun 15 08:25:45 <kerneldev> the supply chain attack? yeah, scary stuff
+Jun 15 08:26:10 <secops_mike> we've been auditing all our build dependencies since then
+Jun 15 08:26:38 <sysadmin_jane> same here. management finally approved budget for reproducible builds
+Jun 15 08:27:05 <secops_mike> good. we're also looking at sigstore for signing our internal packages
+Jun 15 08:27:30 <secops_mike> https://www.sigstore.dev/ for anyone interested
+Jun 15 08:27:55 <netguru> is that what fedora uses now?
+Jun 15 08:28:20 <secops_mike> yeah, and npm, pypi, a bunch of others are adopting it
+Jun 15 08:28:50 <dockerfan> we sign our container images with cosign which is part of sigstore
+Jun 15 08:29:15 <secops_mike> exactly, cosign is great for container workflows
+Jun 15 08:30:00 * tux42 (tux42@gateway/web/freenode/ip.203.0.113.7) has joined #linux
+Jun 15 08:30:12 <tux42> back
+Jun 15 08:30:40 <kerneldev> wb
+Jun 15 08:31:05 <tux42> what'd I miss?
+Jun 15 08:31:28 <secops_mike> supply chain security discussion
+Jun 15 08:31:55 <tux42> fun times
+Jun 15 08:35:00 * netguru has quit (Ping timeout: 260 seconds)
+Jun 15 08:42:15 * storageguy (sg@nas01.homelabs.example.org) has joined #linux
+Jun 15 08:42:30 <storageguy> hey all. zfs question
+Jun 15 08:42:58 <tux42> go for it
+Jun 15 08:43:22 <storageguy> I have a raidz2 pool with 8 drives. one is showing SMART errors. can I replace it proactively?
+Jun 15 08:43:50 <kerneldev> absolutely. zpool replace poolname /dev/old /dev/new
+Jun 15 08:44:15 <storageguy> do I need to offline it first?
+Jun 15 08:44:40 <kerneldev> no, zfs will handle the resilver online. it'll read from the old drive where possible and reconstruct from parity otherwise
+Jun 15 08:45:05 <sysadmin_jane> make sure your new drive is the same size or bigger
+Jun 15 08:45:30 <storageguy> yeah it's the same model just newer. thanks
+Jun 15 08:45:55 <tux42> also check zpool status regularly during the resilver. I've had drives die mid-resilver before
+Jun 15 08:46:20 <storageguy> that's why I went raidz2 :)
+Jun 15 08:46:48 <sysadmin_jane> smart move
+Jun 15 08:47:15 <secops_mike> speaking of storage, anyone using LUKS2 with systemd-cryptenroll for TPM unlocking?
+Jun 15 08:47:42 <tux42> yeah, have it on my laptop. works great with secure boot
+Jun 15 08:48:10 <secops_mike> any issues with kernel updates invalidating the PCR values?
+Jun 15 08:48:35 <tux42> you bind to PCR 7 only (secure boot state), not the kernel hash. that way kernel updates don't break it
+Jun 15 08:49:00 <secops_mike> nice, I'll try that. been putting it off because I was worried about lockouts
+Jun 15 08:49:25 <tux42> always keep a recovery key. systemd-cryptenroll --recovery-key
+Jun 15 08:50:10 * dockerfan has quit (Quit: Leaving)
+Jun 15 08:55:30 * netguru (netguru@192.168.1.50) has joined #linux
+Jun 15 08:55:45 <netguru> sorry, connection dropped. ISP issues
+Jun 15 08:56:10 <tux42> you were gone for a bit, we discussed zfs and disk encryption while you were out
+Jun 15 08:56:35 <netguru> classic. anyway my nftables rules survived a reboot now, so thanks again
+Jun 15 08:57:00 <sysadmin_jane> great to hear
+Jun 15 09:05:00 * sysop_raj (raj@admin.university.example.edu) has joined #linux
+Jun 15 09:05:15 <sysop_raj> hello everyone
+Jun 15 09:05:40 <tux42> hey raj
+Jun 15 09:06:05 <sysop_raj> I need to set up centralized logging for about 200 VMs. what's the current recommended stack?
+Jun 15 09:06:32 <sysadmin_jane> we use Loki + Grafana. way lighter than elasticsearch
+Jun 15 09:06:58 <sysop_raj> how does it compare to the ELK stack for search?
+Jun 15 09:07:25 <sysadmin_jane> search is more limited since loki only indexes labels not full text. but for 90% of use cases it's fine
+Jun 15 09:07:52 <kerneldev> we do promtail -> loki -> grafana and it handles a few TB per day with modest hardware
+Jun 15 09:08:20 <sysop_raj> that sounds perfect. we don't need full text search, just grepping through logs
+Jun 15 09:08:45 <sysadmin_jane> then loki is ideal. check out https://grafana.com/docs/loki/latest/get-started/
+Jun 15 09:09:10 <secops_mike> from a security perspective, make sure you set up retention policies. we got burned storing logs forever and running out of disk
+Jun 15 09:09:38 <sysop_raj> good point. we have a 90-day retention requirement
+Jun 15 09:10:05 <secops_mike> loki supports table-based retention which makes that easy
+Jun 15 09:12:30 <storageguy> for the storage backend, loki works well with S3-compatible storage. we use minio
+Jun 15 09:13:00 <sysop_raj> we have a ceph cluster with RGW so that could work
+Jun 15 09:13:25 <storageguy> perfect, ceph rgw as the loki backend is a solid setup
+Jun 15 09:15:00 * kerneldev is now known as kerneldev_afk
+Jun 15 09:20:15 <tux42> quiet in here now
+Jun 15 09:20:40 <netguru> everyone's actually working for once :P
+Jun 15 09:25:00 * sysadmin_jane has quit (Quit: meeting time, back later)
+Jun 15 09:35:12 <secops_mike> sysop_raj: also consider vector.dev as your log shipper, it's more flexible than promtail
+Jun 15 09:35:40 <sysop_raj> yeah I've heard good things about vector. written in rust so it's fast
+Jun 15 09:36:05 <secops_mike> and it can do transforms in-flight, like redacting sensitive data before it hits loki
+Jun 15 09:36:30 <sysop_raj> oh that's nice. we'd need to strip PII from student records
+Jun 15 09:37:00 <secops_mike> exactly the use case. https://vector.dev/docs/reference/configuration/transforms/
+Jun 15 09:40:00 * netguru has left #linux (lunch break)
+Jun 15 09:55:00 * kerneldev_afk is now known as kerneldev
+Jun 15 09:55:15 <kerneldev> back
+Jun 15 09:55:40 <tux42> wb. quiet morning
+Jun 15 09:56:05 <kerneldev> anyone tried the new io_uring features in 6.8?
+Jun 15 09:56:30 <storageguy> which ones? there's been a ton of io_uring work lately
+Jun 15 09:56:55 <kerneldev> the zero-copy networking stuff. supposed to be huge for high-throughput servers
+Jun 15 09:57:20 <storageguy> haven't tried it yet but I saw the lwn article: https://lwn.net/Articles/961083/
+Jun 15 09:57:45 <kerneldev> yeah that's the one. benchmarks look impressive
+Jun 15 09:58:10 <tux42> io_uring keeps getting more powerful. eventually it'll replace all the syscalls :P
+Jun 15 09:58:35 <kerneldev> that's kind of the plan honestly
+Jun 15 10:10:00 * sysadmin_jane (jane@corp-fw.megacorp.example.com) has joined #linux
+Jun 15 10:10:15 <sysadmin_jane> back from meeting hell
+Jun 15 10:10:40 <tux42> productive meetings?
+Jun 15 10:10:58 <sysadmin_jane> is there such a thing?
+Jun 15 10:11:20 <kerneldev> lol
+Jun 15 10:15:00 <sysadmin_jane> ok real question - we need to migrate our ansible playbooks to run inside containers. best approach?
+Jun 15 10:15:30 <secops_mike> ansible-runner in a container works well. there's an official execution environment spec
+Jun 15 10:15:55 <sysadmin_jane> is that the AWX/AAP approach?
+Jun 15 10:16:20 <secops_mike> yeah, ansible-builder creates the EE images: https://ansible.readthedocs.io/projects/builder/en/latest/
+Jun 15 10:16:48 <sysadmin_jane> we don't use AWX but I suppose we could use the EE images standalone
+Jun 15 10:17:15 <secops_mike> absolutely. ansible-navigator can run playbooks against EEs locally
+Jun 15 10:17:40 <tux42> we just mount the playbook directory into a vanilla ansible container. works fine for CI
+Jun 15 10:18:05 <sysadmin_jane> tux42: how do you handle vault passwords in that setup?
+Jun 15 10:18:30 <tux42> environment variable passed at runtime, never baked into the image
+Jun 15 10:18:55 <secops_mike> +1 on that. or use a vault integration like hashicorp vault
+Jun 15 10:19:20 <sysadmin_jane> we're already using hashicorp vault so that makes sense
+Jun 15 10:22:00 * storageguy has quit (Quit: drive swap time, wish me luck)
+Jun 15 10:40:00 * dockerfan (dock@containers.example.net) has joined #linux
+Jun 15 10:40:15 <dockerfan> back. had to fix a broken compose stack
+Jun 15 10:40:40 <tux42> what broke?
+Jun 15 10:41:05 <dockerfan> postgres container ran out of shared memory. had to add shm_size to the compose file
+Jun 15 10:41:30 <kerneldev> classic. the default 64MB is never enough for production postgres
+Jun 15 10:41:55 <dockerfan> yeah learned that the hard way. queries were failing silently
+Jun 15 10:42:20 <sysadmin_jane> always set shared_buffers and work_mem explicitly in your postgres config too
+Jun 15 10:42:45 <dockerfan> https://pgtune.leopard.in.ua/ helped me figure out the right values
+Jun 15 10:43:10 <sysadmin_jane> pgtune is great. also timescaledb has a tuning tool if you're using timeseries data
+Jun 15 10:48:00 * kerneldev changed the topic of #linux to: Welcome to #linux | Kernel 6.8.5 released | https://kernel.org | No AI spam
+Jun 15 10:48:30 <tux42> thanks for updating the topic kerneldev
+Jun 15 10:50:00 * netguru (netguru@192.168.1.50) has joined #linux
+Jun 15 10:50:15 <netguru> back from lunch
+Jun 15 10:50:40 <tux42> early lunch
+Jun 15 10:50:58 <netguru> perks of remote work
+Jun 15 10:51:20 <netguru> so I'm trying to set up wireguard between two sites and the MTU is giving me headaches
+Jun 15 10:51:45 <kerneldev> what's the underlying link MTU?
+Jun 15 10:52:10 <netguru> 1500 on both sides, standard ethernet
+Jun 15 10:52:35 <kerneldev> set wireguard MTU to 1420. that accounts for the wireguard overhead
+Jun 15 10:52:58 <netguru> I had it at 1380 thinking I needed more room
+Jun 15 10:53:20 <kerneldev> 1420 is the standard recommendation. lower only if you have additional encapsulation like PPPoE
+Jun 15 10:53:45 <netguru> no PPPoE, just straight ethernet to the ISP. I'll bump it up
+Jun 15 10:54:10 <sysadmin_jane> also make sure you set MSS clamping on your firewall if TCP connections are having issues
+Jun 15 10:54:35 <netguru> iptables -t mangle -A FORWARD -p tcp --tcp-flags SYN,RST SYN -j TCPMSS --clamp-mss-to-pmtu
+Jun 15 10:54:58 <sysadmin_jane> exactly that
+Jun 15 10:55:20 <netguru> or nftables equivalent since I just migrated :)
+Jun 15 11:05:00 * secops_mike has quit (Quit: security incident, gotta run)
+Jun 15 11:10:30 <sysop_raj> hope it's nothing serious
+Jun 15 11:10:55 <tux42> with secops there's always something serious
+Jun 15 11:15:00 <dockerfan> quick question - what's the best way to limit container memory in podman vs docker?
+Jun 15 11:15:28 <sysadmin_jane> same flags work in both. --memory=512m --memory-swap=1g
+Jun 15 11:15:55 <dockerfan> and cgroup v2 is required for podman right?
+Jun 15 11:16:20 <sysadmin_jane> recommended but not strictly required. though all modern distros default to cgroupv2 now
+Jun 15 11:16:45 <kerneldev> if you're on rhel9/fedora/ubuntu 22+ you're already on cgroupv2
+Jun 15 11:17:10 <dockerfan> running debian 12 so I should be fine
+Jun 15 11:17:35 <kerneldev> yep, bookworm is cgroupv2 by default
+Jun 15 11:30:00 * storageguy (sg@nas01.homelabs.example.org) has joined #linux
+Jun 15 11:30:15 <storageguy> drive swap successful. resilver in progress
+Jun 15 11:30:40 <tux42> nice! how long is it estimating?
+Jun 15 11:31:05 <storageguy> about 6 hours for 14TB. not bad
+Jun 15 11:31:30 <kerneldev> make sure you lower the resilver priority if you need the pool for production: zfs set resilver_min_active=1
+Jun 15 11:31:55 <storageguy> it's my homelab so I'll let it rip at full speed
+Jun 15 11:32:20 <sysadmin_jane> famous last words when you want to watch a movie tonight :P
+Jun 15 11:32:45 <storageguy> plex will survive, it's mostly sequential reads anyway
+Jun 15 11:45:00 * tux42 is now known as tux42_lunch
+Jun 15 11:45:15 <tux42_lunch> brb lunch
+Jun 15 12:05:00 * secops_mike (mike@vpn-gw.secfirm.example.com) has joined #linux
+Jun 15 12:05:15 <secops_mike> false alarm earlier. someone triggered an IDS rule by running nmap from the wrong VLAN
+Jun 15 12:05:40 <kerneldev> lol at least your IDS works
+Jun 15 12:06:05 <secops_mike> suricata catches everything. sometimes too much
+Jun 15 12:06:30 <sysadmin_jane> better too many alerts than too few
+Jun 15 12:06:55 <secops_mike> the ET open ruleset is noisy out of the box. https://rules.emergingthreats.net/ for tuning tips
+Jun 15 12:15:00 * tux42_lunch is now known as tux42
+Jun 15 12:15:12 <tux42> back
+Jun 15 12:15:35 <netguru> so the wireguard MTU fix worked perfectly. throughput went from 400Mbps to 920Mbps
+Jun 15 12:15:58 <kerneldev> huge difference
+Jun 15 12:16:20 <netguru> yeah, fragmentation was killing performance. such a simple fix
+Jun 15 12:16:45 <tux42> networking is always the simple things that bite you
+Jun 15 12:20:00 <sysop_raj> we're seeing weird DNS resolution failures on some of our Ubuntu 22.04 boxes. systemd-resolved related
+Jun 15 12:20:25 <sysadmin_jane> oh no, the stub resolver strikes again
+Jun 15 12:20:50 <sysop_raj> exactly. /etc/resolv.conf points to 127.0.0.53 and sometimes it just stops resolving
+Jun 15 12:21:15 <tux42> we replaced systemd-resolved with plain unbound on all our servers
+Jun 15 12:21:40 <sysop_raj> that's tempting but I have 200 VMs to change
+Jun 15 12:22:05 <sysadmin_jane> ansible role for it? swap resolv.conf, disable resolved, install unbound, done
+Jun 15 12:22:30 <sysop_raj> true, I already have ansible on all of them. might be worth it
+Jun 15 12:22:55 <kerneldev> or just configure resolved properly. most issues come from the DNSSEC setting being in allow-downgrade mode
+Jun 15 12:23:20 <kerneldev> try setting DNSSEC=no in /etc/systemd/resolved.conf if you have your own internal DNS
+Jun 15 12:23:45 <sysop_raj> we do have internal DNS. I'll test that first since it's less invasive
+Jun 15 12:30:00 * netguru has quit (Quit: EOD for me. thanks for all the help today!)
+Jun 15 13:00:00 * sysop_raj has left #linux (class starting, thanks all)
+Jun 15 13:10:00 <storageguy> resilver at 22%. chugging along nicely
+Jun 15 13:10:25 <tux42> patience, young grasshopper
+Jun 15 13:15:30 <secops_mike> quick question for the group - what's your preferred way to do SSH key management at scale?
+Jun 15 13:15:55 <sysadmin_jane> SSH CA. sign keys with a CA and configure servers to trust the CA
+Jun 15 13:16:20 <secops_mike> we're doing that but managing the CA itself is the pain point
+Jun 15 13:16:45 <sysadmin_jane> we use vault (hashicorp) as the SSH CA. it signs keys with a TTL so they auto-expire
+Jun 15 13:17:10 <secops_mike> https://developer.hashicorp.com/vault/docs/secrets/ssh/signed-ssh-certificates
+Jun 15 13:17:35 <secops_mike> we actually looked at that. the 24-hour cert TTL is appealing from a security standpoint
+Jun 15 13:18:00 <kerneldev> step-ca from smallstep is another good option if you don't want the full vault stack
+Jun 15 13:18:25 <secops_mike> true. https://smallstep.com/docs/step-ca/ looks solid
+Jun 15 13:18:50 <tux42> I just use LDAP for pubkey distribution. old school but it works
+Jun 15 13:19:15 <secops_mike> the problem with that is you can't revoke compromised keys quickly
+Jun 15 13:19:40 <tux42> fair point. short-lived certs solve that problem
+Jun 15 13:25:00 * dockerfan has left #linux (switching to podman investigation mode)
+Jun 15 13:30:15 <sysadmin_jane> so we're planning a big kernel upgrade across our fleet next week
+Jun 15 13:30:40 <kerneldev> canary deployments. upgrade 5% of servers, monitor for a week, then continue
+Jun 15 13:31:05 <sysadmin_jane> that's the plan. blue-green with our k8s nodes
+Jun 15 13:40:00 * storageguy has quit (Ping timeout: 245 seconds)
+Jun 15 13:55:00 <secops_mike> sysadmin_jane: also make sure you update the microcode package with the kernel. they often go together
+Jun 15 13:55:25 <sysadmin_jane> intel-microcode or amd64-microcode depending on the hardware?
+Jun 15 13:55:50 <secops_mike> exactly. and load it via initramfs. your distro package should handle that but verify
+Jun 15 13:56:15 <sysadmin_jane> we're mixed intel/amd so I'll need to handle both. ansible fact gathering to the rescue
+Jun 15 14:00:00 <tux42> sysadmin_jane: did you ever finish that btrfs migration you mentioned this morning?
+Jun 15 14:00:25 <sysadmin_jane> still in planning. got derailed by the ansible container discussion
+Jun 15 14:00:50 <tux42> story of our lives. plan one thing, spend the day on something else
+Jun 15 14:20:00 * sysadmin_jane has quit (Quit: heading out early today. have a good weekend all!)
+Jun 15 14:30:00 <tux42> we're dropping like flies in here
+Jun 15 14:30:25 <secops_mike> friday afternoon, can't blame them
+Jun 15 14:35:10 <tux42> so who's running what distro these days? I've been on arch for years
+Jun 15 14:35:35 <secops_mike> debian stable for servers, fedora for workstation
+Jun 15 14:36:00 <kerneldev> gentoo on the workstation, debian on servers. yes I know
+Jun 15 14:36:25 <tux42> a gentoo user in the wild. respect
+Jun 15 15:00:10 * storageguy (sg@nas01.homelabs.example.org) has joined #linux
+Jun 15 15:00:25 <storageguy> connection dropped. resilver still going, 58% now
+Jun 15 15:00:50 <tux42> steady progress
+Jun 15 15:01:15 <storageguy> I ran zpool iostat -v 5 and the new drive is doing about 200MB/s sustained writes
+Jun 15 15:01:40 <kerneldev> that's solid for a resilver
+Jun 15 15:05:00 <secops_mike> alright, time for my favorite friday activity: reviewing fail2ban logs
+Jun 15 15:05:25 <tux42> how many SSH brute force attempts this week?
+Jun 15 15:05:50 <secops_mike> about 50k. mostly from the usual botnets
+Jun 15 15:06:15 <storageguy> that's why I moved SSH to a non-standard port. cut the noise by 99%
+Jun 15 15:06:40 <secops_mike> security through obscurity isn't real security
+Jun 15 15:07:05 <storageguy> no but it's real noise reduction. I still have key-only auth and fail2ban
+Jun 15 15:07:30 <secops_mike> fair enough. reducing log noise has value
+Jun 15 15:07:55 <tux42> I use crowdsec instead of fail2ban now. it shares blocklists across all participants
+Jun 15 15:08:20 <secops_mike> https://www.crowdsec.net/ - yeah I've been meaning to try that
+Jun 15 15:08:45 <tux42> community blocklist is surprisingly effective. most attacks get blocked before they even try my servers
+Jun 15 15:09:10 <secops_mike> like a collaborative immune system. I like the concept
+Jun 15 15:25:00 * tux42 has quit (Quit: signing off for the week. happy friday everyone!)
+Jun 15 15:35:00 <storageguy> resilver 71%. almost there
+Jun 15 15:35:25 <kerneldev> you're really watching that like a hawk huh
+Jun 15 15:35:50 <storageguy> 14TB of data, you bet I am
+Jun 15 15:45:00 <secops_mike> I need to head out too. kerneldev, storageguy - have a good weekend
+Jun 15 15:45:25 <kerneldev> you too mike. don't let the alerts keep you up
+Jun 15 15:45:50 <secops_mike> pagerduty doesn't care about weekends :P
+Jun 15 15:46:15 * secops_mike has quit (Quit: Leaving)
+Jun 15 16:00:00 <storageguy> just us two now kerneldev
+Jun 15 16:00:25 <kerneldev> friday afternoon ghost town
+Jun 15 16:05:15 * archuser (arch@btw.example.com) has joined #linux
+Jun 15 16:05:30 <archuser> hey, anyone around?
+Jun 15 16:05:55 <kerneldev> hey, what's up?
+Jun 15 16:06:20 <archuser> I broke my system updating and now I'm in an emergency shell. grub can't find the root partition
+Jun 15 16:06:45 <kerneldev> did you update grub or change disk layout?
+Jun 15 16:07:10 <archuser> I think the kernel update changed the UUID references
+Jun 15 16:07:35 <storageguy> boot from a live USB and check /etc/fstab and /etc/default/grub
+Jun 15 16:07:58 <archuser> I'm on the live USB now. blkid shows different UUIDs than what's in fstab
+Jun 15 16:08:20 <kerneldev> did you reformat a partition by accident?
+Jun 15 16:08:45 <archuser> oh wait... I think I accidentally formatted my boot partition instead of the USB drive
+Jun 15 16:09:10 <storageguy> ouch. if you just formatted it, your data partitions should be fine
+Jun 15 16:09:35 <kerneldev> mount your root partition, arch-chroot into it, reinstall the kernel and regenerate grub
+Jun 15 16:09:58 <archuser> mount /dev/sda2 /mnt && arch-chroot /mnt then pacman -S linux?
+Jun 15 16:10:20 <kerneldev> yes, and then grub-mkconfig -o /boot/grub/grub.cfg after
+Jun 15 16:10:45 <archuser> also need to grub-install /dev/sda first right? since I formatted the boot partition
+Jun 15 16:11:10 <kerneldev> depends on if you're UEFI or BIOS. UEFI means you need to reinstall the EFI bootloader
+Jun 15 16:11:35 <archuser> UEFI. so grub-install --target=x86_64-efi --efi-directory=/boot/efi
+Jun 15 16:11:58 <kerneldev> make sure the EFI partition is mounted first
+Jun 15 16:12:20 <archuser> right. ok I'll work through this. thanks for the guidance
+Jun 15 16:12:45 <storageguy> classic arch moment. I use arch btw :P
+Jun 15 16:13:10 <archuser> I earned that meme today
+Jun 15 16:25:00 <archuser> update: it's booting again! thanks kerneldev and storageguy
+Jun 15 16:25:25 <kerneldev> glad to hear it. maybe make a snapshot before updates next time
+Jun 15 16:25:50 <archuser> yeah I need to set up snapper or timeshift
+Jun 15 16:26:15 <storageguy> timeshift with btrfs is dead simple. no excuse not to have it
+Jun 15 16:26:40 <archuser> adding it to my todo list right now
+Jun 15 16:30:00 * archuser has left #linux (back to my restored system, weekend time!)
+Jun 15 16:45:00 <storageguy> resilver complete! state: ONLINE, zero errors across the board
+Jun 15 16:45:25 <kerneldev> congrats! run a scrub next week to verify all the data
+Jun 15 16:45:50 <storageguy> already have a monthly scrub cron. next one is in two weeks
+Jun 15 16:50:00 <storageguy> alright I'm heading out. have a good weekend kerneldev
+Jun 15 16:50:25 <kerneldev> you too. enjoy the new drive
+Jun 15 16:50:50 * storageguy has quit (Quit: Leaving)
+Jun 15 17:00:00 <kerneldev> just me and the kernel source now
+Jun 15 17:15:00 * kerneldev has quit (Quit: time to touch grass. see you all monday)

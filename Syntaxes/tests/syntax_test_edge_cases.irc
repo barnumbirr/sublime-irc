@@ -1,0 +1,81 @@
+# SYNTAX TEST "Packages/IRC Syntax/Syntaxes/IRC.sublime-syntax"
+
+# ── Single-character nicknames ────────────────────────────
+
+[12:34] <a> test
+#        ^ entity.name.tag.nickname.irc
+
+[12:34] <X> test
+#        ^ entity.name.tag.nickname.irc
+
+# ── RFC 2812 special characters in nicknames ─────────────
+
+[12:34] <nick[away]> brb
+#        ^^^^^^^^^^ entity.name.tag.nickname.irc
+#                  ^ punctuation.definition.reference.nickname.end.irc
+
+[12:34] <{nick}> test
+#        ^^^^^^ entity.name.tag.nickname.irc
+
+# ── Mismatched brackets are not timestamps ───────────────
+
+[12:34 <ab> no closing bracket
+# <- - meta.date.irc
+
+12:34] <ab> no opening bracket
+# <- - meta.date.irc
+
+# ── Channel variations ───────────────────────────────────
+
+00:01 -!- foo joined ##linux
+#                    ^ punctuation.definition.channel.irc
+#                     ^^^^^^ constant.other.channel.irc
+
+00:01 -!- foo joined &local
+#                    ^ punctuation.definition.channel.irc
+#                     ^^^^^ constant.other.channel.irc
+
+# ── URL excludes trailing punctuation ────────────────────
+
+[12:34] <ab> https://x.co, ok
+#            ^^^^^^^^^^^^ markup.underline.link.irc
+#                         ^ - markup.underline.link
+
+[12:34] <ab> (https://x.co) ok
+#             ^^^^^^^^^^^^ markup.underline.link.irc
+#                          ^ - markup.underline.link
+
+# ── Quit reasons in both bracket styles ──────────────────
+
+00:01 -!- foo has quit [Ping timeout: 480 seconds]
+#                 ^^^^ keyword.other.quit.irc
+#                       ^^^^^^^^^^^^^^^^^^^^^^^^^ string.unquoted.quit-message.irc
+
+00:01 -!- foo has quit (Quit: bye)
+#                 ^^^^ keyword.other.quit.irc
+#                       ^^^^^^^^^ string.unquoted.quit-message.irc
+
+# ── Topic changes ────────────────────────────────────────
+
+00:01 -!- foo changed the topic of #bar to: hi!
+#         ^^^ entity.name.tag.nickname.irc
+#                                  ^ punctuation.definition.channel.irc
+#                                   ^^^ constant.other.channel.irc
+#                                        ^^ - string.unquoted.topic
+#                                           ^^^ string.unquoted.topic.irc
+
+# ── Bracketed datetime ───────────────────────────────────
+
+[2021-03-27 12:34:56] <ab> test
+# <- punctuation.section.date.begin.irc
+#^^^^ constant.numeric.value.irc
+#    ^ punctuation.separator.date.irc
+#     ^^ constant.numeric.value.irc
+#       ^ punctuation.separator.date.irc
+#        ^^ constant.numeric.value.irc
+#           ^^ constant.numeric.value.irc
+#             ^ punctuation.separator.date.irc
+#              ^^ constant.numeric.value.irc
+#                ^ punctuation.separator.date.irc
+#                 ^^ constant.numeric.value.irc
+#                   ^ punctuation.section.date.end.irc

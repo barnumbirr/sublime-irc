@@ -2,15 +2,22 @@
 
 IRC log file syntax highlighting for Sublime Text.
 
-## Screenshots
+## Supported Formats
 
-`#debian` on irc.oftc.net and `#ubuntu` on irc.libera.chat using Sublime Text's default `Monokai` color scheme:
+- **irssi** — `-!-` event markers, unbracketed timestamps
+- **weechat** — `-->`, `<--`, `--` event markers, tab-separated fields
+- **HexChat** — `*` event markers, named-month timestamps (`Mar 27 12:34:56`)
+- **mIRC** — `*` event markers, bracketed timestamps (`[12:34]`)
+- **ZNC** — `***` event markers, `Joins:`/`Parts:`/`Quits:` keywords
+- **Snak** — `***` event markers
 
-<p align="center">
-    <a href="https://i.imgur.com/GHFblkN.png" target="_blank"> <img src="https://i.imgur.com/GHFblkN.png" width="49%"/></a>
-    <a href="https://i.imgur.com/0C6a5r5.png" target="_blank"> <img src="https://i.imgur.com/0C6a5r5.png" width="49%"/></a>
-    <i>Click images to enlarge.</i>
-</p>
+IRC log files are auto-detected when possible via content matching.
+
+## Preview
+
+`irssi` formatted logs with Sublime Text's default `Monokai` color scheme:
+
+![sublime-irc preview](preview.png)
 
 ## Installation
 
@@ -21,26 +28,26 @@ IRC log file syntax highlighting for Sublime Text.
 
     | Platform      | Install Command                                                |
     | --------------| -------------------------------------------------------------- |
-    | OS X          | <kbd>Cmd</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd> → Package Control: Install Package → IRC Syntax  |
+    | macOS         | <kbd>Cmd</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd> → Package Control: Install Package → IRC Syntax  |
     | Linux/Windows | <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd> → Package Control: Install Package → IRC Syntax |
 
-3. Reopen all IRC log files and select the 'IRC' syntax from the menu.
+3. IRC log files are auto-detected. If not, select 'IRC' from `View → Syntax`.
 
 ### Without Package Control
 
 1. Locate your Sublime Text "Packages" directory and navigate to it
 
-    | Platform | Installation Path                                           |
-    | -------- | ----------------------------------------------------------- |
-    | Linux    | `~/.config/sublime-text-3/Packages/`                        |
-    | OSX      | `~/Library/Application\ Support/Sublime\ Text\ 3/Packages/` |
-    | Windows  | `%AppData%\Roaming\Sublime Text 3\Packages`                 |
+    | Platform | Installation Path                                            |
+    | -------- | ------------------------------------------------------------ |
+    | Linux    | `~/.config/sublime-text/Packages/`                           |
+    | macOS    | `~/Library/Application\ Support/Sublime\ Text/Packages/`     |
+    | Windows  | `%AppData%\Roaming\Sublime Text\Packages`                    |
 
 2. Clone this repository into `IRC Syntax` directory
 
-```bash
-$ git clone git://github.com/barnumbirr/sublime-irc.git 'IRC Syntax'
-```
+    ```bash
+    git clone https://github.com/barnumbirr/sublime-irc.git 'IRC Syntax'
+    ```
 
 ## Configuration
 
@@ -52,9 +59,9 @@ theme rules:
 ```json
     {
         "name": "IRC Nickname",
-        "scope": "string.unquoted.username.irc",
-        "foreground": ["#7F00FF", "#FF0000"]
-    },
+        "scope": "entity.name.tag.nickname.irc",
+        "foreground": ["#FF0000", "#00FF00", "#0000FF"]
+    }
 ```
 
 These foreground colors should be readable in most themes.
@@ -62,7 +69,7 @@ These foreground colors should be readable in most themes.
 ## License:
 
 ```
-Copyright 2021 Martin Simon
+Copyright 2021-2026 Martin Simon
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

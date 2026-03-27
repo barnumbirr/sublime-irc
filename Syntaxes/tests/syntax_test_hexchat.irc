@@ -1,0 +1,28 @@
+# SYNTAX TEST "Packages/IRC Syntax/Syntaxes/IRC.sublime-syntax"
+
+Mar 27 12:34:56 <ab> hi
+# <- meta.date.irc constant.other.month-name.irc
+#^^ constant.other.month-name.irc
+#   ^^ constant.numeric.value.irc
+#      ^^ constant.numeric.value.irc
+#        ^ punctuation.separator.date.irc
+#         ^^ constant.numeric.value.irc
+#           ^ punctuation.separator.date.irc
+#            ^^ constant.numeric.value.irc
+#              ^ - meta.date
+#               ^ punctuation.definition.reference.nickname.begin.irc
+#                ^^ entity.name.tag.nickname.irc
+#                  ^ punctuation.definition.reference.nickname.end.irc
+
+Mar 27 12:34:56 * foo has joined #bar
+#               ^ punctuation.definition.event.irc
+#                 ^^^ meta.event.irc entity.name.tag.nickname.irc
+#                         ^^^^^^ meta.event.irc keyword.other.join.irc
+#                                ^ punctuation.definition.channel.irc
+#                                 ^^^ constant.other.channel.irc
+
+Mar 27 12:34:56 * foo has quit (bye)
+#               ^ punctuation.definition.event.irc
+#                 ^^^ meta.event.irc entity.name.tag.nickname.irc
+#                         ^^^^ meta.event.irc keyword.other.quit.irc
+#                               ^^^ meta.event.irc string.unquoted.quit-message.irc

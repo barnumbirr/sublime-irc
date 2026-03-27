@@ -1,0 +1,305 @@
+Session Start: Sat Jun 15 08:00:00 2024
+Session Ident: #linux
+* Now talking in #linux
+* Topic is 'Welcome to #linux | Kernel 6.9.4 stable | No distro wars | Paste: https://paste.debian.net | Wiki: https://linux.wiki.kernel.org'
+* Set by sysop on Fri Jun 14 19:32:11 2024
+[08:00] * tux_admin (admin@gateway/shell/bnc.example.com) has joined #linux
+[08:00] <tux_admin> morning all
+[08:01] <kerneldev> hey tux_admin, you're up early for a saturday
+[08:01] <tux_admin> couldn't sleep, one of the prod servers started throwing io errors around 3am
+[08:02] <kerneldev> ouch. which filesystem?
+[08:02] <tux_admin> ext4 on an nvme drive, smartctl says it's fine though
+[08:03] <tux_admin> dmesg is full of "EXT4-fs error (device nvme0n1p2): ext4_lookup:1855: inode #131073: comm systemd-journal"
+[08:03] <kerneldev> that inode error usually points to metadata corruption
+[08:04] <kerneldev> have you tried running e2fsck on it yet?
+[08:04] <tux_admin> not yet, it's a live root filesystem so I'd need to boot from rescue media
+[08:05] <kerneldev> yeah definitely don't run it mounted. check https://ext4.wiki.kernel.org/index.php/Ext4_Metadata_Checksums for background
+[08:06] <tux_admin> thanks, bookmarking that
+[08:07] * netguru (ng@10.0.5.22) has joined #linux
+[08:07] <netguru> hi everyone. anyone have experience with bonding interfaces on rhel9?
+[08:08] <kerneldev> netguru: nmcli or manual config?
+[08:08] <netguru> nmcli. I keep getting "Error: Connection activation failed: No suitable device found"
+[08:09] <kerneldev> are both slave interfaces down before you add them to the bond?
+[08:09] <netguru> hmm let me check
+[08:10] <tux_admin> netguru: also make sure the bonding module is loaded. lsmod | grep bonding
+[08:10] <netguru> bonding module is loaded yeah. let me try bringing the interfaces down first
+[08:12] * secops_jen (jen@infosec.corp.example.com) has joined #linux
+[08:12] <secops_jen> good morning
+[08:12] <tux_admin> morning jen
+[08:13] <secops_jen> anyone following the xz-utils situation? there's a new write-up: https://research.swtch.com/xz-timeline
+[08:14] <kerneldev> yeah that whole thing is wild. social engineering over years
+[08:14] <secops_jen> we're now pinning every dependency hash in our build system and running reproducible builds
+[08:15] <tux_admin> that's smart. we should do the same honestly
+[08:16] <netguru> ok bringing the interfaces down first fixed it. bond0 is up now with mode 802.3ad
+[08:16] <kerneldev> netguru: nice. make sure your switch side is configured for LACP too
+[08:18] * dockermike (mike@containers.dev.example.org) has joined #linux
+[08:18] <dockermike> hey folks. quick question about cgroup v2 and container runtimes
+[08:19] <dockermike> we're migrating from cgroupv1 to v2 on our kubernetes nodes and some pods are failing
+[08:20] <dockermike> OCI runtime error, something about "failed to create cgroup" in the kubelet logs
+[08:20] <secops_jen> dockermike: which container runtime? containerd or cri-o?
+[08:21] <dockermike> containerd 1.7.x
+[08:21] <secops_jen> make sure SystemdCgroup is set to true in your containerd config
+[08:22] <dockermike> let me check... it was set to false. that's probably it
+[08:23] <tux_admin> dockermike: also verify your kubelet is using --cgroup-driver=systemd
+[08:25] * netguru has quit IRC (Ping timeout: 260 seconds)
+[08:27] <dockermike> that was it! SystemdCgroup = true fixed it. pods are starting now
+[08:28] <kerneldev> the cgroupv1 to v2 migration catches everyone at least once
+[08:29] <tux_admin> the docs at https://kubernetes.io/docs/concepts/architecture/cgroups/ are actually pretty good now
+[08:30] * netguru (ng@10.0.5.22) has joined #linux
+[08:30] <netguru> sorry, connection dropped. did I miss anything?
+[08:31] <tux_admin> just dockermike fixing his cgroup issue
+[08:35] <kerneldev> anyone running btrfs in production? thinking about switching from ext4 for snapshots
+[08:36] <tux_admin> we use it on a few servers. snapshots are great for backups
+[08:37] <kerneldev> yeah I've been reading https://btrfs.readthedocs.io/en/latest/Administration.html
+[08:37] <tux_admin> raid5/6 is still not recommended though. stick with raid1 or raid10 for redundancy
+[08:40] * oldtimer (ot@dialup.retro.example.net) has joined #linux
+[08:40] <oldtimer> greetings all
+[08:41] <oldtimer> I'm trying to compile kernel 6.9.4 with a custom .config and getting build errors
+[08:42] <oldtimer> error: implicit declaration of function 'access_ok' in my custom module
+[08:42] <kerneldev> oldtimer: access_ok changed signature in 5.x, you need to drop the first argument (type)
+[08:43] <kerneldev> it used to be access_ok(type, addr, size) now it's just access_ok(addr, size)
+[08:44] <oldtimer> ahh that explains it. this module hasn't been updated in a while. thanks kerneldev
+[08:46] * dockermike has quit IRC (Quit: heading to the gym, back later)
+[08:50] <secops_jen> does anyone have a good iptables to nftables migration guide?
+[08:51] <kerneldev> there's iptables-translate and ip6tables-translate that can convert rules
+[08:51] <tux_admin> the arch wiki is the best resource: https://wiki.archlinux.org/title/Nftables
+[08:53] <oldtimer> we migrated last year. the hardest part was the custom chains and jump targets
+[08:55] * tux_admin is now known as tux_afk
+[08:55] <tux_afk> stepping out for coffee, back in a bit
+[09:05] * storageguy (sg@san.datacenter.example.com) has joined #linux
+[09:05] <storageguy> morning. anyone dealt with multipath issues after a kernel upgrade?
+[09:06] <kerneldev> storageguy: what kind of storage?
+[09:06] <storageguy> fc-connected netapp via multipathd
+[09:07] <storageguy> after upgrading from 6.8 to 6.9 the paths keep flipping between active and ghost
+[09:07] <kerneldev> check if the scsi_dh_alua module is loaded properly
+[09:09] <oldtimer> storageguy: did the multipath.conf get overwritten during the upgrade?
+[09:09] <storageguy> let me diff against backup... oh. yeah it got replaced with the default
+[09:10] <oldtimer> been there
+[09:10] <kerneldev> always back up /etc/multipath.conf before kernel upgrades
+[09:11] <storageguy> lesson learned. restoring from backup now
+[09:15] * tux_afk is now known as tux_admin
+[09:15] <tux_admin> back
+[09:16] <secops_jen> wb
+[09:18] <tux_admin> so I got a question about systemd-resolved. we're seeing intermittent dns failures
+[09:19] <tux_admin> resolvectl status shows the right dns servers but queries randomly time out
+[09:20] <kerneldev> is DNSSEC validation enabled?
+[09:20] <tux_admin> yes, DNSSEC=allow-downgrade
+[09:21] <kerneldev> try setting DNSSEC=no temporarily. there's a known issue with certain upstream resolvers
+[09:25] <netguru> tux_admin: also check DNSOverTLS=opportunistic, that can cause weirdness
+[09:27] * oldtimer has quit IRC (Quit: lunch break)
+[09:30] <tux_admin> ok disabling dnssec fixed the timeouts
+[09:30] <kerneldev> figured. file a bug at https://github.com/systemd/systemd/issues if you want
+[09:35] * secops_jen has quit IRC (Quit: meeting time, back after lunch)
+[09:40] <storageguy> restored multipath.conf and restarted multipathd. all paths active/ready now
+[09:41] <storageguy> now I need to figure out why our lvm thin pool is at 95% metadata usage
+[09:42] <kerneldev> ooh that's dangerous. if metadata fills up you can lose the whole pool
+[09:43] <storageguy> alerting at 80% but it jumped from 82 to 95 overnight
+[09:44] <kerneldev> you can extend the metadata lv with lvextend --poolmetadatasize
+[09:50] <netguru> has anyone tried systemd-networkd instead of NetworkManager on servers?
+[09:51] <kerneldev> I use it on all my servers. much simpler config
+[09:52] <kerneldev> main gotcha is wifi support is poor, but for servers that's not an issue
+[09:53] <kerneldev> also make sure to disable NetworkManager first or they'll fight over interfaces
+[09:55] * dockermike (mike@containers.dev.example.org) has joined #linux
+[09:55] <dockermike> back from the gym
+[09:56] <dockermike> anyone know if podman 5.x supports pasta networking by default now?
+[09:57] <kerneldev> yes, pasta replaced slirp4netns as the default in podman 5.0
+[09:58] <tux_admin> we switched to podman last year. docker compose compatibility is pretty good now
+[10:00] <storageguy> found the metadata issue. someone set up a cron that creates daily thin snapshots but never cleans up
+[10:01] <kerneldev> classic
+[10:01] <tux_admin> lol. retention policies exist for a reason
+[10:05] * netguru has quit IRC (Quit: lunch break, see you all later)
+[10:10] <dockermike> anyone have tips on buildkit layer caching in CI environments?
+[10:11] <kerneldev> use --cache-to and --cache-from with a registry cache backend
+[10:12] <dockermike> we tried that but cache invalidation was aggressive
+[10:13] <tux_admin> are you doing COPY . . before package installs in your Dockerfile?
+[10:13] <dockermike> yeah we COPY . . early on
+[10:14] <tux_admin> that's your problem. copy just the dependency files first, run install, then copy everything
+[10:15] <dockermike> doh, right. container 101 and I should have known better
+[10:20] * secops_jen (jen@infosec.corp.example.com) has joined #linux
+[10:20] <secops_jen> back from my meeting. we want to integrate trivy into CI for container scanning
+[10:22] <dockermike> we use trivy, it's solid. also check out grype as an alternative
+[10:24] <dockermike> set severity thresholds with --severity HIGH,CRITICAL to avoid false positive noise
+[10:28] * oldtimer (ot@dialup.retro.example.net) has joined #linux
+[10:28] <oldtimer> back. got my module to compile after fixing access_ok
+[10:30] <oldtimer> but now I'm getting a GPL compatibility warning
+[10:31] <kerneldev> you need MODULE_LICENSE("GPL") in your module
+[10:32] <oldtimer> internal use only so GPL is fine. added it and the warning is gone
+[10:35] <storageguy> question about zfs on linux. production ready?
+[10:36] <kerneldev> openzfs is very mature. lots of people run it in production
+[10:36] <tux_admin> we run it on backup servers. zfs send/recv for remote replication is amazing
+[10:38] <tux_admin> ubuntu ships it in their kernel packages actually
+[10:39] <kerneldev> good plan to test on non-critical first. docs at https://openzfs.github.io/openzfs-docs/
+[10:42] <secops_jen> anyone implemented LUKS2 with fido2 tokens for full disk encryption?
+[10:43] <kerneldev> systemd-cryptenroll makes it easy. you can combine fido2 with tpm2 for two-factor unlock
+[10:45] <tux_admin> we use clevis and tang for network-bound encryption on headless servers
+[10:50] * netguru (ng@10.0.5.22) has joined #linux
+[10:50] <netguru> back. so I have a networking question about asymmetric routing on multihomed hosts
+[10:52] <netguru> traffic comes in on eth0 but replies go out on eth1
+[10:52] <kerneldev> you need policy-based routing with separate tables per interface
+[10:54] <tux_admin> check rp_filter settings. net.ipv4.conf.all.rp_filter should be 2 for loose mode
+[10:55] <netguru> it's set to 1. that might be it
+[10:55] <tux_admin> strict mode (1) drops packets that arrive on unexpected interfaces
+[10:58] <netguru> changed to 2. that fixed it! responses going out the correct interface now
+[11:00] * oldtimer has quit IRC (Quit: kernel compiling, brb)
+[11:01] * alice (alice@home.example.net) has joined #linux
+[11:02] * tux_admin changed the topic of #linux to: Linux help & chat | Kernel 6.9.4 released | Paste: https://bpaste.net
+[11:03] <alice> tux_admin: thanks for updating the topic
+[11:05] <dockermike> anyone have a preferred method for local k3s clusters?
+[11:06] <kerneldev> k3s is dead simple. curl -sfL https://get.k3s.io | sh -
+[11:06] <secops_jen> please don't pipe curl to shell in production
+[11:07] <kerneldev> haha fair. download first, verify checksum, then run
+[11:08] <tux_admin> check out k3d if you want k3s in docker: https://k3d.io
+[11:10] <secops_jen> kube-bench for security scanning: https://github.com/aquasecurity/kube-bench
+[11:20] * oldtimer (ot@dialup.retro.example.net) has joined #linux
+[11:20] <oldtimer> kernel compiled successfully. custom module loads and works
+[11:21] <kerneldev> congrats oldtimer
+[11:25] <netguru> random question: what's everyone's preferred terminal emulator?
+[11:26] <kerneldev> alacritty. gpu-accelerated and fast
+[11:26] <tux_admin> kitty. similar to alacritty but more features
+[11:27] <dockermike> wezterm. lua config is great
+[11:27] <oldtimer> xterm. don't judge me
+[11:30] <secops_jen> has anyone set up proper auditd for tracking privileged shell commands?
+[11:31] <kerneldev> -a always,exit -F arch=b64 -S execve -F euid=0 -k root-commands
+[11:33] <tux_admin> there's also the pam_tty_audit module for keystroke logging per-session
+[11:35] * storageguy has quit IRC (Quit: heading to the datacenter for cable management)
+[11:40] <tux_admin> going back to my ext4 issue, I scheduled a maintenance window tonight for e2fsck
+[11:41] <kerneldev> good. make sure to back up first
+[11:42] <tux_admin> already taken a dd image of the partition
+[11:45] <dockermike> has anyone migrated from docker swarm to kubernetes?
+[11:46] <tux_admin> we did that last year. kompose converts docker-compose files to k8s manifests
+[11:47] <dockermike> how accurate is the conversion?
+[11:47] <tux_admin> maybe 70%. you'll manually handle volumes, networking, and secrets
+[11:50] <secops_jen> set up network policies from the start. default k8s allows all pod-to-pod traffic
+[11:55] * netguru has quit IRC (Quit: heading out for the afternoon)
+[12:00] * kerneldev has quit IRC (Quit: lunch)
+[12:05] <tux_admin> quiet time
+[12:06] <secops_jen> perfect for getting actual work done
+[12:10] <oldtimer> what's the deal with the rust-in-kernel stuff? is it actually usable yet?
+[12:12] <tux_admin> it's still early but there are real drivers being written in rust now
+[12:12] <secops_jen> the nova gpu driver is a big one. still wip
+[12:14] <tux_admin> the kernel has had so many buffer overflow vulns. rust would prevent most of them
+[12:15] <oldtimer> maybe I'll give it a look. https://doc.rust-lang.org/book/ is the starting point right?
+[12:16] <tux_admin> yes, the rust book is excellent
+[12:20] * dockermike has quit IRC (Quit: lunch, back later)
+[12:30] * oldtimer has left #linux
+[12:35] <tux_admin> secops_jen: have you dealt with selinux denials on custom systemd services?
+[12:36] <secops_jen> all the time. what's the denial?
+[12:37] <tux_admin> type=AVC msg=audit: avc:  denied  { read } for  pid=4521 comm="myapp" name="config.yaml" scontext=system_u:system_r:myapp_t:s0 tcontext=system_u:object_r:etc_t:s0 tclass=file
+[12:38] <secops_jen> your custom type doesn't have a policy to read etc_t files
+[12:39] <secops_jen> audit2allow is a blunt instrument. better to write a targeted policy manually
+[12:40] <secops_jen> allow myapp_t etc_t:file { open read getattr };
+[12:42] <tux_admin> worked. selinux is powerful but the learning curve is steep
+[12:45] * kerneldev (kd@kernel.hackerspace.example.org) has joined #linux
+[12:45] <kerneldev> back from lunch
+[12:46] <tux_admin> wb. we were talking about selinux
+[12:46] <kerneldev> my favorite topic /s
+[12:50] <kerneldev> speaking of security, new spectre variant patch on lkml: https://lore.kernel.org/lkml/
+[12:52] <kerneldev> performance impact looks minimal this time. maybe 1-2%
+[12:55] * storageguy (sg@san.datacenter.example.com) has joined #linux
+[12:55] <storageguy> back from the datacenter. cable management done
+[12:56] <storageguy> 4 hours of velcro straps and cable combs
+[13:00] <tux_admin> I need to set up wireguard between two sites. anyone have a quick reference?
+[13:01] <kerneldev> honestly like 10 lines of config per side. https://www.wireguard.com/quickstart/
+[13:01] <storageguy> wireguard is so much easier than openvpn. night and day
+[13:02] <secops_jen> just make sure to use proper key management. no private keys in plaintext over email
+[13:05] * netguru (ng@10.0.5.22) has joined #linux
+[13:05] <netguru> afternoon all. anything exciting?
+[13:06] <tux_admin> just the usual. selinux, security patches, wireguard
+[13:06] <netguru> so a normal saturday in #linux
+[13:10] <netguru> question about tc. is htb still the way to go or is there something newer?
+[13:11] <kerneldev> check out cake qdisc. simpler and handles fairness, ack prioritization, and bufferbloat
+[13:12] <netguru> tc qdisc add dev br0 root cake bandwidth 1gbit -- that simple?
+[13:12] <kerneldev> basically yes
+[13:15] <secops_jen> heads up everyone, new CVE affecting openssh: CVE-2024-6387
+[13:16] <secops_jen> remote code execution via race condition. affects 8.5p1 through 9.7p1. patch to 9.8p1 asap
+[13:16] <kerneldev> that's the regreSSHion vuln right?
+[13:17] <secops_jen> yes. patch your systems
+[13:18] <storageguy> checking our servers now. thanks for the heads up
+[13:19] <netguru> our sshd configs set LoginGraceTime to 0 which mitigates this right?
+[13:19] <secops_jen> it does but also disables login timeout entirely. better to just patch
+[13:25] * dockermike (mike@containers.dev.example.org) has joined #linux
+[13:25] <dockermike> back from lunch
+[13:26] <secops_jen> dockermike: check your openssh versions. CVE-2024-6387 regreSSHion
+[13:30] * oldtimer (ot@dialup.retro.example.net) has joined #linux
+[13:30] <oldtimer> well this is embarrassing. I accidentally rm -rf'd my kernel source tree
+[13:31] <oldtimer> I do use git but rm'd the wrong directory. git clone is running again
+[13:32] <tux_admin> at least you can re-clone. could have been worse
+[13:33] <kerneldev> alias rm='rm -i' is your friend
+[13:35] <dockermike> all our hosts are on openssh 9.6p1, within the vulnerable range. pushing updates now
+[13:36] <secops_jen> good. make sure to restart sshd after updating
+[13:40] <storageguy> we're all patched. the beauty of ansible
+[13:41] <tux_admin> what's your ansible setup? tower/awx or command line?
+[13:42] <storageguy> awx. web ui is nice for the ops team
+[13:43] <tux_admin> we've been looking at semaphore: https://semaphoreui.com/
+[13:50] <kerneldev> anyone have strong opinions on io_uring vs traditional aio?
+[13:51] <secops_jen> io_uring has had a LOT of security issues. google disabled it in their prod kernels
+[13:52] <tux_admin> performance-wise io_uring wins hands down though
+[13:53] <kerneldev> I'll use it behind a feature flag so we can disable it if needed
+[13:55] * netguru has quit IRC (Ping timeout: 245 seconds)
+[14:00] <oldtimer> kernel source re-cloned. back in business
+[14:01] <dockermike> set up a local git mirror with --mirror so re-cloning is faster next time
+[14:10] * secops_jen has quit IRC (Quit: done for the day, enjoy your weekend everyone)
+[14:15] <kerneldev> losing people as the afternoon goes on
+[14:16] <tux_admin> it's saturday, surprised anyone's still here
+[14:25] <tux_admin> alright I need to prep for that maintenance window tonight
+[14:26] <kerneldev> good luck with it. let us know how it goes
+[14:27] * tux_admin has quit IRC (Quit: maintenance prep)
+[14:30] * netguru (ng@10.0.5.22) has joined #linux
+[14:30] <netguru> sorry, wifi issues. the irony of a network engineer with network problems
+[14:31] <kerneldev> haha the cobbler's children have no shoes
+[14:35] <netguru> got cake qdisc working on the bridge. latency under load dropped significantly
+[14:40] * oldtimer is now known as oldtimer_away
+[14:45] <dockermike> I should head out. openssh patches rolling out and everything looks good
+[14:46] * dockermike has quit IRC (Quit: have a good weekend)
+[14:55] <netguru> so kerneldev, what are you working on kernel-wise these days?
+[14:56] <kerneldev> mostly BPF stuff. writing a network observability tool using libbpf
+[14:57] <kerneldev> bpftrace is great for one-off investigations
+[14:58] <storageguy> I've used bcc tools for storage analysis. biolatency and biosnoop are lifesavers
+[15:05] <storageguy> alright I need to head out. got some zfs testing this weekend
+[15:06] * storageguy has left #linux
+[15:10] <netguru> getting quiet in here
+[15:11] <kerneldev> saturday afternoon. everyone's touching grass
+[15:15] * oldtimer_away is now known as oldtimer
+[15:15] <oldtimer> back. got my module working with dkms so it survives kernel upgrades
+[15:16] <kerneldev> dkms.conf is straightforward. just make sure AUTOINSTALL is set
+[15:20] <netguru> I'm going to call it a day. thanks for the help with rp_filter and cake
+[15:21] * netguru has quit IRC (Quit: weekend mode activated)
+[15:25] <oldtimer> kerneldev: what's your recommended way to manage kernel boot parameters?
+[15:26] <kerneldev> /etc/sysctl.d/ for sysctl, /etc/default/grub for cmdline. use numbered files like 99-custom.conf
+[15:28] <kerneldev> drop-in directories survive package updates
+[15:30] <oldtimer> alright I'm done for the day. thanks for all the help kerneldev
+[15:31] * oldtimer has quit IRC (Quit: back to the 90s)
+[15:35] <kerneldev> and then there was one
+[15:40] * kerneldev has quit IRC (Quit: going outside, see you all tomorrow)
+[15:45] * tux_admin (admin@gateway/shell/bnc.example.com) has joined #linux
+[15:45] <tux_admin> hello? anyone around?
+[15:50] <tux_admin> guess not. maintenance window is at 21:00, just getting things ready
+[15:55] * tux_admin has quit IRC (Quit: will be back tonight)
+Session Close: Sat Jun 15 15:55:00 2024
+Session Start: Sat Jun 15 21:00:00 2024
+Session Ident: #linux
+[21:00] * tux_admin (admin@gateway/shell/bnc.example.com) has joined #linux
+[21:00] <tux_admin> starting the e2fsck maintenance now
+[21:05] * kerneldev (kd@kernel.hackerspace.example.org) has joined #linux
+[21:05] <kerneldev> tux_admin: saw your message earlier. how's it going?
+[21:06] <tux_admin> just booted into rescue mode. running e2fsck -f -v /dev/nvme0n1p2 now
+[21:07] <kerneldev> fingers crossed
+[21:10] <tux_admin> found and fixed 3 orphaned inodes and some directory entry issues
+[21:11] <kerneldev> clean exit code?
+[21:11] <tux_admin> exit code 1 which means errors were corrected. no code 4 or 8
+[21:12] <kerneldev> that's the best outcome
+[21:15] <tux_admin> rebooting into normal mode now
+[21:18] <tux_admin> system is back up. all services healthy. dmesg is clean
+[21:19] <kerneldev> excellent. what caused the corruption in the first place?
+[21:20] <tux_admin> still not sure. ups logs show a power blip around 2:50am
+[21:20] <kerneldev> might want to add metadata checksums. tune2fs -O metadata_csum
+[21:21] <tux_admin> I'll schedule that for next weekend. don't want to push my luck tonight
+[21:22] <kerneldev> fair enough
+[21:25] <tux_admin> alright, maintenance complete. closing out the change request
+[21:26] <tux_admin> thanks for checking in kerneldev
+[21:26] <kerneldev> no problem. glad it went smoothly
+[21:27] <tux_admin> going to bed now. have a good night
+[21:27] * tux_admin has quit IRC (Quit: zzz)
+[21:28] <kerneldev> night. another day in #linux
+[21:30] * kerneldev has quit IRC (Quit: EOF)
+Session Close: Sat Jun 15 22:00:00 2024

@@ -1,0 +1,300 @@
+2024-06-15 08:00:12	-->	tux_admin (tux@gateway/web/freenode/ip.203.0.113.42) has joined #linux
+2024-06-15 08:00:12	--	tux_admin is "Marcus Webb" on #linux #debian #sysadmin
+2024-06-15 08:00:18	<tux_admin>	morning everyone
+2024-06-15 08:00:45	-->	kerneldev (kdev@kernel.example.org) has joined #linux
+2024-06-15 08:00:45	--	kerneldev is "Satoshi Tanaka" on #linux #kernel #c-lang
+2024-06-15 08:00:52	<kerneldev>	hey tux_admin
+2024-06-15 08:01:10	<tux_admin>	anyone been following the 6.10 rc releases?
+2024-06-15 08:01:35	<kerneldev>	yeah, there's a nice scheduler patch that finally landed
+2024-06-15 08:01:58	<kerneldev>	https://lore.kernel.org/lkml/20240610-sched-ext-v7-0-12345abcde@kernel.org/
+2024-06-15 08:02:14	<tux_admin>	sched_ext right? been waiting for that for ages
+2024-06-15 08:02:30	<kerneldev>	yep, BPF-based scheduler classes. it's going to change how distros tune for workloads
+2024-06-15 08:03:01	-->	netguru (sarah@192.168.1.100) has joined #linux
+2024-06-15 08:03:01	--	netguru is "Sarah Chen" on #linux #networking #nftables
+2024-06-15 08:03:15	<netguru>	good morning #linux
+2024-06-15 08:03:45	<netguru>	anyone here dealt with nftables and docker? I'm getting some weird conflicts with the FORWARD chain
+2024-06-15 08:04:02	<tux_admin>	oh yeah, docker still defaults to iptables-legacy in a lot of setups
+2024-06-15 08:04:18	<tux_admin>	you need to set "iptables": false in /etc/docker/daemon.json and manage rules yourself
+2024-06-15 08:04:52	<kerneldev>	you need to add masquerade rules for the docker bridge yourself if you disable iptables
+2024-06-15 08:05:10	<kerneldev>	something like: nft add rule ip nat postrouting oifname "eth0" masquerade
+2024-06-15 08:05:28	<netguru>	ah right, I forgot the masquerade part. let me try that
+2024-06-15 08:06:00	-->	sysop_jane (jane@corp.megacorp.example.com) has joined #linux
+2024-06-15 08:06:00	--	sysop_jane is "Jane Rodriguez" on #linux #ansible #terraform
+2024-06-15 08:06:12	<sysop_jane>	hey all, quick question about systemd
+2024-06-15 08:06:45	<sysop_jane>	I have a service that depends on a mount point being available, but systemd starts it before the NFS mount is ready
+2024-06-15 08:07:02	<tux_admin>	add RequiresMountsFor=/path/to/mountpoint in the [Unit] section
+2024-06-15 08:07:35	<kerneldev>	RequiresMountsFor is the right approach, After=remote-fs.target is a race condition waiting to happen
+2024-06-15 08:07:50	<sysop_jane>	thanks, let me update the unit file
+2024-06-15 08:08:15	<netguru>	kerneldev: the masquerade rule worked! containers can reach the internet now
+2024-06-15 08:09:02	 *	tux_admin still uses iptables out of muscle memory
+2024-06-15 08:10:00	<--	netguru (sarah@192.168.1.100) has left #linux (thanks for the help!)
+2024-06-15 08:15:30	-->	container_kid (ck@podman.containers.example.net) has joined #linux
+2024-06-15 08:15:30	--	container_kid is "Alex Petrov" on #linux #podman #kubernetes
+2024-06-15 08:15:45	<container_kid>	anyone running podman in rootless mode on RHEL 9?
+2024-06-15 08:16:18	<container_kid>	getting permission denied when trying to bind to port 80
+2024-06-15 08:16:35	<tux_admin>	rootless containers can't bind to privileged ports by default
+2024-06-15 08:16:50	<tux_admin>	you can either use a port above 1024 or set net.ipv4.ip_unprivileged_port_start=80 in sysctl
+2024-06-15 08:17:40	<sysop_jane>	we use a reverse proxy on the host and map to high ports in the container
+2024-06-15 08:18:10	<container_kid>	that's probably the cleaner approach, thanks sysop_jane
+2024-06-15 08:18:30	<sysop_jane>	np, here's a good write-up: https://www.redhat.com/sysadmin/rootless-podman-makes-sense
+2024-06-15 08:20:00	--	Topic for #linux: "Linux support and discussion | Kernel 6.9.4 stable | Be respectful | No piracy | See also #linux-offtopic"
+2024-06-15 08:20:00	--	Topic set by chanserv on 2024-06-14 22:30:00
+2024-06-15 08:25:12	<kerneldev>	speaking of containers, anyone tried the new kernel memory cgroup v2 improvements?
+2024-06-15 08:26:20	<tux_admin>	I still get bitten by the OOM killer randomly sometimes
+2024-06-15 08:26:38	<kerneldev>	check if you're using memory.max or memory.high. memory.high gives the process a chance to reclaim before killing
+2024-06-15 08:27:30	 *	tux_admin adds "migrate to cgroup v2" to the ever-growing TODO list
+2024-06-15 08:30:00	<--	sysop_jane (jane@corp.megacorp.example.com) has quit (Quit: back to ansible playbooks)
+2024-06-15 08:45:15	-->	storageguy (sg@nas.homelab.example.org) has joined #linux
+2024-06-15 08:45:15	--	storageguy is "Dave Mitchell" on #linux #zfs #btrfs
+2024-06-15 08:45:30	<storageguy>	morning, got a btrfs question for the channel
+2024-06-15 08:46:05	<storageguy>	running btrfs raid1 on two 4TB drives. one drive is showing smart errors. what's the safest way to replace it?
+2024-06-15 08:46:22	<kerneldev>	first run btrfs device stats /mount to check the error counters
+2024-06-15 08:46:40	<storageguy>	already did, write_io_errs is climbing on /dev/sdb
+2024-06-15 08:46:58	<tux_admin>	add the new drive first, then remove the old one: btrfs device add /dev/sdc /mount && btrfs device remove /dev/sdb /mount
+2024-06-15 08:47:32	<kerneldev>	btrfs also supports in-place replace: btrfs replace start /dev/sdb /dev/sdc /mount
+2024-06-15 08:48:58	<kerneldev>	btrfs doesn't care about the path. it identifies devices by UUID
+2024-06-15 08:49:15	<storageguy>	perfect, thanks both
+2024-06-15 08:50:00	 *	storageguy goes to order a new WD Red
+2024-06-15 09:00:30	-->	netguru (sarah@192.168.1.100) has joined #linux
+2024-06-15 09:00:30	--	netguru is "Sarah Chen" on #linux #networking #nftables
+2024-06-15 09:01:02	<netguru>	I need to set up a wireguard tunnel between two sites. is there a preferred way to manage the interface with systemd?
+2024-06-15 09:01:20	<tux_admin>	systemd-networkd has native wireguard support via .netdev files
+2024-06-15 09:01:55	<netguru>	I've been using wg-quick but it doesn't play well with networkmanager on the desktops
+2024-06-15 09:02:12	<container_kid>	networkmanager has wireguard support since 1.16. you can import configs directly
+2024-06-15 09:02:30	<container_kid>	nmcli connection import type wireguard file /etc/wireguard/wg0.conf
+2024-06-15 09:03:22	<netguru>	nice, I'll test that approach, thanks container_kid
+2024-06-15 09:05:00	<--	container_kid (ck@podman.containers.example.net) has quit (Quit: lunch break)
+2024-06-15 09:15:00	-->	secops (sec@infosec.example.com) has joined #linux
+2024-06-15 09:15:00	--	secops is "Pat Kim" on #linux #security #hardening
+2024-06-15 09:15:18	<secops>	hey channel, anyone using LUKS2 with TPM2 for automatic unlock?
+2024-06-15 09:15:35	<tux_admin>	yeah, systemd-cryptenroll makes it pretty straightforward now
+2024-06-15 09:15:52	<secops>	I'm worried about evil maid attacks though. if someone swaps the initramfs, the TPM will still unseal
+2024-06-15 09:16:10	<kerneldev>	you need to bind to PCR 7 which covers secure boot state, not just PCR 0-3
+2024-06-15 09:16:28	<secops>	so: systemd-cryptenroll --tpm2-device=auto --tpm2-pcrs=0+7 /dev/sda2
+2024-06-15 09:17:02	<secops>	what about kernel updates? won't that change the PCR values and lock me out?
+2024-06-15 09:17:20	<tux_admin>	you re-enroll after kernel updates. most distros handle this with a hook in the package manager
+2024-06-15 09:17:55	<kerneldev>	yeah, and there's ukify for building unified kernel images which simplifies the whole thing
+2024-06-15 09:18:12	<secops>	https://www.freedesktop.org/software/systemd/man/latest/ukify.html
+2024-06-15 09:18:45	<tux_admin>	the old grub + initramfs + separate kernel approach is slowly dying
+2024-06-15 09:19:02	 *	kerneldev is excited about the boot security improvements in recent systemd versions
+2024-06-15 09:20:00	<storageguy>	secops: do you also encrypt swap?
+2024-06-15 09:20:18	<secops>	always. random key for swap, no hibernate support needed so it's fine
+2024-06-15 09:25:00	<--	storageguy (sg@nas.homelab.example.org) has quit (Quit: Leaving)
+2024-06-15 09:30:15	--	kerneldev is now known as kdev_afk
+2024-06-15 09:30:22	<kdev_afk>	stepping out for a bit, back in an hour
+2024-06-15 09:35:00	-->	sysop_jane (jane@corp.megacorp.example.com) has joined #linux
+2024-06-15 09:35:00	--	sysop_jane is "Jane Rodriguez" on #linux #ansible #terraform
+2024-06-15 09:35:15	<sysop_jane>	tux_admin: that RequiresMountsFor fixed my NFS issue. thanks again
+2024-06-15 09:35:32	<tux_admin>	glad to hear it
+2024-06-15 09:36:00	<sysop_jane>	now I'm fighting with ansible and the systemd module. it doesn't recognize user services properly
+2024-06-15 09:36:18	<tux_admin>	you need scope=user in the ansible systemd module and make sure lingering is enabled
+2024-06-15 09:36:52	<tux_admin>	loginctl enable-linger, otherwise the user session gets cleaned up on logout and user services die
+2024-06-15 09:37:45	<secops>	check out https://wiki.archlinux.org/title/Systemd/User - best docs on the topic
+2024-06-15 09:38:02	<sysop_jane>	bookmarked, thanks secops
+2024-06-15 09:45:00	-->	newbie_dan (dan@dsl-50-23-114-8.example.net) has joined #linux
+2024-06-15 09:45:00	--	newbie_dan is "Dan Baker" on #linux
+2024-06-15 09:45:15	<newbie_dan>	hi, I just installed Ubuntu 24.04 and can't get my wifi working
+2024-06-15 09:45:32	<tux_admin>	what wifi chipset? run lspci | grep -i network
+2024-06-15 09:45:48	<newbie_dan>	Intel Corporation Wi-Fi 6E AX211
+2024-06-15 09:46:05	<tux_admin>	that should work out of the box with iwlwifi. what does dmesg | grep iwl show?
+2024-06-15 09:46:22	<newbie_dan>	iwlwifi: probe of 0000:00:14.3 failed with error -110
+2024-06-15 09:46:40	<secops>	error -110 is usually a firmware loading timeout
+2024-06-15 09:47:15	<newbie_dan>	how do I check if I have linux-firmware? sorry I'm new to linux
+2024-06-15 09:47:32	<tux_admin>	dpkg -l | grep linux-firmware
+2024-06-15 09:48:05	<secops>	might need a newer firmware blob for AX211. check /lib/firmware/iwlwifi-ty-a0-gf-a0.pnvm exists
+2024-06-15 09:48:22	<newbie_dan>	no such file
+2024-06-15 09:48:40	<tux_admin>	you can grab it from https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git
+2024-06-15 09:49:35	<tux_admin>	download the pnvm file, drop it in /lib/firmware/, then: sudo modprobe -r iwlwifi && sudo modprobe iwlwifi
+2024-06-15 09:55:00	<newbie_dan>	it worked!! I can see wifi networks now. thanks tux_admin and secops!
+2024-06-15 09:55:18	<tux_admin>	nice! make sure to file a bug with ubuntu so they update the firmware package
+2024-06-15 09:56:08	<tux_admin>	for future updates: sudo apt update && sudo apt upgrade is all you really need
+2024-06-15 10:00:00	<--	newbie_dan (dan@dsl-50-23-114-8.example.net) has quit (Quit: Leaving)
+2024-06-15 10:15:00	--	kdev_afk is now known as kerneldev
+2024-06-15 10:15:12	<kerneldev>	back
+2024-06-15 10:15:30	<tux_admin>	welcome back. you missed a wifi debugging session
+2024-06-15 10:15:48	<kerneldev>	iwlwifi firmware issues again?
+2024-06-15 10:16:05	<tux_admin>	yep, AX211 needing a newer pnvm file. classic
+2024-06-15 10:16:22	<kerneldev>	intel really needs to get their firmware upstreamed faster
+2024-06-15 10:20:00	<netguru>	so I got wireguard working with networkmanager. one issue though - split tunneling
+2024-06-15 10:20:18	<netguru>	I only want traffic to 10.0.0.0/8 going through the tunnel, not everything
+2024-06-15 10:20:35	<tux_admin>	set AllowedIPs = 10.0.0.0/8 in the peer config instead of 0.0.0.0/0
+2024-06-15 10:21:10	<sysop_jane>	you might need to set ipv4.never-default=yes on the NM connection
+2024-06-15 10:21:28	<netguru>	that did it! nmcli connection modify wg0 ipv4.never-default yes
+2024-06-15 10:22:02	 *	netguru is finally getting the hang of networkmanager
+2024-06-15 10:30:00	-->	container_kid (ck@podman.containers.example.net) has joined #linux
+2024-06-15 10:30:00	--	container_kid is "Alex Petrov" on #linux #podman #kubernetes
+2024-06-15 10:30:15	<container_kid>	back from lunch. anyone want to talk about the kubernetes 1.30 release?
+2024-06-15 10:30:32	<sysop_jane>	yes! the sidecar containers finally went GA
+2024-06-15 10:31:42	<secops>	structured auth config is huge for multi-tenant clusters
+2024-06-15 10:32:18	<container_kid>	https://kubernetes.io/blog/2024/04/17/kubernetes-v1-30-release/
+2024-06-15 10:35:00	<kerneldev>	I still think k8s is overengineered for 90% of use cases
+2024-06-15 10:35:52	<tux_admin>	I use docker compose for my homelab and k8s at work. right tool for the right job
+2024-06-15 10:40:00	-->	storageguy (sg@nas.homelab.example.org) has joined #linux
+2024-06-15 10:40:00	--	storageguy is "Dave Mitchell" on #linux #zfs #btrfs
+2024-06-15 10:40:15	<storageguy>	ordered the new drive. while I wait, anyone have opinions on ZFS vs btrfs for a new NAS build?
+2024-06-15 10:40:32	<tux_admin>	oh boy, here we go :)
+2024-06-15 10:40:50	<kerneldev>	ZFS if you need rock-solid reliability and don't mind the licensing situation
+2024-06-15 10:41:08	<kerneldev>	btrfs if you want in-tree kernel support and can live with some rough edges
+2024-06-15 10:41:42	<kerneldev>	btrfs raid5/6 is still not production-ready. the write hole issue hasn't been fully resolved
+2024-06-15 10:42:35	<container_kid>	ZFS has better tooling for snapshots and send/receive replication IMO
+2024-06-15 10:43:45	<storageguy>	leaning toward ZFS then. is OpenZFS 2.2 stable enough?
+2024-06-15 10:44:02	<kerneldev>	2.2.4 fixed the block cloning bugs that caused data corruption in 2.2.0. make sure you're on 2.2.4+
+2024-06-15 10:44:38	 *	storageguy starts researching ZFS pool layouts
+2024-06-15 11:00:00	<--	secops (sec@infosec.example.com) has left #linux (heading to #security)
+2024-06-15 11:15:00	<sysop_jane>	anyone have a good resource for learning eBPF?
+2024-06-15 11:15:18	<kerneldev>	Brendan Gregg's "BPF Performance Tools" book is the bible
+2024-06-15 11:15:35	<kerneldev>	also check out https://ebpf.io/get-started/ for interactive tutorials
+2024-06-15 11:16:28	<kerneldev>	look at libbpf + CO-RE (Compile Once - Run Everywhere) for the modern approach
+2024-06-15 11:17:02	<container_kid>	cilium/ebpf Go library is nice if you prefer Go over C
+2024-06-15 11:30:00	<--	netguru (sarah@192.168.1.100) has quit (Quit: wireguard is configured, time for real work)
+2024-06-15 11:45:00	<tux_admin>	quiet in here. anyone want to talk about the recent xz backdoor aftermath?
+2024-06-15 11:45:35	<tux_admin>	there's been a push for reproducible builds across all major distros now
+2024-06-15 11:45:52	<sysop_jane>	debian has been working on reproducible builds for years. it's finally getting traction
+2024-06-15 11:46:28	<kerneldev>	a timing anomaly in SSH connections is what caught it
+2024-06-15 11:46:45	<tux_admin>	500ms slower SSH logins. imagine if the attacker had been more careful about performance
+2024-06-15 11:47:20	<sysop_jane>	we now audit all our build dependencies weekly
+2024-06-15 11:48:12	<kerneldev>	the real fix is more funding for critical open source maintainers
+2024-06-15 11:48:30	 *	tux_admin agrees wholeheartedly
+2024-06-15 12:00:00	<--	sysop_jane (jane@corp.megacorp.example.com) has quit (Quit: lunch break, back in an hour)
+2024-06-15 12:00:15	<--	container_kid (ck@podman.containers.example.net) has left #linux (same, food time)
+2024-06-15 12:05:35	 *	tux_admin grabs coffee
+2024-06-15 12:30:00	<storageguy>	quick ZFS question: what's the recommended ashift value for modern NVMe drives?
+2024-06-15 12:30:18	<kerneldev>	ashift=12 for 4K sector drives, which is most NVMe
+2024-06-15 12:30:52	<kerneldev>	ashift=13 (8K) is safer for some Samsung drives. it can't hurt to use 13
+2024-06-15 12:31:45	<storageguy>	going with ashift=13 then, better safe than sorry
+2024-06-15 13:00:00	-->	sysop_jane (jane@corp.megacorp.example.com) has joined #linux
+2024-06-15 13:00:00	--	sysop_jane is "Jane Rodriguez" on #linux #ansible #terraform
+2024-06-15 13:00:15	<sysop_jane>	back. missed anything?
+2024-06-15 13:00:32	<tux_admin>	just some ZFS ashift discussion
+2024-06-15 13:01:08	-->	container_kid (ck@podman.containers.example.net) has joined #linux
+2024-06-15 13:01:08	--	container_kid is "Alex Petrov" on #linux #podman #kubernetes
+2024-06-15 13:01:25	<container_kid>	anyone dealt with the ingress deprecation in favor of the kubernetes gateway API?
+2024-06-15 13:02:18	<sysop_jane>	we're migrating from ingress-nginx to the gateway API. it's more flexible but more verbose
+2024-06-15 13:02:52	<sysop_jane>	https://gateway-api.sigs.k8s.io/guides/simple-gateway/ is a decent starting point
+2024-06-15 13:15:00	-->	secops (sec@infosec.example.com) has joined #linux
+2024-06-15 13:15:00	--	secops is "Pat Kim" on #linux #security #hardening
+2024-06-15 13:15:15	<secops>	anyone running SELinux in enforcing mode on their servers?
+2024-06-15 13:15:32	<tux_admin>	I do on RHEL boxes. it's painful to set up but worth it
+2024-06-15 13:15:50	<secops>	we're trying to move from permissive to enforcing and everything is breaking
+2024-06-15 13:16:08	<kerneldev>	run in permissive first and use audit2allow to generate policies for your custom apps
+2024-06-15 13:17:00	<secops>	we've been using udica for container SELinux policies, that's helped a lot
+2024-06-15 13:17:35	<secops>	https://github.com/containers/udica - for anyone interested
+2024-06-15 13:18:00	 *	secops wishes more people took SELinux seriously instead of just disabling it
+2024-06-15 13:18:35	<kerneldev>	to be fair, the UX of SELinux has been terrible for years. it's getting better though
+2024-06-15 13:20:00	<sysop_jane>	I prefer AppArmor on Ubuntu systems. simpler to write profiles
+2024-06-15 13:20:18	<secops>	AppArmor is path-based which has its own problems. SELinux labels are more robust
+2024-06-15 13:30:00	<--	storageguy (sg@nas.homelab.example.org) has left #linux (back to the lab)
+2024-06-15 13:45:00	--	tux_admin changed the topic of #linux to: Linux support and discussion | Kernel 6.9.5 stable released! | Be respectful | No piracy | See also #linux-offtopic
+2024-06-15 13:45:18	<tux_admin>	updated the topic - 6.9.5 just dropped
+2024-06-15 13:45:35	<kerneldev>	nice, I saw the announcement. mostly networking fixes and a DRM regression fix
+2024-06-15 13:46:10	<container_kid>	I was hitting that DRM bug! white flickering on my RX 7800 XT
+2024-06-15 13:46:28	<kerneldev>	update ASAP then, the fix is confirmed working
+2024-06-15 14:00:00	-->	newbie_dan (dan@dsl-50-23-114-8.example.net) has joined #linux
+2024-06-15 14:00:00	--	newbie_dan is "Dan Baker" on #linux
+2024-06-15 14:00:15	<newbie_dan>	me again. wifi is working great but now I have a permissions question
+2024-06-15 14:00:50	<newbie_dan>	I can't access my second hard drive. it says permission denied
+2024-06-15 14:01:08	<tux_admin>	is it mounted? what does lsblk show?
+2024-06-15 14:01:25	<newbie_dan>	it shows sdb1 as ntfs, mounted at /media/dan/Data
+2024-06-15 14:01:42	<tux_admin>	ah NTFS. you're probably using the old ntfs-3g FUSE driver
+2024-06-15 14:02:00	<tux_admin>	try remounting with the kernel driver: sudo mount -t ntfs3 /dev/sdb1 /mnt/data
+2024-06-15 14:03:10	<tux_admin>	for fstab add: UUID=<your-uuid> /mnt/data ntfs3 defaults,uid=1000,gid=1000 0 0
+2024-06-15 14:04:20	<kerneldev>	use UUID instead of /dev/sdb1 in fstab. device names can change between boots
+2024-06-15 14:04:55	<newbie_dan>	ok I'll use the UUID. you all are so helpful, thanks
+2024-06-15 14:05:12	 *	newbie_dan is slowly becoming a linux convert
+2024-06-15 14:10:00	<--	newbie_dan (dan@dsl-50-23-114-8.example.net) has quit (Quit: off to configure fstab)
+2024-06-15 14:30:00	<secops>	has anyone looked at io_uring from a security perspective?
+2024-06-15 14:30:18	<kerneldev>	io_uring has been a constant source of CVEs. google disabled it in production for a while
+2024-06-15 14:30:52	<kerneldev>	the attack surface is massive. it basically bypasses the syscall boundary
+2024-06-15 14:31:10	<secops>	we're considering disabling it with sysctl: kernel.io_uring_disabled=2
+2024-06-15 14:32:02	<kerneldev>	if you don't need it, disable it. smaller attack surface is always better
+2024-06-15 14:45:00	<sysop_jane>	on the topic of hardening - anyone using sshd with certificate-based auth instead of keys?
+2024-06-15 14:45:18	<secops>	yes! SSH certificates are way better than authorized_keys management
+2024-06-15 14:45:35	<secops>	sign a user's key with a CA, set an expiry, one TrustedUserCAKeys line in sshd_config and you're done
+2024-06-15 14:46:45	<secops>	short-lived certs (8-12 hours) so revocation is rarely needed. tools like step-ca or vault handle issuance
+2024-06-15 14:47:02	<sysop_jane>	https://smallstep.com/blog/use-ssh-certificates/ - is this the step-ca you mean?
+2024-06-15 14:47:20	<secops>	that's the one. we use it with an OIDC provider so devs authenticate with SSO to get SSH certs
+2024-06-15 14:48:00	 *	sysop_jane imagines never managing authorized_keys again
+2024-06-15 15:00:00	<--	kerneldev (kdev@kernel.example.org) has quit (Quit: kernel hacking time)
+2024-06-15 15:15:00	-->	netguru (sarah@192.168.1.100) has joined #linux
+2024-06-15 15:15:00	--	netguru is "Sarah Chen" on #linux #networking #nftables
+2024-06-15 15:15:15	<netguru>	afternoon everyone. got the wireguard deployment done, management is happy
+2024-06-15 15:15:32	<tux_admin>	nice work netguru
+2024-06-15 15:15:50	<netguru>	now they want me to set up 802.1X on all switch ports
+2024-06-15 15:16:08	<secops>	freeradius + hostapd for the authentication side. EAP-TLS with client certificates is the most secure option
+2024-06-15 15:17:18	<sysop_jane>	ansible can handle cert distribution pretty easily
+2024-06-15 15:30:00	-->	kerneldev (kdev@kernel.example.org) has joined #linux
+2024-06-15 15:30:00	--	kerneldev is "Satoshi Tanaka" on #linux #kernel #c-lang
+2024-06-15 15:30:15	<kerneldev>	back, couldn't stay away
+2024-06-15 15:30:50	<kerneldev>	anyone using Rust in the kernel? I've been looking at the R4L patches
+2024-06-15 15:31:08	<tux_admin>	not personally but I've been following the development. the NVMe driver in Rust is interesting
+2024-06-15 15:31:25	<kerneldev>	it's more of a proof of concept right now but the safety guarantees are compelling
+2024-06-15 15:32:35	<kerneldev>	compile times are about 15-20% longer. the Rust compiler is slow compared to GCC for kernel-sized codebases
+2024-06-15 15:32:52	<tux_admin>	that's not terrible for the safety benefits
+2024-06-15 15:33:10	<kerneldev>	agreed. I think we'll see more Rust drivers in 6.12+
+2024-06-15 16:00:00	<--	sysop_jane (jane@corp.megacorp.example.com) has quit (Quit: EOD for me, see you all Monday)
+2024-06-15 16:15:00	<secops>	I'm going to head out too. PSA: check your openssh versions. CVE-2024-6387 affects 8.5p1 through 9.7p1
+2024-06-15 16:15:35	<secops>	9.8p1 has the fix. it's a race condition in the SIGALRM handler. unauthenticated RCE potential
+2024-06-15 16:16:10	<tux_admin>	we patched ours the day it dropped. scary stuff
+2024-06-15 16:16:28	<secops>	good. check your inventory, you might have forgotten a bastion host or jump box somewhere
+2024-06-15 16:17:00	<--	secops (sec@infosec.example.com) has quit (Quit: stay safe out there)
+2024-06-15 16:30:00	<container_kid>	question about systemd-nspawn vs docker for dev environments
+2024-06-15 16:30:52	<kerneldev>	systemd-nspawn is great for that. it's essentially a chroot on steroids
+2024-06-15 16:31:28	<kerneldev>	debootstrap bookworm /var/lib/machines/bookworm && systemd-nspawn -M bookworm
+2024-06-15 16:31:45	<tux_admin>	machinectl is the management interface. machinectl list, machinectl start, etc.
+2024-06-15 16:32:38	<container_kid>	for build environments that's fine. I'll give it a try
+2024-06-15 16:45:00	<--	container_kid (ck@podman.containers.example.net) has quit (Quit: time to experiment with nspawn)
+2024-06-15 17:00:00	<netguru>	getting quiet in here
+2024-06-15 17:00:52	<kerneldev>	JST here, it's 2am but who's counting
+2024-06-15 17:01:10	 *	tux_admin tells kerneldev to get some sleep
+2024-06-15 17:15:00	-->	storageguy (sg@nas.homelab.example.org) has joined #linux
+2024-06-15 17:15:00	--	storageguy is "Dave Mitchell" on #linux #zfs #btrfs
+2024-06-15 17:15:15	<storageguy>	update: new drive arrived. fastest shipping ever
+2024-06-15 17:15:50	<storageguy>	should I scrub before the replace to make sure the good drive is clean?
+2024-06-15 17:16:08	<kerneldev>	good idea. btrfs scrub start /mount - it'll verify checksums on all data
+2024-06-15 17:16:42	<tux_admin>	depends on disk speed. spinning rust? probably 3-4 hours
+2024-06-15 17:17:00	<storageguy>	yeah these are 5400rpm WD Reds. I'll start it now and do the replace after
+2024-06-15 17:30:00	<--	kerneldev (kdev@kernel.example.org) has quit (Quit: finally sleeping. oyasumi!)
+2024-06-15 17:30:18	<tux_admin>	night kerneldev
+2024-06-15 17:45:00	<netguru>	tux_admin: random question - what's your preferred terminal emulator?
+2024-06-15 17:45:18	<tux_admin>	alacritty. GPU-accelerated, fast, minimal config
+2024-06-15 17:45:35	<netguru>	I've been using kitty. similar philosophy but with image rendering support
+2024-06-15 17:46:10	<storageguy>	I'm still on gnome-terminal and I'm not ashamed
+2024-06-15 17:46:45	<netguru>	the real answer is tmux inside whatever terminal anyway
+2024-06-15 17:47:20	 *	storageguy uses screen because old habits die hard
+2024-06-15 18:00:00	<--	netguru (sarah@192.168.1.100) has quit (Quit: dinner time, later all)
+2024-06-15 18:15:00	<storageguy>	scrub is about 40% done, no errors on the good drive so far
+2024-06-15 19:00:00	<storageguy>	scrub complete! zero errors on the good drive, 47 read errors on the failing drive
+2024-06-15 19:00:18	<tux_admin>	47 read errors, that drive is definitely dying. good timing on the replacement
+2024-06-15 19:00:35	<storageguy>	starting the replace now. btrfs replace start 2 /dev/sdc /mnt/data
+2024-06-15 19:01:10	<storageguy>	double checked, devid 2 is /dev/sdb which is the failing one
+2024-06-15 19:01:45	 *	storageguy watches btrfs replace status nervously
+2024-06-15 19:30:00	--	tux_admin is now known as tux_dinner
+2024-06-15 19:30:15	<tux_dinner>	grabbing dinner, back in a bit. good luck with the replace storageguy
+2024-06-15 19:30:32	<storageguy>	thanks, it's at 25% already
+2024-06-15 20:00:00	<storageguy>	replace is at 60%. smooth sailing so far
+2024-06-15 20:30:00	--	tux_dinner is now known as tux_admin
+2024-06-15 20:30:15	<tux_admin>	how's the replace going?
+2024-06-15 20:30:32	<storageguy>	85%! almost there
+2024-06-15 20:45:00	<storageguy>	done! btrfs replace status says "finished"
+2024-06-15 20:45:35	<storageguy>	clean replace. btrfs reconstructed a few unrecoverable blocks from the mirror automatically
+2024-06-15 20:45:52	<tux_admin>	that's the beauty of raid1 checksumming. silent corruption would have gone unnoticed on mdraid
+2024-06-15 21:00:00	<storageguy>	post-replace scrub clean. all data verified. I'm calling this a success
+2024-06-15 21:00:18	<tux_admin>	congrats! time to properly dispose of that old drive
+2024-06-15 21:00:35	<storageguy>	shred -vzn 3 /dev/sdb then a hammer :)
+2024-06-15 21:01:10	<storageguy>	alright I'm heading out. thanks for all the help today tux_admin
+2024-06-15 21:01:45	<--	storageguy (sg@nas.homelab.example.org) has quit (Quit: Leaving)
+2024-06-15 21:15:18	<tux_admin>	been a good day in #linux
+2024-06-15 21:30:00	-->	nightowl (owl@tor-exit-node.example.net) has joined #linux
+2024-06-15 21:30:00	--	nightowl is "Anonymous" on #linux #tor #privacy
+2024-06-15 21:30:15	<nightowl>	anyone awake?
+2024-06-15 21:30:32	<tux_admin>	barely. what's up?
+2024-06-15 21:30:50	<nightowl>	just wondering if there's a way to verify my kernel hasn't been tampered with at runtime
+2024-06-15 21:31:08	<tux_admin>	look into dm-verity for the root filesystem and IMA/EVM for runtime integrity
+2024-06-15 21:31:42	<tux_admin>	IMA maintains a measurement list and can extend TPM PCRs for remote attestation
+2024-06-15 21:32:52	<tux_admin>	the kernel docs are the best resource: https://www.kernel.org/doc/html/latest/security/IMA.html
+2024-06-15 21:33:10	<nightowl>	thanks. I'll read through that tonight
+2024-06-15 21:45:00	<tux_admin>	alright I'm calling it a night. channel is all yours nightowl
+2024-06-15 21:45:18	<nightowl>	night tux_admin, thanks for the pointers
+2024-06-15 21:45:35	<--	tux_admin (tux@gateway/web/freenode/ip.203.0.113.42) has quit (Quit: zzz)
+2024-06-15 21:50:00	 *	nightowl reads kernel documentation in silence
+2024-06-15 22:00:00	<--	nightowl (owl@tor-exit-node.example.net) has quit (Quit: back to the shadows)

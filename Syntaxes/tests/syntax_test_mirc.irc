@@ -1,0 +1,41 @@
+# SYNTAX TEST "Packages/IRC Syntax/Syntaxes/IRC.sublime-syntax"
+
+[12:34] <ab> hi #ch
+# <- meta.date.irc punctuation.section.date.begin.irc
+#^^ constant.numeric.value.irc
+#  ^ punctuation.separator.date.irc
+#   ^^ constant.numeric.value.irc
+#     ^ punctuation.section.date.end.irc
+#      ^ - meta.date
+#       ^ punctuation.definition.reference.nickname.begin.irc
+#        ^^ entity.name.tag.nickname.irc
+#          ^ punctuation.definition.reference.nickname.end.irc
+#               ^ punctuation.definition.channel.irc
+#                ^^ constant.other.channel.irc
+
+[12:34:56] <ab> hi
+# <- meta.date.irc punctuation.section.date.begin.irc
+#^^ constant.numeric.value.irc
+#  ^ punctuation.separator.date.irc
+#   ^^ constant.numeric.value.irc
+#     ^ punctuation.separator.date.irc
+#      ^^ constant.numeric.value.irc
+#        ^ punctuation.section.date.end.irc
+
+[12:34] * foo has joined #bar
+#       ^ punctuation.definition.event.irc
+#         ^^^ meta.event.irc entity.name.tag.nickname.irc
+#                 ^^^^^^ meta.event.irc keyword.other.join.irc
+#                        ^ punctuation.definition.channel.irc
+#                         ^^^ constant.other.channel.irc
+
+[12:34] * foo has quit IRC (bye)
+#       ^ punctuation.definition.event.irc
+#         ^^^ meta.event.irc entity.name.tag.nickname.irc
+#                 ^^^^ meta.event.irc keyword.other.quit.irc
+#                           ^^^ meta.event.irc string.unquoted.quit-message.irc
+
+[12:34] * old is now known as new
+#       ^ punctuation.definition.event.irc
+#         ^^^ meta.event.irc entity.name.tag.nickname.irc
+#                             ^^^ meta.event.irc entity.name.tag.nickname.irc

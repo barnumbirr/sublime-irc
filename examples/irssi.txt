@@ -1,0 +1,285 @@
+--- Log opened Sat Jun 15 08:00:00 2024
+08:00 -!- brewer42 [~brewer@gateway/web/freenode/ip.203.0.113.42] has joined #linux
+08:00 -!- brewer42 is "Dan Brewer" on #linux #debian #networking
+08:01 -!- sysop_meg [~meg@office.megacorp.example.com] has joined #linux
+08:01 -!- sysop_meg is "Megan Torres" on #linux #sysadmin
+08:02 <brewer42> morning all
+08:02 <sysop_meg> hey brewer42, early start today?
+08:03 <brewer42> yeah, been fighting a kernel panic on one of our prod boxes since 5am
+08:03 <brewer42> 6.6.32 on debian bookworm, BUG in mm/slub.c
+08:04 <sysop_meg> oof. which hardware?
+08:04 <brewer42> supermicro X13SEI-TF, dual xeon. nothing exotic
+08:05 <sysop_meg> have you checked the errata? there was a fix in 6.6.33 for a slab allocator race
+08:05 <brewer42> looking now... https://lore.kernel.org/linux-mm/20240610082315.1234567-1-akpm@linux-foundation.org/
+08:06 <sysop_meg> yeah that's the one. commit 3a7f2c89e4 fixed it
+08:07 <brewer42> perfect, I'll backport that patch. thanks meg
+08:08 -!- ghostdancer [~ghost@pool-72-83-191-55.washdc.fios.verizon.net] has joined #linux
+08:08 -!- ghostdancer is "Karl Weiss" on #linux #security #archlinux
+08:09 <ghostdancer> morning
+08:10 <sysop_meg> hey ghostdancer
+08:10 <ghostdancer> anyone running the new 6.9 kernel yet? wondering about the io_uring changes
+08:11 <brewer42> not in prod obviously, but I've been testing it in staging
+08:12 <brewer42> the io_uring hardening is actually pretty solid. they finally restricted the opcodes properly
+08:13 <ghostdancer> nice. we had to disable io_uring entirely after those CVEs last year
+08:14 <sysop_meg> same here. we have sysctl kernel.io_uring_disabled=2 in our ansible baseline
+08:15 -!- rhel_james [~jamesr@vpn-104.redhat.example.com] has joined #linux
+08:15 -!- rhel_james is "James Rodriguez" on #linux #rhel #centos
+08:16 <rhel_james> hey folks. quick question - anyone migrated from cgroupv1 to cgroupv2 on a large fleet?
+08:17 <ghostdancer> we did about 2000 nodes last quarter
+08:18 <ghostdancer> the biggest gotcha is docker. if you're still on docker and not containerd, you need at least 20.10
+08:19 <rhel_james> we're on podman actually
+08:19 <sysop_meg> podman handles cgroupv2 natively, you'll be fine
+08:20 <ghostdancer> the path layout is completely different though - /sys/fs/cgroup/cpu,cpuacct/ becomes /sys/fs/cgroup/ with cpu.weight
+08:21 <rhel_james> exactly. all our grafana dashboards will break
+08:22 <sysop_meg> we use cadvisor which abstracts that. https://github.com/google/cadvisor
+08:25 -!- netdev_pat [~pat@cpe-76-93-148-200.socal.res.rr.com] has joined #linux
+08:25 -!- netdev_pat is "Patricia Kim" on #linux #networking #nftables
+08:26 <netdev_pat> hi everyone. got a weird nftables issue
+08:28 <netdev_pat> I'm trying to do policy-based routing with fwmarks, but my marks aren't surviving the FORWARD chain
+08:30 <ghostdancer> are you marking in the same family? inet vs ip matters
+08:31 <netdev_pat> oh... I'm marking in ip prerouting but filtering in inet forward
+08:32 <ghostdancer> try adding a counter in prerouting to verify packets are actually hitting the mark rule
+08:35 -!- Topic for #linux: Linux support and discussion | Kernel 6.9.3 released | Be respectful | https://kernel.org
+08:35 -!- Topic set by chanop [~chanop@services.libera.chat] [Fri Jun 14 22:30:00 2024]
+08:37 <netdev_pat> ghostdancer: you were right, the mark rule wasn't matching. typo in the source IP
+08:38 <ghostdancer> classic. glad it was simple
+08:40 -!- sysop_meg [~meg@office.megacorp.example.com] has quit [Ping timeout: 260 seconds]
+08:45 <brewer42> has anyone played with XDP for DDoS mitigation?
+08:46 <ghostdancer> we wrote a simple XDP program that drops SYN floods - handles 10Mpps on a single core
+08:47 <ghostdancer> using libbpf with CO-RE for portability
+08:48 <ghostdancer> https://nakryiko.com/posts/bpf-core-reference-guide/ is the best reference
+08:49 <brewer42> bookmarked. thanks
+08:52 -!- sysop_meg [~meg@office.megacorp.example.com] has joined #linux
+08:52 <sysop_meg> sorry, wifi dropped
+08:55 -!- contayne [~rsmith@10.42.0.7] has joined #linux
+08:55 -!- contayne is "Ryan Smith" on #linux #kubernetes #containers
+08:56 <contayne> morning. we're getting ENOSPC errors on overlayfs even though the underlying fs has plenty of space
+08:59 <brewer42> xfs underneath? xfs has a fixed inode ratio set at mkfs time
+09:00 <brewer42> you probably need mkfs.xfs -i maxpct=50 or something higher
+09:01 <contayne> df -i shows 95% inode usage... you're right. node_modules nightmare
+09:03 <ghostdancer> this is why I advocate for distroless images
+09:04 <contayne> easier said than done when your devs want a full shell for debugging
+09:05 <ghostdancer> ephemeral debug containers solve that. kubectl debug -it pod/foo --image=busybox
+09:06 <contayne> fair point. I'll bring it up with the team
+09:07 <sysop_meg> we went through the same transition last year. the devs adapted quickly once they saw how fast the images built
+09:08 <brewer42> smaller images also mean faster pulls. our deploy time dropped by 40%
+09:10 -!- rhel_james [~jamesr@vpn-104.redhat.example.com] has quit [Quit: lunch break]
+09:15 <netdev_pat> contayne, are you running cilium or calico for k8s networking?
+09:16 <contayne> cilium. the eBPF dataplane is way more efficient than iptables
+09:17 <contayne> and hubble is incredible for network observability
+09:25 -!- brewer42 [~brewer@gateway/web/freenode/ip.203.0.113.42] has quit [Quit: applying kernel patches, brb]
+09:30 <ghostdancer> I've been looking at the new landlock LSM for sandboxing
+09:31 <ghostdancer> it's like seccomp but for filesystem access. and it doesn't need root
+09:33 <ghostdancer> https://docs.kernel.org/userspace-api/landlock.html
+09:34 <sysop_meg> so a web app could restrict its own filesystem access at startup?
+09:35 <ghostdancer> exactly. defense in depth. even if compromised, the attacker can't traverse outside the sandbox
+09:40 -!- netdev_pat [~pat@cpe-76-93-148-200.socal.res.rr.com] has left #linux [heading to a meeting]
+09:45 -!- brewer42 [~brewer@gateway/web/freenode/ip.203.0.113.42] has joined #linux
+09:46 <brewer42> back. kernel patched and rebooted, no more panics
+09:48 <brewer42> kexec is a beautiful thing. skipped the whole POST/BIOS cycle
+09:50 -!- tux_luna [~luna@luna.students.cs.ubc.ca] has joined #linux
+09:50 -!- tux_luna is "Luna Chen" on #linux #fedora
+09:51 <tux_luna> hey! I'm a CS student working on my first kernel module. anyone willing to help?
+09:52 <brewer42> sure, what are you trying to do?
+09:53 <tux_luna> simple char device driver. I can load it with insmod but reading from /dev/mydevice gives -EINVAL
+09:55 <tux_luna> static ssize_t mydev_read(struct file *filp, char __user *buf, size_t count, loff_t *f_pos)
+09:56 <brewer42> are you using copy_to_user() to send data back?
+09:57 <tux_luna> oh... I'm using memcpy
+09:58 <brewer42> there's your problem. you can't memcpy to userspace. copy_to_user handles the page fault safety
+09:59 <tux_luna> that makes so much sense now. thank you!
+10:02 <ghostdancer> tux_luna: also check out https://lwn.net/Kernel/LDD3/ for the free version of Linux Device Drivers
+10:03 <tux_luna> bookmarked, thanks ghostdancer!
+10:10 -!- sysop_meg is now known as meg_afk
+10:15 <contayne> does anyone have experience with zfs on linux for container storage?
+10:16 <brewer42> been running it for 3 years. excellent for containers because of snapshot and clone performance
+10:18 <contayne> how's the memory overhead?
+10:19 <brewer42> by default it'll eat all your RAM for ARC. cap it with: echo 8589934592 > /sys/module/zfs/parameters/zfs_arc_max
+10:22 <ghostdancer> the licensing is messy but canonical ships it in ubuntu by default
+10:25 -!- tux_luna [~luna@luna.students.cs.ubc.ca] has quit [Quit: it works!! thanks everyone]
+10:30 -!- rhel_james [~jamesr@vpn-104.redhat.example.com] has joined #linux
+10:31 <rhel_james> back. systemd-resolved is ignoring our /etc/resolv.conf
+10:33 <ghostdancer> is /etc/resolv.conf a symlink to /run/systemd/resolve/stub-resolv.conf?
+10:34 <rhel_james> yes, and our DHCP-provided nameservers aren't showing up
+10:35 <ghostdancer> try resolvectl status to see what systemd thinks the DNS config is
+10:38 <rhel_james> resolvectl query works fine actually. the real issue is our java app can't resolve internal hostnames
+10:40 <brewer42> java uses its own DNS resolution. is the app in a container?
+10:43 <rhel_james> wait... yes, and the container's resolv.conf has stale IPs from an old environment
+10:44 <brewer42> there you go
+10:45 <contayne> use podman's --dns flag or set it in the compose file
+10:50 -!- meg_afk is now known as sysop_meg
+10:51 <sysop_meg> back. what did I miss?
+10:52 <ghostdancer> the usual DNS debugging fun
+10:53 <sysop_meg> it's always DNS
+10:53 <contayne> or the firewall
+10:54 <brewer42> or both
+10:55 <ghostdancer> the three certainties in life: death, taxes, and DNS issues
+10:56 <sysop_meg> I should get that on a t-shirt
+11:00 -!- netdev_pat [~pat@cpe-76-93-148-200.socal.res.rr.com] has joined #linux
+11:05 <netdev_pat> I wanted to ask about wireguard. we're replacing our openvpn infrastructure
+11:06 <ghostdancer> best decision you'll make. wireguard is much simpler
+11:07 <netdev_pat> my concern is key management at scale. about 500 clients
+11:08 <ghostdancer> look into headscale - open-source tailscale control server
+11:09 <ghostdancer> https://github.com/juanfont/headscale
+11:10 <netdev_pat> we can't use SaaS, everything must be on-prem. this is perfect
+11:15 <brewer42> we use headscale. works great. the ACL system is powerful enough for most needs
+11:20 -!- contayne [~rsmith@10.42.0.7] has quit [Quit: deploying to staging, wish me luck]
+11:25 <sysop_meg> so I need to vent. our security team just mandated FIPS mode on all RHEL systems
+11:27 <sysop_meg> half our stuff broke. everything using chacha20 or ed25519 just stopped working
+11:29 <ghostdancer> did your ssh keys break?
+11:29 <sysop_meg> all our ed25519 keys rejected. had to regenerate everything as ecdsa-sha2-nistp256
+11:31 <sysop_meg> and ansible stopped working too. 3-day fire drill to update every host
+11:33 <ghostdancer> the irony is ed25519 is arguably stronger than NIST P-256 but it's not FIPS validated
+11:35 <sysop_meg> try explaining that to a compliance auditor
+11:40 -!- contayne [~rsmith@10.42.0.7] has joined #linux
+11:41 <contayne> deploy went fine for once
+11:43 -!- brewer42 changed the topic of #linux to: Linux support and discussion | Kernel 6.9.4 security fix | Be respectful | https://kernel.org
+11:44  * sysop_meg goes to update her boxes
+11:45 <contayne> I'm looking at switching log aggregation from ELK to something lighter. elasticsearch eats 64GB of RAM
+11:47 <brewer42> grafana loki. it's like prometheus but for logs. doesn't index content, only labels
+11:50 <brewer42> we replaced a 3-node elasticsearch cluster with a single loki instance
+11:54 <contayne> https://grafana.com/docs/loki/latest/ - reading the docs now
+11:58 -!- tux_luna [~luna@luna.students.cs.ubc.ca] has joined #linux
+11:59 <tux_luna> me again. how do I make my module autoload at boot?
+12:01 <brewer42> put it in /lib/modules/$(uname -r)/extra/, run depmod -a, add the name to /etc/modules-load.d/mymodule.conf
+12:05 <tux_luna> great, thanks!
+12:10 -!- rhel_james [~jamesr@vpn-104.redhat.example.com] has quit [Ping timeout: 245 seconds]
+12:15 -!- sysop_meg [~meg@office.megacorp.example.com] has quit [Quit: lunch]
+12:18  * brewer42 grabs lunch from the fridge
+12:20 <ghostdancer> has anyone else noticed weird behavior with systemd-oomd?
+12:23 <ghostdancer> it killed a perfectly healthy postgres instance while the system had 30% free memory
+12:25 <brewer42> it uses PSI (pressure stall information), not just memory usage
+12:26 <brewer42> even with free memory, if the allocation rate is high enough it triggers
+12:29 <brewer42> set ManagedOOMPreference=none for critical services to exclude them
+12:32 <ghostdancer> thanks. I was about to just mask systemd-oomd entirely
+12:33 <brewer42> don't, it's useful for runaway processes. just tune it
+12:40 -!- netdev_pat [~pat@cpe-76-93-148-200.socal.res.rr.com] has quit [Quit: heading home]
+12:48 <tux_luna> is it terrifying for everyone or just students when the whole VM crashes from a bad pointer?
+12:49 <brewer42> that's the fun part. welcome to kernel development
+12:50 <ghostdancer> at least you're using a VM. I bricked real hardware in college
+13:00 -!- sysop_meg [~meg@office.megacorp.example.com] has joined #linux
+13:05 <sysop_meg> brewer42, you mentioned kexec earlier. we've been having issues on newer boxes
+13:07 <sysop_meg> kexec load fails with "Cannot determine the file type of /boot/vmlinuz"
+13:10 <brewer42> some newer kernels require signed kexec images when secure boot is enabled
+13:13 <brewer42> you need to sign the kernel with your MOK key
+13:14 <sysop_meg> I'll look into MOK signing. disabling secure boot isn't an option for us
+13:20 -!- rhel_james [~jamesr@vpn-104.redhat.example.com] has joined #linux
+13:22 <rhel_james> update on cgroupv2 - cadvisor handles it transparently. thanks sysop_meg
+13:25 <contayne> make sure you test resource limits too. cpu.shares becomes cpu.weight and the scale is different
+13:26 <rhel_james> yeah I read that. shares is 2-262144, weight is 1-10000
+13:27 <contayne> right. and the default weight is 100 instead of 1024 like shares
+13:28 <rhel_james> our migration doc is growing by the minute
+13:30 -!- tux_luna [~luna@luna.students.cs.ubc.ca] has quit [Quit: back to studying]
+13:35 <ghostdancer> anyone have a strong opinion on btrfs vs ext4 for general server use?
+13:36 <brewer42> ext4 for simplicity. btrfs if you need snapshots, compression, or subvolumes
+13:39 <contayne> btrfs RAID5/6 is still unstable. don't touch it for production
+13:41 <brewer42> RAID1 and RAID10 are solid though. been running btrfs RAID1 for years
+13:43 <brewer42> btrfs send/receive is excellent for incremental backups. way more efficient than rsync
+13:50 <sysop_meg> changing topics - has anyone set up unattended-upgrades with automatic reboots?
+13:53 <brewer42> we have a cron that checks /var/run/reboot-required and reboots during maintenance windows
+13:55 <brewer42> systemd handles graceful shutdown if your service units have proper ExecStop and TimeoutStopSec
+14:00 -!- netdev_pat [~pat@mobile-166-170-58-92.mycingular.net] has joined #linux
+14:05 <netdev_pat> following up on wireguard - I set up a test instance of headscale
+14:06 <netdev_pat> the DERP relay setup is confusing though
+14:07 <ghostdancer> DERP is for NAT traversal. use tailscale's public DERP servers for testing, self-host later
+14:10 <ghostdancer> start simple. get the basic mesh working first, then optimize
+14:15 -!- brewer42 is now known as brewer42_away
+14:20 <contayne> fun debugging story - containers failing health checks from conntrack table exhaustion
+14:23 <sysop_meg> oh yeah, the default conntrack max is way too low for container workloads
+14:24 <contayne> default 65536. we bumped to 1048576 via sysctl net.netfilter.nf_conntrack_max
+14:27 <ghostdancer> don't forget net.netfilter.nf_conntrack_buckets, should be about 1/4 of max
+14:30 -!- rhel_james [~jamesr@vpn-104.redhat.example.com] has quit [Quit: EOD. have a good weekend!]
+14:35 <sysop_meg> speaking of sysctl tuning, what's everyone's essential sysctl.conf?
+14:36 <ghostdancer> vm.swappiness=10 is my #1
+14:37 <contayne> net.core.somaxconn=65535 for anything running a web server
+14:38 <sysop_meg> we also set net.ipv4.tcp_tw_reuse=1 for high-connection-rate servers
+14:39 <ghostdancer> careful with that one in NAT environments
+14:42 -!- brewer42_away is now known as brewer42
+14:45 <brewer42> re: sysctl - fs.inotify.max_user_watches=524288 is essential if you run anything that watches files
+14:50 -!- ghostdancer [~ghost@pool-72-83-191-55.washdc.fios.verizon.net] has quit [Quit: going to set up a landlock sandbox for my cat]
+15:00 <sysop_meg> I'm writing an ansible role for our new server baseline
+15:07 <brewer42> use the sysctl module, not templates. it handles reload and persistence properly
+15:10 <contayne> ansible.builtin.sysctl with sysctl_file=/etc/sysctl.d/99-baseline.conf is what we do
+15:15 <netdev_pat> anyone using ansible-pull instead of push for large fleets?
+15:16 <brewer42> we switched to pull mode for edge nodes. each node runs ansible-pull on a cron from git
+15:20 <sysop_meg> we use hashicorp vault for secrets and ansible reads from the vault API
+15:25 -!- ghostdancer [~ghost@pool-72-83-191-55.washdc.fios.verizon.net] has joined #linux
+15:26 <ghostdancer> back. the cat is still not sandboxed
+15:30 <ghostdancer> serious question - anyone running immutable infrastructure? fedora coreos or flatcar?
+15:31 <contayne> we use flatcar for k8s nodes. the automatic updates with locksmith coordination are great
+15:34 <contayne> everything runs in containers. if you need something on the host, use systemd-sysext
+15:37 <sysop_meg> we looked at coreos but too many "just ssh in and fix it" habits on our team
+15:38 <brewer42> that's the hardest part. cultural change, not technical change
+15:45 -!- netdev_pat [~pat@mobile-166-170-58-92.mycingular.net] has quit [Ping timeout: 252 seconds]
+15:50 <ghostdancer> has anyone dealt with spectre/meltdown mitigations impacting performance?
+15:51 <brewer42> our database servers took a 15-20% hit
+15:53 <brewer42> you can boot with mitigations=off but that's all-or-nothing
+15:54 <brewer42> per-process: prctl(PR_SET_SPECULATION_CTRL) for SSBD
+15:55 <ghostdancer> https://docs.kernel.org/admin-guide/hw-vuln/spectre.html
+15:56 <sysop_meg> we just eat the performance cost. the risk isn't worth it for us
+16:00 -!- contayne [~rsmith@10.42.0.7] has quit [Quit: weekend starts now. later all]
+16:10 <sysop_meg> it's gotten quiet
+16:11 <brewer42> saturday afternoon. people have lives apparently
+16:12 <ghostdancer> speak for yourself. I live here
+16:15 <sysop_meg> ghostdancer, you mentioned seccomp earlier. good resource for writing profiles?
+16:17 <ghostdancer> https://github.com/moby/moby/blob/master/profiles/seccomp/default.json is a good starting point
+16:18 <ghostdancer> for custom profiles, strace -c -f -S name your_binary to see which syscalls it uses
+16:21 <ghostdancer> default deny, explicit allow. same principle as firewall rules
+16:22 <sysop_meg> makes sense. how do you handle profile updates when the app changes?
+16:23 <ghostdancer> you run the profiler against your test suite and regenerate
+16:24 <ghostdancer> CI pipeline: run tests under strace, diff the syscall list, update the profile
+16:25 <brewer42> we automated this with oci-seccomp-bpf-hook. generates profiles from container runs
+16:30 -!- netdev_pat [~pat@cpe-76-93-148-200.socal.res.rr.com] has joined #linux
+16:32 <netdev_pat> final wireguard update - headscale is working beautifully
+16:33 <netdev_pat> 3 test nodes meshed, direct connections without DERP relay
+16:35 <ghostdancer> how's latency vs openvpn?
+16:36 <netdev_pat> night and day. openvpn added 8-12ms, wireguard adds less than 1ms
+16:37 <ghostdancer> kernel-space crypto for the win
+16:40 <sysop_meg> alright I need to sign off. brewer42 thanks for the kernel help this morning
+16:41 <ghostdancer> see you monday meg
+16:42 -!- sysop_meg [~meg@office.megacorp.example.com] has quit [Quit: have a good weekend!]
+16:50 <brewer42> I should go too. one last thing - great kernel livepatch talk from linux plumbers conf
+16:52 <brewer42> https://lpc.events/event/17/contributions/1456/
+16:55 -!- brewer42 [~brewer@gateway/web/freenode/ip.203.0.113.42] has quit [Quit: remember to touch grass regularly]
+17:00 <ghostdancer> just us netdev_pat
+17:01 <netdev_pat> heh. writing up my wireguard findings for the team
+17:05 <ghostdancer> I'm going to write a bpftrace probe for that systemd-oomd issue
+17:07 <ghostdancer> bpftrace -e 'tracepoint:oom:oom_score_adj_update { printf("%s %d\n", comm, args->oom_score_adj); }'
+17:15 -!- netdev_pat [~pat@cpe-76-93-148-200.socal.res.rr.com] has left #linux [done for the day, cheers]
+17:30 <ghostdancer> just me and the kernel now
+17:32 -!- n00b_alert [~newbie@dsl-189-252-44-18.prod-infinitum.com.mx] has joined #linux
+17:32 -!- n00b_alert is "Marco Perez" on #linux
+17:33 <n00b_alert> hi, is anyone around? I accidentally ran chmod -R 777 / on my server
+17:34 <ghostdancer> oh no
+17:35 <n00b_alert> yeah... everything is broken now. ssh won't accept my key
+17:36 <ghostdancer> ssh refuses to use key files with world-readable permissions
+17:37 <ghostdancer> you'll need to fix permissions from a rescue console or live USB
+17:38 <ghostdancer> honestly, if you have backups, a reinstall might be faster
+17:39 <n00b_alert> no backups...
+17:40 <ghostdancer> lesson learned. always test destructive commands with echo first: echo chmod -R 777 /path
+17:41 <ghostdancer> and never run recursive permission changes on /
+17:42 <n00b_alert> I meant to run it on /var/www only. forgot the path
+17:43 <ghostdancer> try booting a live USB and using rpm --setperms to restore package permissions
+17:44 <n00b_alert> ok I'll try that. thanks for the help
+17:44 -!- n00b_alert [~newbie@dsl-189-252-44-18.prod-infinitum.com.mx] has quit [Quit: off to find a live USB]
+17:45 -!- tux_luna [~luna@luna.students.cs.ubc.ca] has joined #linux
+17:47 <ghostdancer> hey tux_luna
+17:48 <tux_luna> hey! is there a way to get kernel log messages without checking dmesg every time?
+17:49 <ghostdancer> journalctl -k -f to follow kernel messages in real time
+17:52 <ghostdancer> also use pr_info() instead of raw printk. it auto-prepends the module name
+17:55 <ghostdancer> add #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt at the top of your source
+17:56 <tux_luna> this channel is a goldmine. my professor doesn't teach this stuff
+17:57 <ghostdancer> that's what IRC is for
+18:00 -!- tux_luna [~luna@luna.students.cs.ubc.ca] has quit [Quit: off to implement the block device]
+18:15 <ghostdancer> the bpftrace probe is working
+18:16 <ghostdancer> confirmed systemd-oomd adjusts oom_score_adj based on memory.pressure even when actual usage is low
+18:30 <ghostdancer> going to write this up as a blog post
+18:45 <ghostdancer> filed an issue: https://github.com/systemd/systemd/issues/33418
+18:50 -!- contayne [~rsmith@home.rsmith.dev] has joined #linux
+18:51 <contayne> still here ghostdancer? quick question about that loki setup
+18:52 <ghostdancer> yep. what's up?
+18:53 <contayne> does loki support retention policies? we need to keep logs for 90 days minimum
+18:54 <ghostdancer> yeah, configure compactor.retention_enabled and limits_config.retention_period in the loki config
+18:55 <contayne> perfect. deploying it monday. thanks
+18:56 -!- contayne [~rsmith@home.rsmith.dev] has quit [Quit: actually going to enjoy the weekend now]
+19:00 -!- ghostdancer [~ghost@pool-72-83-191-55.washdc.fios.verizon.net] has quit [Quit: time to touch grass, as brewer42 would say]
+--- Log closed Sat Jun 15 22:00:00 2024

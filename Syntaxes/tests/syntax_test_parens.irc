@@ -1,0 +1,21 @@
+# SYNTAX TEST "Packages/IRC Syntax/Syntaxes/IRC.sublime-syntax"
+
+(22:20) <nick> hello world
+# <- meta.date.irc punctuation.section.date.begin.irc
+#^^ constant.numeric.value.irc
+#  ^ punctuation.separator.date.irc
+#   ^^ constant.numeric.value.irc
+#     ^ punctuation.section.date.end.irc
+#      ^ - meta.date
+#       ^ punctuation.definition.reference.nickname.begin.irc
+#        ^^^^ entity.name.tag.nickname.irc
+#            ^ punctuation.definition.reference.nickname.end.irc
+
+(22:20:30) <nick> hi
+# <- meta.date.irc punctuation.section.date.begin.irc
+#^^ constant.numeric.value.irc
+#  ^ punctuation.separator.date.irc
+#   ^^ constant.numeric.value.irc
+#     ^ punctuation.separator.date.irc
+#      ^^ constant.numeric.value.irc
+#        ^ punctuation.section.date.end.irc

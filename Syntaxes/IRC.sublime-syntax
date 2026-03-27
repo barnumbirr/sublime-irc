@@ -3,80 +3,241 @@
 # https://www.sublimetext.com/docs/syntax.html
 name: IRC
 scope: text.irc
+first_line_match: |-
+  (?x)
+    ^\[?\d{4}[-/]\d{2}[-/]\d{2}[\sT]\d{2}:\d{2}
+  | ^\[?\d{2}:\d{2}(?::\d{2})?:?\]?\s+(?:[<*]|-!-|===|-->|\*{3})
+  | ^\(\d{2}:\d{2}(?::\d{2})?\)\s+[<*]
+  | ^[A-Z][a-z]{2}\s+\d{1,2}\s+\d{2}:\d{2}:\d{2}
+  | ^---\s+Log\s+opened
+  | ^Session\s+Start:
+  | ^\*{4}\s+BEGIN\s+LOGGING
 
 contexts:
   main:
-    - match: \b\B
-    - include: channel
-    - include: join
-    - include: quit
     - include: timestamp
-    - include: topic
-    - include: url
-    - include: user-is
+    - include: event
     - include: nickname
-    - include: nickname-change
+    - include: inline
+
+  inline:
+    - include: url
+    - include: channel
     - include: vhost
 
-  channel:
-    - match: ([#&][^\x07\x2C\s]{,199})
-      scope: meta.string.channel.irc
-      captures:
-        1: punctuation.definition.channel.irc comment.line.irc
-        2: string.unquoted.channel.irc comment.line.irc
-
-  join:
-    - match: (?:(-!-)|(===))? (\S+)? (\S+) (?:has)? joined (\S+)$
-      scope: meta.string.message.join.irc comment.line.irc
-
-  quit:
-    - match: '(?:(-!-)|(===))? (\S+)? (\S+) (?:has)? (quit|left)(?: (.*))?$'
-      scope: meta.string.message.quit.irc comment.line.irc
+  # ── Timestamps ──────────────────────────────────────────
 
   timestamp:
-    - match: '^(\[)?(\d{4})?(\-)?(\d\d)?(\-)?(\d\d)?\s?(\d\d)(\:)(\d\d)(\:)?(\d\d)?(\])?'
-      scope: meta.string.timestamp.irc
+    # Bracketed with date: [2021-03-27 12:34:56] or [2021/03/27 12:34]
+    - match: '^(\[)(\d{4})([-/])(\d{2})([-/])(\d{2})[\sT](\d{2})(:)(\d{2})(?:(:)(\d{2}))?(\])'
+      scope: meta.date.irc
       captures:
-        1: punctuation.definition.timestamp.begin.irc
-        2: constant.numeric.integer.decimal.irc
-        3: punctuation.separator.sequence.irc
-        4: constant.numeric.integer.decimal.irc
-        5: punctuation.separator.sequence.irc
-        6: constant.numeric.integer.decimal.irc
-        7: constant.numeric.integer.decimal.irc
-        8: punctuation.separator.sequence.irc
-        9: constant.numeric.integer.decimal.irc
-        10: punctuation.separator.sequence.irc
-        11: constant.numeric.integer.decimal.irc
-        12: punctuation.definition.timestamp.end.irc
+        1: punctuation.section.date.begin.irc
+        2: constant.numeric.value.irc
+        3: punctuation.separator.date.irc
+        4: constant.numeric.value.irc
+        5: punctuation.separator.date.irc
+        6: constant.numeric.value.irc
+        7: constant.numeric.value.irc
+        8: punctuation.separator.date.irc
+        9: constant.numeric.value.irc
+        10: punctuation.separator.date.irc
+        11: constant.numeric.value.irc
+        12: punctuation.section.date.end.irc
+    # Bracketed time only: [12:34:56] or [12:34] or [12:34:56:] (Snak)
+    - match: '^(\[)(\d{2})(:)(\d{2})(?:(:)(\d{2}))?:?(\])'
+      scope: meta.date.irc
+      captures:
+        1: punctuation.section.date.begin.irc
+        2: constant.numeric.value.irc
+        3: punctuation.separator.date.irc
+        4: constant.numeric.value.irc
+        5: punctuation.separator.date.irc
+        6: constant.numeric.value.irc
+        7: punctuation.section.date.end.irc
+    # Unbracketed with date: 2021-03-27 12:34:56
+    - match: '^(\d{4})([-/])(\d{2})([-/])(\d{2})[\sT](\d{2})(:)(\d{2})(?:(:)(\d{2}))?'
+      scope: meta.date.irc
+      captures:
+        1: constant.numeric.value.irc
+        2: punctuation.separator.date.irc
+        3: constant.numeric.value.irc
+        4: punctuation.separator.date.irc
+        5: constant.numeric.value.irc
+        6: constant.numeric.value.irc
+        7: punctuation.separator.date.irc
+        8: constant.numeric.value.irc
+        9: punctuation.separator.date.irc
+        10: constant.numeric.value.irc
+    # Unbracketed time only: 12:34 or 12:34:56 (must be followed by whitespace)
+    - match: '^(\d{2})(:)(\d{2})(?:(:)(\d{2}))?(?=\s|$)'
+      scope: meta.date.irc
+      captures:
+        1: constant.numeric.value.irc
+        2: punctuation.separator.date.irc
+        3: constant.numeric.value.irc
+        4: punctuation.separator.date.irc
+        5: constant.numeric.value.irc
+    # Named month: Mar 27 12:34:56 (HexChat style)
+    - match: '^([A-Z][a-z]{2})\s+(\d{1,2})\s+(\d{2})(:)(\d{2})(:)(\d{2})'
+      scope: meta.date.irc
+      captures:
+        1: constant.other.month-name.irc
+        2: constant.numeric.value.irc
+        3: constant.numeric.value.irc
+        4: punctuation.separator.date.irc
+        5: constant.numeric.value.irc
+        6: punctuation.separator.date.irc
+        7: constant.numeric.value.irc
+    # Parenthesized: (12:34:56) or (12:34)
+    - match: '^(\()(\d{2})(:)(\d{2})(?:(:)(\d{2}))?(\))'
+      scope: meta.date.irc
+      captures:
+        1: punctuation.section.date.begin.irc
+        2: constant.numeric.value.irc
+        3: punctuation.separator.date.irc
+        4: constant.numeric.value.irc
+        5: punctuation.separator.date.irc
+        6: constant.numeric.value.irc
+        7: punctuation.section.date.end.irc
 
-  topic:
-    - match: '(?:(-!-)|(===))? (\S+) changed the topic of (?:(.*)) to: (?:(.*))?$'
-      scope: meta.string.topic.irc comment.line.irc
-
-  url:
-    - match: https?:\/\/\S+
-      scope: markup.underline.link.irc
-
-  user-is:
-    - match: '(?:(-!-)|(===))? (\S+) is (?:(.*)) on (?:(.*))$'
-      scope: meta.string.fullname.irc comment.line.irc
+  # ── Chat nicknames: <nick> ─────────────────────────────
 
   nickname:
-    - match: (<)([a-zA-Z\[\]\\`_\^\{\|\}][a-zA-Z0-9\[\]\\`_\^\{\|\}-]{1,31})(>)
-      scope: meta.string.nickname.irc
+    - match: '(<)([a-zA-Z\[\]\\`_\^\{\|\}][a-zA-Z0-9\[\]\\`_\^\{\|\}\-]{0,31})(>)'
+      scope: meta.reference.nickname.irc
       captures:
-        1: punctuation.definition.nickname.begin.irc
-        2: string.unquoted.username.irc
-        3: punctuation.definition.nickname.end.irc
+        1: punctuation.definition.reference.nickname.begin.irc
+        2: entity.name.tag.nickname.irc
+        3: punctuation.definition.reference.nickname.end.irc
 
-  nickname-change:
-    - match: (?:(-!-)|(===))? (\S+) is now known as (\S+)$
-      scope: meta.string.nickname.irc comment.line.irc
+  # ── Event lines ────────────────────────────────────────
+  # Matches event markers from irssi (-!-), generic (===),
+  # weechat (-->, <--, --), ZNC/Snak (***), and HexChat/mIRC (*)
+
+  event:
+    - match: '(-!-|===|-->|<--|\*{3}:?|--)\s+'
+      captures:
+        1: punctuation.definition.event.irc
+      push: event-body
+    - match: '(\*)\s+(?=\S)'
+      captures:
+        1: punctuation.definition.event.irc
+      push: event-body
+
+  event-body:
+    - meta_scope: meta.event.irc
+    - match: $
+      pop: true
+    - include: event-nick-change
+    - include: event-znc-join
+    - include: event-znc-quit
+    - include: event-join
+    - include: event-quit
+    - include: event-topic
+    - include: event-user-is
+    - include: inline
+
+  event-znc-join:
+    - match: '(Joins):\s+(\S+)\s+'
+      captures:
+        1: keyword.other.join.irc
+        2: entity.name.tag.nickname.irc
+      push:
+        - match: $
+          pop: true
+        - include: channel
+        - include: url
+        - include: vhost
+
+  event-znc-quit:
+    - match: '(Quits|Parts):\s+(\S+)\s+'
+      captures:
+        1: keyword.other.quit.irc
+        2: entity.name.tag.nickname.irc
+      push:
+        - match: $
+          pop: true
+        - match: '\(([^)]*)\)'
+          captures:
+            1: string.unquoted.quit-message.irc
+        - include: inline
+
+  event-join:
+    - match: '(\S+)\s+(?:(?:\[[^\]]+\]|\([^)]+\))\s+)?(?:has\s+)?(joined)\s+'
+      captures:
+        1: entity.name.tag.nickname.irc
+        2: keyword.other.join.irc
+      push:
+        - match: $
+          pop: true
+        - include: channel
+        - include: url
+
+  event-quit:
+    - match: '(\S+)\s+(?:(?:\[[^\]]+\]|\([^)]+\))\s+)?(?:has\s+)?(quit|left|parted)\b'
+      captures:
+        1: entity.name.tag.nickname.irc
+        2: keyword.other.quit.irc
+      push:
+        - match: $
+          pop: true
+        - match: '\[([^\]]*)\]'
+          captures:
+            1: string.unquoted.quit-message.irc
+        - match: '\(([^)]*)\)'
+          captures:
+            1: string.unquoted.quit-message.irc
+        - include: inline
+
+  event-topic:
+    - match: '(\S+)\s+changed\s+the\s+topic\s+of\s+'
+      captures:
+        1: entity.name.tag.nickname.irc
+      push:
+        - match: $
+          pop: true
+        - match: 'to:\s*(.*)'
+          captures:
+            1: string.unquoted.topic.irc
+        - include: channel
+        - include: url
+
+  event-nick-change:
+    - match: '(\S+)\s+is\s+now\s+known\s+as\s+(\S+)'
+      captures:
+        1: entity.name.tag.nickname.irc
+        2: entity.name.tag.nickname.irc
+
+  event-user-is:
+    - match: '(\S+)\s+is\s+(.*?)\s+on\s+'
+      captures:
+        1: entity.name.tag.nickname.irc
+        2: string.unquoted.realname.irc
+      push:
+        - match: $
+          pop: true
+        - include: channel
+
+  # ── URLs ────────────────────────────────────────────────
+
+  url:
+    - match: 'https?://[^\s)\]}>,"'']*'
+      scope: markup.underline.link.irc
+
+  # ── Channels ────────────────────────────────────────────
+
+  channel:
+    - match: '([#&])([^\x07\x2C\s]{0,199})'
+      captures:
+        1: punctuation.definition.channel.irc
+        2: constant.other.channel.irc
+
+  # ── Virtual hosts ───────────────────────────────────────
 
   vhost:
-    - match: \[(?=\S+?(?i:@)\S+?(?i:\.)?\S+?\])
-      scope: punctuation.definition.reference.vhost.begin.irc
+    - match: '\[(?=\S+?@\S+?\.\S+?\])'
+      scope: punctuation.definition.vhost.begin.irc
       push: [vhost-meta, vhost-name]
 
   vhost-meta:
@@ -86,18 +247,18 @@ contexts:
 
   vhost-name:
     - meta_content_scope: entity.name.reference.vhost.irc
-    - match: (?i:@)
-      scope: punctuation.separator.vhost.irc
+    - match: '@'
+      scope: punctuation.separator.email.irc
       set: vhost-domain
     - include: vhost-end
 
   vhost-domain:
     - meta_content_scope: entity.name.reference.vhost.irc
-    - match: (?i:\.)
+    - match: '\.'
       scope: punctuation.separator.domain.irc
     - include: vhost-end
 
   vhost-end:
     - match: '\]'
-      scope: punctuation.definition.reference.vhost.end.irc
+      scope: punctuation.definition.vhost.end.irc
       pop: true

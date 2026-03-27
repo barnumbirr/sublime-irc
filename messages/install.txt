@@ -1,12 +1,13 @@
-sublime-irc
---------------
+IRC Syntax
+==========
 
-Thank you for installing sublime-irc, an IRC log file syntax highlighter for
-Sublime Text.
+Thank you for installing IRC Syntax for Sublime Text!
 
-You're almost there, you'll only need to close and reopen all IRC related
-files (.txt, .log ...) and select the 'IRC' syntax from the menu.
+Provides syntax highlighting for IRC log files from:
+  - irssi, weechat, HexChat, mIRC, ZNC, and Snak
+
+IRC log files are auto-detected when possible. If not, select 'IRC'
+from View > Syntax.
 
 If you have any questions, comments, concerns, bugs, or patches, please open an
 issue or pull request over on GitHub (https://github.com/barnumbirr/sublime-irc).
-You can also find me on Twitter @barnumbirr.

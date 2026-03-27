@@ -1,0 +1,303 @@
+[08:00:02] *** Joins: tux42 (tux@gateway/web/freenode/ip.203.0.113.12)
+[08:00:15] <tux42> morning everyone
+[08:00:32] *** Joins: sysop_jen (jen@shells.example.com)
+[08:00:45] <sysop_jen> hey tux42
+[08:00:58] <sysop_jen> anyone here running 6.8 yet?
+[08:01:14] <tux42> yeah I upgraded last weekend on my workstation
+[08:01:29] <tux42> the new io_uring improvements are noticeable
+[08:02:01] *** Joins: kerneldev (rms@198.51.100.44)
+[08:02:18] <kerneldev> morning
+[08:02:35] <kerneldev> sysop_jen: 6.8 has been solid for me on production boxes, no regressions so far
+[08:02:52] <sysop_jen> good to hear. I've been holding off because of that bcachefs issue from a few weeks ago
+[08:03:10] <kerneldev> that got patched in 6.8.2
+[08:03:28] <tux42> yeah the bcachefs fix landed pretty quick. Kent Overstreet was on it
+[08:03:45] <sysop_jen> nice. I'll schedule the upgrade for this weekend then
+[08:04:02] <kerneldev> make sure you check the release notes, there's a small change to the btrfs scrub behavior
+[08:04:20] <sysop_jen> oh? what changed?
+[08:04:38] <kerneldev> scrub now defaults to read-verify mode, you need --write explicitly for write verification
+[08:04:55] <sysop_jen> that's actually a good change. the old default was too aggressive for some workloads
+[08:05:12] <tux42> agreed. we had scrub kill performance on our NAS boxes more than once
+[08:05:30] *** Joins: netadmin_bob (bob@192.168.1.50)
+[08:05:45] <netadmin_bob> morning all
+[08:05:58] <netadmin_bob> anyone have experience with nftables and wireguard?
+[08:06:15] <tux42> yeah, what's the issue?
+[08:06:32] <netadmin_bob> I'm trying to set up split-tunnel routing with policy-based rules and nftables keeps dropping packets on the forward chain
+[08:06:50] <tux42> are you using mark-based routing?
+[08:07:05] <netadmin_bob> no, just source-based with ip rule
+[08:07:22] <tux42> that's probably your problem. you need fwmark on the wireguard interface and then match it in nftables
+[08:07:40] <netadmin_bob> hm okay. got a link to a good guide?
+[08:07:55] <tux42> check https://wiki.archlinux.org/title/WireGuard#nftables -- it has a solid walkthrough
+[08:08:12] <netadmin_bob> thanks, bookmarking that
+[08:08:30] <kerneldev> also make sure your AllowedIPs in the wireguard config match what you're trying to route
+[08:08:48] <kerneldev> and you've got ip forwarding enabled? sysctl net.ipv4.ip_forward=1
+[08:09:05] <netadmin_bob> ...
+[08:09:20] <netadmin_bob> I'm going to go check that
+[08:09:35] <tux42> lol classic
+[08:09:48] <sysop_jen> haha we've all been there
+[08:10:10] *** Quits: kerneldev (rms@198.51.100.44) (Quit: back to hacking)
+[08:10:30] * tux42 refills coffee
+[08:15:02] <netadmin_bob> yep. that was it. ip_forward was 0
+[08:15:18] <netadmin_bob> I set it in sysctl.conf months ago but apparently it got overwritten by an update
+[08:15:35] <sysop_jen> use /etc/sysctl.d/99-custom.conf instead, it won't get clobbered
+[08:15:52] <netadmin_bob> good call, moving it there now
+[08:20:01] *** Joins: container_mike (mike@docker-host.internal.lan)
+[08:20:18] <container_mike> hey folks. quick podman question
+[08:20:35] <tux42> shoot
+[08:20:50] <container_mike> trying to run rootless podman with systemd user units and it keeps failing to start after reboot
+[08:21:08] <container_mike> works fine if I ssh in and start it manually
+[08:21:25] <sysop_jen> did you enable lingering for the user?
+[08:21:40] <container_mike> lingering?
+[08:21:55] <sysop_jen> loginctl enable-linger <username>
+[08:22:12] <sysop_jen> without it, systemd user services only start when the user logs in
+[08:22:30] <container_mike> that would explain it perfectly
+[08:22:45] <tux42> also make sure the unit is in ~/.config/systemd/user/ not /etc/systemd/system/
+[08:23:18] <container_mike> yeah it's in the right place. just didn't know about linger
+[08:23:35] <sysop_jen> it's one of those things that trips everyone up with rootless containers
+[08:24:05] <tux42> welcome to the rootless world. it's better once you get past the initial gotchas
+[08:25:00] *** Parts: netadmin_bob (bob@192.168.1.50) (heading to a meeting)
+[08:30:15] *** Joins: storage_anna (anna@nas.homelab.net)
+[08:30:32] <storage_anna> hi all. anyone running ZFS on 6.8?
+[08:30:48] <tux42> I thought ZFS wasn't in the mainline kernel
+[08:31:05] <storage_anna> it's not, I mean OpenZFS 2.2.x with kernel 6.8
+[08:31:22] <sysop_jen> yeah I've got that combo on my file server
+[08:31:38] <storage_anna> any issues with the deadlock bug that was reported?
+[08:31:55] <sysop_jen> which one? there were a couple
+[08:32:10] <storage_anna> the one with heavy sequential writes causing a hang in zfs_write
+[08:32:28] <sysop_jen> oh yeah, that's fixed in 2.2.4. make sure you're on at least that
+[08:32:45] <storage_anna> I'm on 2.2.3, that explains my nightly backup freezes
+[08:33:02] <sysop_jen> yeah upgrade ASAP. the fix is in https://github.com/openzfs/zfs/pull/15892
+[08:33:18] <storage_anna> thanks, pulling that now
+[08:33:35] <container_mike> sysop_jen: the linger thing worked perfectly by the way. container survives reboot now
+[08:33:52] <sysop_jen> nice!
+[08:34:10] <tux42> storage_anna: while you're at it, check your ARC size. the default is sometimes too aggressive on systems with less than 64GB
+[08:34:28] <storage_anna> I've got 32GB and the ARC is set to 16GB max
+[08:34:45] <tux42> that's reasonable. just make sure your other services aren't memory-starved
+[08:35:20] * storage_anna checks dashboard
+[08:40:01] *** Joins: secops_dave (dave@vpn.corp.example.com)
+[08:40:18] <secops_dave> morning. anyone else see the openssh vulnerability disclosure this morning?
+[08:40:35] <tux42> which one? CVE-2024-?
+[08:40:50] <secops_dave> CVE-2024-6387, the regreSSHion thing
+[08:41:08] <sysop_jen> oh great, another ssh vuln
+[08:41:25] <secops_dave> it's a race condition in the signal handler. allows unauthenticated RCE
+[08:41:42] <tux42> severity?
+[08:41:58] <secops_dave> CVSS 8.1. affects OpenSSH 8.5p1 through 9.7p1
+[08:42:15] <sysop_jen> that's basically everything
+[08:42:30] <secops_dave> yep. 9.8p1 has the fix. I'd recommend patching today
+[08:42:48] <tux42> already building packages for our fleet
+[08:43:05] <secops_dave> good. also worth checking if you've got LoginGraceTime set in sshd_config
+[08:43:22] <secops_dave> setting it to 0 mitigates the vuln as a workaround
+[08:43:38] <container_mike> wouldn't that allow infinite unauthenticated connections though?
+[08:43:55] <secops_dave> yes, so it's not great as a permanent fix. just a stopgap until you can patch
+[08:44:12] <secops_dave> better yet, use MaxStartups to limit concurrent pre-auth connections
+[08:44:28] <tux42> we've got MaxStartups 10:30:60 in our baseline config
+[08:44:45] <secops_dave> that's reasonable. the advisory is at https://www.qualys.com/2024/07/01/cve-2024-6387/regresshion.txt
+[08:45:02] <sysop_jen> bookmarked. thanks secops_dave
+[08:50:01] *** Quits: container_mike (mike@docker-host.internal.lan) (Quit: Leaving)
+[08:55:10] *** Joins: devops_kai (kai@ci-runner-03.build.internal)
+[08:55:28] <devops_kai> hey channel. anyone using ansible with become and SELinux?
+[08:55:45] <tux42> yeah, what's the problem?
+[08:56:02] <devops_kai> getting AVC denials when ansible tries to write to /etc/sysconfig even though become: true is set
+[08:56:18] <secops_dave> what's the SELinux context on the target directory?
+[08:56:35] <devops_kai> system_u:object_r:etc_t:s0
+[08:56:52] <secops_dave> and the ansible process context?
+[08:57:08] <devops_kai> unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023
+[08:57:25] <secops_dave> that should work. check if there's a custom policy module blocking it
+[08:57:42] <secops_dave> run: semodule -l | grep ansible
+[08:57:58] <devops_kai> nothing
+[08:58:15] <secops_dave> then check audit.log: ausearch -m AVC -ts recent
+[09:00:01] <devops_kai> found it. there's a fcontext rule that's restoring the context after ansible writes
+[09:00:18] <secops_dave> ah yeah, restorecon might be running via a cron job
+[09:00:35] <devops_kai> exactly. there's a cron.daily that runs restorecon -R /etc/
+[09:00:52] <tux42> that's pretty aggressive. who set that up?
+[09:01:08] <devops_kai> probably the previous admin. I'll just add proper fcontext rules for ansible's temp files
+[09:01:25] <secops_dave> better to fix the SELinux policy than disable the restorecon. the restorecon is there for a reason
+[09:01:42] <devops_kai> agreed. thanks for the help
+[09:15:01] *** Parts: storage_anna (anna@nas.homelab.net) (upgrading ZFS, brb)
+[09:20:00] *** secops_dave is now known as dave_afk
+[09:30:05] <devops_kai> so I got the SELinux policy sorted out. had to create a custom module with audit2allow
+[09:30:22] <tux42> nice. did you scope it properly or just allow everything?
+[09:30:38] <devops_kai> I scoped it to just the ansible tmp context and the target paths
+[09:30:55] <tux42> good. too many people just do audit2allow -M mypol and call it a day
+[09:31:12] <sysop_jen> yeah that's basically disabling SELinux with extra steps
+[09:45:00] *** Quits: devops_kai (kai@ci-runner-03.build.internal) (Quit: pipeline calls)
+[10:00:02] *** Joins: kerneldev (rms@198.51.100.44)
+[10:00:18] <kerneldev> back. anyone want to discuss the new Rust-for-Linux status?
+[10:00:35] <tux42> absolutely. I read the LWN article yesterday
+[10:00:52] <kerneldev> things are moving fast. the GPIO driver is basically the proof of concept everyone was waiting for
+[10:01:08] <sysop_jen> how's the toolchain situation? last I checked you needed a specific nightly rust version
+[10:01:25] <kerneldev> it's better now. works with stable rustc 1.78+
+[10:01:42] <tux42> that's a big deal. nightly was a blocker for a lot of distros
+[10:01:58] <kerneldev> yeah. Fedora and Arch are already shipping rust-enabled kernel configs
+[10:02:15] <sysop_jen> any performance overhead from the Rust abstractions?
+[10:02:32] <kerneldev> negligible. the zero-cost abstractions actually hold up. Miguel did some benchmarks
+[10:02:48] <kerneldev> https://lore.kernel.org/rust-for-linux/ has the recent discussions
+[10:03:05] <tux42> I'm cautiously optimistic. the memory safety guarantees alone are worth it for driver code
+[10:03:22] <kerneldev> exactly. most kernel vulns are memory safety bugs in drivers
+[10:18:00] *** sysop_jen changed the topic of #linux to: Welcome to #linux | SECURITY: OpenSSH patch available | https://kernel.org
+[10:18:15] <sysop_jen> updated the topic. also posted in #sysadmin and #security
+[10:18:30] <tux42> good call. I'll mention it in #devops too
+[10:20:00] *** dave_afk is now known as secops_dave
+[10:20:15] <secops_dave> back. quick update on the SSH vuln -- Debian and Ubuntu have pushed patches to their repos
+[10:20:32] <sysop_jen> already running apt upgrade on my fleet
+[10:20:48] <secops_dave> RHEL/CentOS patches are in testing, should be in stable by EOD
+[10:21:05] <tux42> Arch had it within 2 hours of disclosure. gotta love rolling release
+[10:21:22] <secops_dave> yeah but I wouldn't run Arch in production :)
+[10:21:38] <tux42> I know I know. workstations only
+[10:45:00] *** Quits: sysop_jen (jen@shells.example.com) (Quit: patching servers)
+[11:00:02] *** Joins: newbie_linux (guest@pool-72-80-45-101.nycmny.fios.verizon.net)
+[11:00:18] <newbie_linux> hi, I just installed Ubuntu and I can't get my wifi working. can anyone help?
+[11:00:35] <tux42> sure. what wifi card do you have?
+[11:00:52] <newbie_linux> how do I check?
+[11:01:08] <tux42> run: lspci | grep -i network
+[11:01:25] <newbie_linux> it says Intel Corporation Wi-Fi 6 AX200
+[11:01:42] <tux42> that should work out of the box. what Ubuntu version?
+[11:01:58] <newbie_linux> 24.04
+[11:02:15] <tux42> definitely should work. run: rfkill list
+[11:02:32] <newbie_linux> it says Soft blocked: yes
+[11:02:48] <tux42> there you go. run: rfkill unblock wifi
+[11:03:05] <newbie_linux> oh! it works now. what was that?
+[11:03:22] <tux42> your wifi was software-disabled. sometimes happens after install or if you hit a keyboard shortcut
+[11:03:38] <newbie_linux> thanks so much! I spent hours trying to fix this
+[11:03:55] <kerneldev> tux42 to the rescue again
+[11:10:00] *** Quits: newbie_linux (guest@pool-72-80-45-101.nycmny.fios.verizon.net) (Quit: Web IRC)
+[12:00:00] *** Joins: sysop_jen (jen@shells.example.com)
+[12:00:15] <sysop_jen> back from patching. 47 servers updated, zero issues
+[12:00:32] <secops_dave> that's what I like to hear
+[12:00:48] <tux42> 47 servers patched before lunch? ansible?
+[12:01:05] <sysop_jen> ansible with a rolling restart strategy. never patch everything at once
+[12:01:22] <secops_dave> good practice. we've seen shops take down entire clusters by patching all nodes simultaneously
+[12:01:38] <sysop_jen> yeah our playbook does 10% at a time with health checks between batches
+[12:05:00] *** Joins: container_mike (mike@docker-host.internal.lan)
+[12:10:00] * kerneldev is reading the latest LKML thread on scheduler changes
+[12:10:18] <kerneldev> the EEVDF scheduler patches are looking really promising
+[12:10:35] <tux42> EEVDF? what happened to CFS?
+[12:10:52] <kerneldev> EEVDF is the replacement for CFS. Earliest Eligible Virtual Deadline First
+[12:11:08] <kerneldev> it's better for latency-sensitive workloads
+[12:11:25] <container_mike> does the scheduler change affect container scheduling at all?
+[12:11:42] <kerneldev> not directly. cgroup CPU controllers still work the same way. the underlying scheduling algorithm is just smarter
+[12:20:00] *** Quits: storage_anna (anna@nas.homelab.net) (Quit: time for lunch)
+[12:45:01] *** Parts: container_mike (mike@docker-host.internal.lan) (going to grab food)
+[13:00:02] *** Joins: netadmin_bob (bob@192.168.1.50)
+[13:00:18] <netadmin_bob> back from lunch. BGP session has been stable for 3 hours now
+[13:00:35] <tux42> nice. persist those firewall rules this time :)
+[13:00:52] <netadmin_bob> already done. enabled and verified with systemctl is-enabled nftables
+[13:01:08] <secops_dave> netadmin_bob: while you're doing networking stuff, have you looked into segment routing?
+[13:01:25] <netadmin_bob> SRv6? a little bit. seems like overkill for our network though
+[13:01:42] <secops_dave> depends on your scale. for anything under 50 routers it's probably unnecessary
+[13:15:00] *** Joins: container_mike (mike@docker-host.internal.lan)
+[13:15:18] <container_mike> back. question about overlay networks -- anyone using Cilium instead of flannel?
+[13:15:35] <tux42> yeah we switched to Cilium about 6 months ago
+[13:16:08] <tux42> the eBPF-based networking is significantly faster than iptables-based CNIs
+[13:16:25] <secops_dave> plus Cilium has great network policy support. much more granular than vanilla k8s NetworkPolicy
+[13:16:42] <container_mike> how's the observability? I heard Hubble is good
+[13:16:58] <tux42> Hubble is amazing. being able to see L7 flows between pods without tcpdump is a game changer
+[13:17:15] <container_mike> okay I'm sold. going to try it on my home lab first
+[13:17:32] <tux42> start with https://docs.cilium.io/en/stable/gettingstarted/ -- the quick install is straightforward
+[13:40:00] *** Quits: secops_dave (dave@vpn.corp.example.com) (Quit: end of shift)
+[13:45:00] *** Quits: kerneldev (rms@198.51.100.44) (Quit: kernel compile done, rebooting)
+[14:00:01] *** Joins: kerneldev (rms@198.51.100.44)
+[14:00:18] <kerneldev> new kernel booted fine. custom config with EEVDF and some debug options enabled
+[14:00:35] <tux42> living on the edge
+[14:00:52] <kerneldev> it's a test machine, not production :)
+[14:01:08] <sysop_jen> famous last words
+[14:01:25] * kerneldev checks dmesg nervously
+[14:01:42] <kerneldev> all clean. no BUG: or WARNING: in dmesg
+[14:15:00] *** newbie_linux is now known as linux_learner
+[15:00:00] *** Joins: storage_anna (anna@nas.homelab.net)
+[15:00:18] <storage_anna> nightly backup test completed successfully. no freezes with the new ZFS version
+[15:00:35] <tux42> great news!
+[15:00:52] <storage_anna> yeah the write throughput is actually better too. sustained 450MB/s vs 380MB/s before
+[15:01:08] <sysop_jen> that's a nice improvement. the new ARC prefetch changes might be helping too
+[15:01:25] <storage_anna> could be. I also noticed lower CPU usage during scrub
+[15:01:42] <tux42> 2.2.4 had some scrub optimizations as well. less lock contention
+[15:15:00] *** Quits: netadmin_bob (bob@192.168.1.50) (Quit: heading home)
+[16:00:00] *** Quits: container_mike (mike@docker-host.internal.lan) (Quit: time to pick up the kids)
+[16:15:01] <storage_anna> anyone have opinions on mdadm vs ZFS vs btrfs for a new NAS build?
+[16:15:18] <kerneldev> what's the use case?
+[16:15:35] <storage_anna> home media server. 4x 16TB drives, want redundancy and snapshots
+[16:15:52] <kerneldev> ZFS raidz1 or btrfs raid1 would both work
+[16:16:08] <tux42> ZFS if you value data integrity above all else. the checksumming and scrub are unmatched
+[16:16:25] <sysop_jen> btrfs if you want something in the mainline kernel without DKMS hassle
+[16:16:42] <storage_anna> I'm already running ZFS on my main NAS so I'll probably stick with it
+[16:16:58] <tux42> just remember: raidz1 on 16TB drives means a long resilver time if a drive fails
+[16:17:15] <storage_anna> yeah I've thought about that. might go raidz2 for the extra safety margin
+[16:17:32] <tux42> with 4 drives that only gives you 32TB usable though
+[16:17:48] <storage_anna> that's fine. better to have 32TB safe than 48TB at risk
+[16:18:05] <sysop_jen> smart approach. data loss is never worth the extra space
+[17:00:01] <sysop_jen> getting ready to head out. anyone else going to FOSDEM next year?
+[17:00:18] <kerneldev> planning on it. the kernel devroom is always great
+[17:00:35] <tux42> I went in 2024 and it was amazing. definitely going again
+[17:00:52] <storage_anna> never been. is it worth the trip?
+[17:01:08] <tux42> absolutely. biggest open source conference in Europe. and it's free
+[17:01:42] <sysop_jen> alright, see you all tomorrow
+[17:01:58] *** Quits: sysop_jen (jen@shells.example.com) (Quit: o/)
+[17:30:01] <storage_anna> I'm heading out too. thanks for the ZFS help earlier everyone
+[17:30:18] <tux42> np. let us know how the raidz2 build goes
+[17:30:35] <storage_anna> will do. night!
+[17:30:50] *** Quits: storage_anna (anna@nas.homelab.net) (Quit: Leaving)
+[18:00:00] *** Joins: nightowl_ops (noc@monitoring.datacenter.example.com)
+[18:00:18] <nightowl_ops> evening shift checking in
+[18:00:35] <tux42> hey nightowl. quiet day today
+[18:00:52] <nightowl_ops> that's the best kind of day. any ongoing issues I should know about?
+[18:01:08] <tux42> just the SSH CVE from this morning. everything is patched already
+[18:01:25] <nightowl_ops> saw that in the ticket queue. good that it's handled
+[18:01:42] <kerneldev> I'm heading out too. have a good evening shift
+[18:01:58] *** Quits: kerneldev (rms@198.51.100.44) (Quit: sleep is for the weak... but I am weak)
+[18:15:00] <nightowl_ops> tux42: you still here?
+[18:15:18] <tux42> for a bit yeah. what's up?
+[18:15:35] <nightowl_ops> one of the monitoring agents is showing high iowait on db-prod-03
+[18:15:52] <tux42> how high?
+[18:16:08] <nightowl_ops> 45%. normally it's under 5%
+[18:16:25] <tux42> check if there's a backup running. sometimes the postgres vacuum overlaps with the backup window
+[18:16:42] <nightowl_ops> good call. let me check... yeah autovacuum is running on a large table
+[18:16:58] <tux42> that'll do it. should settle down once it finishes
+[18:17:15] <nightowl_ops> ETA on completion?
+[18:17:32] <tux42> check pg_stat_activity and pg_stat_progress_vacuum
+[18:17:48] <nightowl_ops> phase: scanning heap, heap_blks_scanned: 450000 out of 2100000
+[18:18:05] <tux42> so about 20% done. probably another 30-40 minutes
+[18:18:22] <nightowl_ops> okay I'll keep an eye on it. thanks
+[18:18:38] <tux42> np. if iowait goes above 80% or you see connection timeouts, ping me
+[18:30:00] * tux42 is finally calling it a day
+[18:30:18] <tux42> nightowl_ops: you good?
+[18:30:35] <nightowl_ops> all good here. iowait is coming down already, at 30% now
+[18:30:52] <tux42> great. have a quiet night
+[18:31:05] *** Quits: tux42 (tux@gateway/web/freenode/ip.203.0.113.12) (Quit: see ya)
+[19:00:00] <nightowl_ops> autovacuum completed. iowait back to normal at 3%
+[19:15:01] *** Joins: late_coder (coder@residential-98-42-77-210.hsd1.ca.comcast.net)
+[19:15:18] <late_coder> anyone awake?
+[19:15:35] <nightowl_ops> always. what's up?
+[19:15:52] <late_coder> trying to debug a segfault in a C program. GDB shows it's in a library call but I don't have debug symbols
+[19:16:08] <nightowl_ops> which distro?
+[19:16:25] <late_coder> Fedora 40
+[19:16:42] <nightowl_ops> install debuginfod. Fedora has a debuginfod server that provides symbols on demand
+[19:16:58] <late_coder> oh I didn't know about that
+[19:17:15] <nightowl_ops> export DEBUGINFOD_URLS="https://debuginfod.fedoraproject.org/"
+[19:17:32] <nightowl_ops> then GDB will automatically download debug info when you need it
+[19:17:48] <late_coder> that's incredible. trying it now
+[19:18:05] <late_coder> it's downloading symbols... and now I can see the full backtrace!
+[19:18:22] <nightowl_ops> nice. what's the crash?
+[19:18:38] <late_coder> null pointer dereference in a callback. I see the bug now
+[19:18:55] <nightowl_ops> classic. happy debugging
+[19:19:12] <late_coder> thanks a ton. debuginfod is a game changer
+[19:45:00] *** Quits: late_coder (coder@residential-98-42-77-210.hsd1.ca.comcast.net) (Quit: bug squashed!)
+[20:00:00] <nightowl_ops> quiet night so far. just the way I like it
+[20:30:01] *** Joins: insomnia_admin (root@jump-box.startup.io)
+[20:30:18] <insomnia_admin> hey night crew
+[20:30:35] <nightowl_ops> hey. can't sleep?
+[20:30:52] <insomnia_admin> nah, just realized I left a tmux session running with a long compile
+[20:31:08] <nightowl_ops> let me guess, kernel compile?
+[20:31:25] <insomnia_admin> gentoo emerge --update world actually
+[20:31:42] <nightowl_ops> oh boy. how long has that been running?
+[20:31:58] <insomnia_admin> about 6 hours now. still going
+[20:32:15] <nightowl_ops> sounds about right for a full world update on Gentoo
+[20:32:32] <insomnia_admin> the price we pay for optimization
+[20:32:48] <nightowl_ops> is it really faster in the end though? serious question
+[20:33:05] <insomnia_admin> marginally. honestly I just enjoy the control it gives me
+[20:33:38] <insomnia_admin> alright the build looks healthy. going back to pretending to sleep
+[20:33:55] *** Quits: insomnia_admin (root@jump-box.startup.io) (Quit: zzz)
+[21:00:00] <nightowl_ops> running the nightly health checks now
+[21:00:18] * nightowl_ops checks all monitoring dashboards
+[21:00:35] <nightowl_ops> all green. disk usage nominal, memory stable, no alerts
+[21:45:00] <nightowl_ops> and then there was one
+[22:00:00] <nightowl_ops> end of day log: all systems nominal. SSH CVE-2024-6387 patched across fleet. no incidents during evening shift. autovacuum spike on db-prod-03 resolved. signing off.
+[22:00:18] *** Quits: nightowl_ops (noc@monitoring.datacenter.example.com) (Quit: shift complete)

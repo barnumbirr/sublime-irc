@@ -1,0 +1,39 @@
+# SYNTAX TEST "Packages/IRC Syntax/Syntaxes/IRC.sublime-syntax"
+
+[14:30:45] *** Joins: nick (user@host.net)
+# <- meta.date.irc punctuation.section.date.begin.irc
+#^^ constant.numeric.value.irc
+#  ^ punctuation.separator.date.irc
+#   ^^ constant.numeric.value.irc
+#     ^ punctuation.separator.date.irc
+#      ^^ constant.numeric.value.irc
+#        ^ punctuation.section.date.end.irc
+#          ^^^ punctuation.definition.event.irc
+#              ^^^^^ meta.event.irc keyword.other.join.irc
+#                     ^^^^ meta.event.irc entity.name.tag.nickname.irc
+
+[14:31:20] *** Parts: nick (user@host.net) (leaving)
+#          ^^^ punctuation.definition.event.irc
+#              ^^^^^ meta.event.irc keyword.other.quit.irc
+#                     ^^^^ meta.event.irc entity.name.tag.nickname.irc
+#                                           ^^^^^^^ meta.event.irc string.unquoted.quit-message.irc
+
+[14:32:00] *** Quits: nick (user@host.net) (Ping timeout)
+#              ^^^^^ meta.event.irc keyword.other.quit.irc
+#                     ^^^^ meta.event.irc entity.name.tag.nickname.irc
+#                                           ^^^^^^^^^^^^ meta.event.irc string.unquoted.quit-message.irc
+
+[14:33:00] *** nick is now known as newnick
+#          ^^^ punctuation.definition.event.irc
+#              ^^^^ meta.event.irc entity.name.tag.nickname.irc
+#                                   ^^^^^^^ meta.event.irc entity.name.tag.nickname.irc
+
+[14:34:00] <nick> hello #channel
+#          ^ punctuation.definition.reference.nickname.begin.irc
+#           ^^^^ entity.name.tag.nickname.irc
+#               ^ punctuation.definition.reference.nickname.end.irc
+#                       ^ punctuation.definition.channel.irc
+#                        ^^^^^^^ constant.other.channel.irc
+
+[14:35:00] * nick waves
+#          ^ punctuation.definition.event.irc

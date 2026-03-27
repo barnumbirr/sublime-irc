@@ -1,0 +1,38 @@
+# SYNTAX TEST "Packages/IRC Syntax/Syntaxes/IRC.sublime-syntax"
+
+00:01 <ab> hi
+# <- meta.date.irc constant.numeric.value.irc
+#^ constant.numeric.value.irc
+# ^ punctuation.separator.date.irc
+#  ^^ constant.numeric.value.irc
+#    ^ - meta.date
+#     ^ punctuation.definition.reference.nickname.begin.irc
+#      ^^ entity.name.tag.nickname.irc
+#        ^ punctuation.definition.reference.nickname.end.irc
+
+00:01 -!- foo joined #bar
+#     ^^^ punctuation.definition.event.irc
+#        ^ - punctuation.definition.event
+#         ^^^ meta.event.irc entity.name.tag.nickname.irc
+#             ^^^^^^ meta.event.irc keyword.other.join.irc
+#                    ^ punctuation.definition.channel.irc
+#                     ^^^ constant.other.channel.irc
+
+00:01 -!- foo has quit [bye]
+#         ^^^ meta.event.irc entity.name.tag.nickname.irc
+#                 ^^^^ meta.event.irc keyword.other.quit.irc
+#                       ^^^ meta.event.irc string.unquoted.quit-message.irc
+
+00:01 -!- foo is "Foo" on #bar
+#         ^^^ entity.name.tag.nickname.irc
+#                ^^^^^ string.unquoted.realname.irc
+#                         ^ punctuation.definition.channel.irc
+#                          ^^^ constant.other.channel.irc
+
+00:01 -!- old is now known as new
+#         ^^^ entity.name.tag.nickname.irc
+#                             ^^^ entity.name.tag.nickname.irc
+
+00:01 <ab> https://x.co ok
+#          ^^^^^^^^^^^^ markup.underline.link.irc
+#                       ^^ - markup.underline.link

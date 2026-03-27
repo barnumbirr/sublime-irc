@@ -1,0 +1,41 @@
+name: Syntax Tests
+
+on:
+  push:
+    paths:
+      - '**.sublime-syntax'
+      - 'Syntaxes/tests/syntax_test_*'
+      - '**.tmPreferences'
+  pull_request:
+    paths:
+      - '**.sublime-syntax'
+      - 'Syntaxes/tests/syntax_test_*'
+      - '**.tmPreferences'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  syntax_tests:
+    name: Syntax Tests (${{ matrix.build }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      package_name: IRC Syntax
+    strategy:
+      matrix:
+        include:
+          - build: latest
+          - build: 4143
+          - build: 3210
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run syntax tests
+        uses: SublimeText/syntax-test-action@14f4a5fbcd0ffaa4a1adba2dbf9193585dce93fc # v2
+        with:
+          build: ${{ matrix.build }}
+          package_name: ${{ env.package_name }}
+          package_root: .

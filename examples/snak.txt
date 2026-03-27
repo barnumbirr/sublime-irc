@@ -1,0 +1,396 @@
+[08:00:02] *** tuxdev has joined #linux
+[08:00:15] *** sysadm_joe has joined #linux
+[08:00:34] <tuxdev> morning everyone
+[08:00:41] <sysadm_joe> hey tuxdev, early start today
+[08:00:58] <tuxdev> yeah, got paged at 5am for a kernel panic on one of the prod boxes
+[08:01:12] <sysadm_joe> ouch. what kernel version?
+[08:01:30] <tuxdev> 6.6.72, the LTS branch
+[08:01:45] <tuxdev> traced it back to a null pointer deref in the nvme driver
+[08:01:59] <sysadm_joe> was that the bug fixed in 6.6.74? let me find the commit
+[08:02:18] <sysadm_joe> https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/log/?h=linux-6.6.y
+[08:02:35] <tuxdev> yeah looks like it, upgrading now across the fleet with kexec
+[08:02:50] *** netguru has joined #linux
+[08:03:04] <netguru> hi all. anyone here run bird2 for bgp?
+[08:03:22] <sysadm_joe> netguru: I use it on a couple of route reflectors, what's up?
+[08:03:45] <netguru> trying to figure out why my eBGP session keeps flapping every 30 seconds
+[08:04:01] <netguru> hold timer is set to 90s but the session drops way before that
+[08:04:18] <sysadm_joe> check if your firewall is dropping the keepalives. iptables -L -n -v | grep 179
+[08:04:35] <netguru> good call, let me check
+[08:04:52] <tuxdev> could also be an MTU issue if you're running over a tunnel
+[08:05:10] <netguru> it is over a wireguard tunnel actually
+[08:05:28] <tuxdev> there you go. set the wireguard MTU to 1420 and the bird interface MTU to match
+[08:05:45] <netguru> wireguard mtu is already 1420 but let me verify the bird side
+[08:06:03] *** containerking has joined #linux
+[08:06:18] <containerking> morning. anyone know why podman 5.x changed the default network backend?
+[08:06:40] <tuxdev> containerking: they switched from cni to netavark, it's been the default since 4.0 actually
+[08:06:58] <containerking> hmm, I just upgraded from 3.4 to 5.2 so that explains the breakage
+[08:07:15] <containerking> all my custom cni configs stopped working
+[08:07:32] <sysadm_joe> you can set network_backend = "cni" in containers.conf to go back
+[08:07:50] <containerking> thanks, but should I just migrate to netavark? is it actually better?
+[08:08:08] <tuxdev> yes, netavark is way better for dns resolution between containers
+[08:08:25] <tuxdev> and it doesn't need the cni plugins package installed separately
+[08:08:42] <containerking> alright I'll migrate then. is there a guide?
+[08:08:59] <sysadm_joe> https://podman.io/docs/network/netavark/migration
+[08:09:16] <containerking> perfect, thanks
+[08:09:45] <netguru> tuxdev: you were right, bird was using the default 1500 mtu for the wg interface. fixed it, session is stable now
+[08:10:02] <tuxdev> glad that worked
+[08:10:30] *** netguru has left #linux
+[08:15:12] *** linuxsec has joined #linux
+[08:15:30] <linuxsec> has anyone been following the xz backdoor aftermath? wondering if there are new supply chain checks in place
+[08:15:55] <sysadm_joe> linuxsec: yeah, most distros now run reproducible builds and verify tarballs against git
+[08:16:14] <tuxdev> debian added automated diffoscope checks for all source packages too
+[08:16:35] <linuxsec> nice. I've been auditing our build pipeline and found we were pulling tarballs without verifying gpg signatures
+[08:16:52] <sysadm_joe> that's... not great
+[08:17:08] <linuxsec> tell me about it. fixed it now, but it was a wake-up call
+[08:17:30] <linuxsec> also started using sigstore/cosign for our container images
+[08:17:48] <containerking> linuxsec: cosign is great. we use it with our harbor registry
+[08:18:05] <linuxsec> containerking: any issues with the keyless mode? we're debating whether to use that or bring our own keys
+[08:18:28] <containerking> keyless works fine for ci/cd, it uses oidc tokens from your identity provider
+[08:18:45] <containerking> for manual signing I'd use your own keys though
+[08:19:02] <linuxsec> makes sense, thanks
+[08:25:30] *** storageguy has joined #linux
+[08:25:48] <storageguy> question about zfs. is anyone running zfs 2.3 on kernel 6.8+?
+[08:26:05] <tuxdev> storageguy: yeah, on a couple of NAS boxes. what's the issue?
+[08:26:22] <storageguy> getting random pool suspends under heavy write load
+[08:26:40] <storageguy> dmesg shows "txg sync timeout" errors
+[08:26:58] <tuxdev> what's your vdev layout? and how much ram for the ARC?
+[08:27:15] <storageguy> 6x raidz2 with 8 drives each, 128GB ram, arc limited to 64GB
+[08:27:33] <tuxdev> that's a lot of vdevs. what's the recordsize?
+[08:27:50] <storageguy> 128k default
+[08:28:08] <sysadm_joe> storageguy: check zfs_txg_timeout, default is 5 seconds which might be too aggressive for that many vdevs
+[08:28:25] <storageguy> it's at the default 5
+[08:28:42] <sysadm_joe> try bumping it to 10 or 15. echo 15 > /sys/module/zfs/parameters/zfs_txg_timeout
+[08:28:59] <storageguy> will try that, thanks
+[08:29:16] <tuxdev> also make sure you're on the latest 2.3.x, there were some txg sync fixes recently
+[08:29:33] <storageguy> I'm on 2.3.1, let me check if there's a newer point release
+[08:29:50] <tuxdev> 2.3.3 is latest, couple of important fixes: https://github.com/openzfs/zfs/releases/tag/zfs-2.3.3
+[08:30:15] *** systemd_fan has joined #linux
+[08:30:32] <systemd_fan> anyone know how to set up a systemd timer that runs every 6 hours but with a random delay of up to 30 minutes?
+[08:30:50] <sysadm_joe> RandomizedDelaySec=30min in the timer unit
+[08:31:07] <systemd_fan> and the 6 hour interval?
+[08:31:24] <sysadm_joe> OnCalendar=*-*-* 00/6:00:00
+[08:31:42] <systemd_fan> thanks, that's cleaner than what I had with cron
+[08:31:59] <tuxdev> systemd timers are one of the few things systemd actually got right imo
+[08:32:16] <containerking> tuxdev: careful, you'll start a flame war
+[08:32:33] <tuxdev> hah, I said "one of the few things", I'm not a full convert
+[08:33:00] <systemd_fan> I actually like most of systemd. the journal is great for structured logging
+[08:33:18] <sysadm_joe> until the journal gets corrupted and you lose all your logs
+[08:33:35] <systemd_fan> that's what remote syslog forwarding is for
+[08:33:52] <sysadm_joe> fair point
+[08:40:10] *** storageguy has left #linux
+[08:45:22] *** kernelhacker has joined #linux
+[08:45:40] <kernelhacker> does anyone have experience with io_uring for high-throughput networking?
+[08:45:58] <tuxdev> kernelhacker: yeah, we switched our proxy layer from epoll to io_uring last quarter
+[08:46:15] <kernelhacker> what kind of improvement did you see?
+[08:46:33] <tuxdev> about 15-20% reduction in syscalls, maybe 8% throughput improvement at the 99th percentile
+[08:46:50] <kernelhacker> that's decent. any stability issues?
+[08:47:08] <tuxdev> a few. you need kernel 6.4+ to avoid some nasty bugs in the multishot accept path
+[08:47:25] <kernelhacker> we're on 6.10 so should be fine
+[08:47:42] <tuxdev> then go for it. liburing makes the api much more ergonomic than raw io_uring
+[08:47:59] <kernelhacker> yeah I've been reading axboe's examples: https://github.com/axboe/liburing/tree/master/examples
+[08:48:16] <sysadm_joe> just be careful with the security implications, io_uring has had a lot of CVEs
+[08:48:33] <linuxsec> sysadm_joe: exactly, google actually disabled io_uring in production for a while because of that
+[08:48:50] <kernelhacker> I know, but most of those were in the earlier iterations. it's much more audited now
+[08:49:07] <linuxsec> true, and you can restrict it with seccomp if you need to limit exposure
+[08:49:24] <kernelhacker> good point
+[08:55:30] *** systemd_fan has quit (Ping timeout: 260 seconds)
+[09:10:05] *** sysadm_joe is now known as joe_afk
+[09:10:22] <tuxdev> lunchtime already joe?
+[09:10:38] <joe_afk> coffee run. back in 15
+[09:25:12] *** joe_afk is now known as sysadm_joe
+[09:25:30] <sysadm_joe> back. what'd I miss?
+[09:25:47] <tuxdev> not much, quiet morning
+[09:30:15] *** devops_maya has joined #linux
+[09:30:33] <devops_maya> hey all. having a weird issue with ansible and become on ubuntu 24.04
+[09:30:50] <devops_maya> sudo works fine manually but ansible keeps getting "permission denied"
+[09:31:08] <sysadm_joe> devops_maya: is requiretty set in sudoers?
+[09:31:25] <devops_maya> no, checked that already
+[09:31:42] <tuxdev> ubuntu 24.04 switched to sudo-rs by default, the rust reimplementation
+[09:31:59] <devops_maya> oh, I didn't know that
+[09:32:16] <tuxdev> there are some subtle differences in how it handles env_keep and secure_path
+[09:32:33] <devops_maya> that might be it. my ansible tasks set some environment variables via become
+[09:32:50] <sysadm_joe> try adding those vars to env_keep in your sudoers config
+[09:33:07] <devops_maya> will do. alternatively, is it safe to switch back to original sudo?
+[09:33:24] <tuxdev> yeah, apt install sudo should replace sudo-rs, but the rust version is the future
+[09:33:41] <devops_maya> I'll fix the env_keep then, thanks
+[09:40:18] *** kernelhacker has left #linux
+[09:55:30] <containerking> hey tuxdev, follow-up question on the netavark migration
+[09:55:48] <containerking> I have some containers that need static IPs. is that supported?
+[09:56:05] <tuxdev> yes, podman network create --subnet and then --ip on the container
+[09:56:22] <containerking> same syntax as docker then?
+[09:56:39] <tuxdev> basically identical. netavark was designed to be a drop-in for docker networking semantics
+[09:56:56] <containerking> nice. one less thing to worry about
+[10:05:30] *** linuxsec has quit (Quit: heading to a meeting)
+[10:15:45] *** storageguy has joined #linux
+[10:16:02] <storageguy> update: bumping zfs_txg_timeout to 15 helped a lot. no more pool suspends under load
+[10:16:19] <sysadm_joe> storageguy: great to hear. you should also add that to /etc/modprobe.d/zfs.conf to persist it
+[10:16:36] <storageguy> already done. options zfs zfs_txg_timeout=15
+[10:16:53] <tuxdev> good. also consider upgrading to 2.3.3 when you get a maintenance window
+[10:17:10] <storageguy> yeah, scheduling that for next weekend
+[10:20:30] *** devops_maya has left #linux
+[10:35:18] *** netguru has joined #linux
+[10:35:36] <netguru> back again. new question: what's the best way to do policy-based routing on linux these days?
+[10:35:53] <sysadm_joe> ip rule + ip route with multiple tables. same as it's been for years
+[10:36:10] <netguru> is there anything newer? I heard nftables can do some routing decisions now
+[10:36:27] <tuxdev> nftables can mark packets and then you use ip rules to route based on marks
+[10:36:44] <tuxdev> but for straightforward PBR, ip rule is still the way to go
+[10:37:01] <netguru> I need to route traffic from specific source IPs out a different gateway
+[10:37:18] <sysadm_joe> classic PBR case. ip rule add from 10.0.1.0/24 table 100 && ip route add default via 192.168.1.1 table 100
+[10:37:35] <netguru> and to persist across reboots?
+[10:37:52] <sysadm_joe> depends on your distro. networkd has RoutingPolicyRule sections, or use a dispatcher script
+[10:38:09] <netguru> running rocky 9, so networkmanager
+[10:38:26] <tuxdev> nmcli connection modify eth0 +ipv4.routing-rules "priority 100 from 10.0.1.0/24 table 100"
+[10:38:43] <netguru> perfect, exactly what I needed
+[10:38:55] <netguru> the nmcli docs are so hard to navigate
+[10:39:12] <tuxdev> tell me about it. I keep this bookmarked: https://networkmanager.dev/docs/api/latest/nm-settings-nmcli.html
+[10:39:29] <netguru> bookmarked, thanks
+[10:50:00] *** containerking has quit (Quit: Leaving)
+[10:55:00] *** tuxdev changed the topic of #linux to: Welcome to #linux | Kernel 6.9.4 security release | https://kernel.org
+[10:55:15] <sysadm_joe> thanks for the topic update tuxdev
+[10:56:00] * sysadm_joe goes to check if his servers need patching
+[10:58:00] * tuxdev nods
+[11:05:45] *** systemd_fan has joined #linux
+[11:06:02] <systemd_fan> tuxdev: earlier you mentioned systemd timers being good. have you tried the new systemd-run --on-calendar for one-shot tasks?
+[11:06:19] <tuxdev> yeah, it's great for quick ad-hoc scheduled tasks without creating unit files
+[11:06:36] <systemd_fan> I replaced a bunch of at jobs with it
+[11:06:53] <sysadm_joe> does at even still work? I thought it was removed from most distros
+[11:07:10] <systemd_fan> it's still in the repos but not installed by default anymore
+[11:07:27] <storageguy> we still use at on some legacy rhel7 boxes. yes they're still running
+[11:07:44] <sysadm_joe> rhel7... that's end of life
+[11:08:01] <storageguy> extended lifecycle support. we're migrating but it's slow going
+[11:08:18] <tuxdev> migrating to rhel9 or something else?
+[11:08:35] <storageguy> alma linux 9. we decided the centos stream model doesn't work for us
+[11:08:52] <sysadm_joe> same here. we went with rocky linux
+[11:09:09] <systemd_fan> I'm surprised more people haven't moved to debian for servers
+[11:09:26] <tuxdev> rpm-based shops have too much tooling built around yum/dnf and rpm packaging
+[11:09:43] <sysadm_joe> exactly. we have hundreds of internal RPMs, repackaging everything for deb would take years
+[11:10:00] <storageguy> plus all the puppet/ansible roles assume rhel-family
+[11:10:17] <systemd_fan> fair points
+[11:25:30] *** netguru has left #linux
+[11:30:45] *** linuxsec has joined #linux
+[11:31:02] <linuxsec> meeting's over. did I miss anything good?
+[11:31:19] <tuxdev> storageguy fixed his zfs issue, and we had a brief distro war
+[11:31:36] <linuxsec> a distro war in #linux? I'm shocked
+[11:31:53] <sysadm_joe> heh, it was civil this time
+[11:32:10] <linuxsec> so I wanted to bring up something. anyone running falco for runtime security?
+[11:32:27] <tuxdev> we evaluated it but went with tetragon instead. ebpf-based, less overhead
+[11:32:44] <linuxsec> tetragon from cilium? how's the detection quality?
+[11:33:01] <tuxdev> really good for syscall monitoring. the TracingPolicy CRDs are powerful
+[11:33:18] <linuxsec> does it work outside kubernetes too?
+[11:33:35] <tuxdev> yes, you can run it standalone. just install the tetragon binary and write json policies
+[11:33:52] <linuxsec> nice, I'll check it out. https://tetragon.io/docs/getting-started/
+[11:34:09] <sysadm_joe> we run both actually. falco for container runtime, tetragon for node-level syscall monitoring
+[11:34:26] <linuxsec> isn't that redundant?
+[11:34:43] <sysadm_joe> some overlap but different strengths. falco's rules library for container escapes is more mature
+[11:35:00] <linuxsec> makes sense, defense in depth
+[11:45:20] *** storageguy has quit (Quit: lunch break)
+[12:00:10] *** systemd_fan has quit (Ping timeout: 245 seconds)
+[12:15:30] *** tuxdev is now known as tux_lunch
+[12:15:47] <sysadm_joe> lunch time here too. back later
+[12:16:04] *** sysadm_joe has quit (Quit: bbl)
+[12:30:22] <linuxsec> quiet in here
+[12:45:18] *** newbie_admin has joined #linux
+[12:45:35] <newbie_admin> hi, probably a dumb question but how do I find out which process is using port 8080?
+[12:45:52] <linuxsec> not a dumb question. ss -tlnp | grep 8080
+[12:46:09] <newbie_admin> thanks! it says it's java
+[12:46:26] <linuxsec> if you need the full command, use ps -p <PID> -o args
+[12:46:43] <newbie_admin> it's a tomcat instance I forgot was running
+[12:47:00] <linuxsec> happens to all of us. you might want to set it up as a systemd service so it's managed properly
+[12:47:17] <newbie_admin> good idea. I've been starting it manually with nohup
+[12:47:34] <linuxsec> yeah that's fragile. here's a quick guide for creating a service unit: https://www.freedesktop.org/software/systemd/man/latest/systemd.service.html
+[12:47:51] <newbie_admin> I'll read through that, thanks
+[13:00:30] *** tux_lunch is now known as tuxdev
+[13:00:47] <tuxdev> back
+[13:05:15] *** sysadm_joe has joined #linux
+[13:05:32] <sysadm_joe> back as well. afternoon shift begins
+[13:10:45] <newbie_admin> another question if you don't mind. what's the difference between /dev/sda and /dev/nvme0n1?
+[13:11:02] <tuxdev> sda is a SCSI/SATA device, nvme0n1 is an NVMe device. different naming because different driver subsystems
+[13:11:19] <newbie_admin> is one better than the other?
+[13:11:36] <sysadm_joe> NVMe is generally much faster. it talks directly to the PCIe bus instead of going through SCSI/AHCI
+[13:11:53] <newbie_admin> so I should always use NVMe SSDs?
+[13:12:10] <tuxdev> for boot drives and databases, yes. for bulk storage, SATA SSDs or even HDDs are fine
+[13:12:27] <newbie_admin> makes sense, thanks for explaining
+[13:25:18] *** kernelhacker has joined #linux
+[13:25:35] <kernelhacker> follow-up on the io_uring discussion from this morning
+[13:25:52] <kernelhacker> I ran some benchmarks. io_uring with multishot recv is 22% faster than epoll for our workload
+[13:26:09] <tuxdev> nice, that's even better than what we saw
+[13:26:26] <kernelhacker> the key was using ring-mapped buffers to avoid the copy
+[13:26:43] <sysadm_joe> what's your request size? small packets benefit more from io_uring
+[13:27:00] <kernelhacker> mostly 1-4KB requests, so yeah, the syscall overhead reduction is huge
+[13:27:17] <tuxdev> makes sense. for large transfers the bottleneck shifts to memory bandwidth anyway
+[13:27:34] <kernelhacker> exactly. I'll write up our findings and share the repo
+[13:30:45] *** devops_maya has joined #linux
+[13:31:02] <devops_maya> the env_keep fix worked for ansible on ubuntu 24.04, thanks tuxdev and sysadm_joe
+[13:31:19] <tuxdev> glad to hear it
+[13:31:36] <devops_maya> now I have a different problem. ansible is taking forever to gather facts on 500+ hosts
+[13:31:53] <sysadm_joe> devops_maya: set gather_facts: no and only gather what you need with setup module
+[13:32:10] <devops_maya> or I could use gather_subset to limit it
+[13:32:27] <sysadm_joe> even better. gather_subset: ['!all', 'network', 'hardware'] for example
+[13:32:44] <devops_maya> also thinking about using mitogen to speed up the connection layer
+[13:33:01] <tuxdev> mitogen is great but development has stalled a bit. check if it supports your ansible version
+[13:33:18] <devops_maya> we're on ansible-core 2.17
+[13:33:35] <tuxdev> should be fine. the fork at https://github.com/mitogen-hq/mitogen has recent updates
+[13:33:52] <devops_maya> I'll test it in staging first
+[13:40:10] *** newbie_admin has quit (Quit: thanks for the help everyone!)
+[13:55:30] <linuxsec> random question: anyone using age instead of gpg for file encryption?
+[13:55:47] <sysadm_joe> yes, switched our backup encryption from gpg to age last year
+[13:56:04] <linuxsec> how has it been?
+[13:56:21] <sysadm_joe> so much simpler. no keyring management, no web of trust complexity
+[13:56:38] <tuxdev> we use sops with age backend for secrets management in git repos
+[13:56:55] <linuxsec> sops + age is a nice combo. way better than the old gpg workflow
+[13:57:12] <kernelhacker> I still use gpg for git commit signing
+[13:57:29] <linuxsec> you could switch to ssh signing for that. git supports it natively since 2.34
+[13:57:46] <kernelhacker> oh I didn't know that. git config --global gpg.format ssh?
+[13:58:03] <linuxsec> exactly. and set user.signingkey to your ssh public key path
+[13:58:20] <kernelhacker> nice, one less reason to keep gpg around
+[14:10:30] *** containerking has joined #linux
+[14:10:47] <containerking> migration to netavark is done. everything works except one thing
+[14:11:04] <containerking> dns resolution between containers on different networks doesn't work
+[14:11:21] <tuxdev> you need to connect both containers to a shared network, or use an external dns
+[14:11:38] <containerking> they need to be on separate networks for isolation
+[14:11:55] <sysadm_joe> then run a local dns resolver like dnsmasq or unbound and point both networks at it
+[14:12:12] <containerking> that adds complexity but I guess there's no way around it
+[14:12:29] <tuxdev> docker has the same limitation. network isolation means dns isolation
+[14:12:46] <containerking> fair enough. I'll set up a dnsmasq container on a bridge network
+[14:20:15] *** devops_maya has left #linux
+[14:35:40] *** storageguy has joined #linux
+[14:35:57] <storageguy> back from lunch. tuxdev: I just read the zfs 2.3.3 release notes. there's a fix for exactly my txg issue
+[14:36:14] <tuxdev> told you. the txg sync path got a major rework in 2.3.2
+[14:36:31] <storageguy> also noticed they added block cloning support for cp --reflink
+[14:36:48] <sysadm_joe> that's huge. btrfs had that for years
+[14:37:05] <storageguy> yeah, finally. should make snapshot-based backups way more space efficient
+[14:37:22] <linuxsec> speaking of btrfs, anyone tried bcachefs yet?
+[14:37:39] <tuxdev> on a test box, yes. it's promising but I wouldn't run it in production yet
+[14:37:56] <linuxsec> kent overstreet has been doing incredible work on it though
+[14:38:13] <tuxdev> absolutely. the erasure coding support is something no other linux filesystem has
+[14:38:30] <sysadm_joe> give it another 2-3 years of stabilization and it could be the default
+[14:38:47] <storageguy> I'll stick with zfs for now. proven and boring is good for storage
+[14:39:04] <tuxdev> "proven and boring" should be on every sysadmin's resume
+[14:39:21] <sysadm_joe> hah, truth
+[15:00:18] *** kernelhacker has quit (Quit: back to hacking)
+[15:15:30] *** systemd_fan has joined #linux
+[15:15:47] <systemd_fan> back. laptop ran out of battery earlier
+[15:16:04] <tuxdev> welcome back
+[15:16:21] <systemd_fan> so I have a question about systemd-networkd vs NetworkManager
+[15:16:38] <systemd_fan> we're deploying new servers and trying to decide which to standardize on
+[15:16:55] <sysadm_joe> for servers, systemd-networkd hands down. lighter, more predictable, config-file driven
+[15:17:12] <tuxdev> agreed. NetworkManager is better for desktops/laptops where you need wifi and vpn integration
+[15:17:29] <systemd_fan> what about bond/vlan/bridge configs? networkd handles those well?
+[15:17:46] <sysadm_joe> perfectly. netdev files for the virtual devices, network files for the configuration
+[15:18:03] <systemd_fan> and it integrates with systemd-resolved for dns?
+[15:18:20] <tuxdev> yes, they're designed to work together. resolved picks up dns servers from networkd automatically
+[15:18:37] <systemd_fan> sold. I'll write the ansible roles for networkd this week
+[15:18:54] <linuxsec> just make sure you test failover scenarios. I've seen networkd be slow to detect link failures
+[15:19:11] <systemd_fan> good tip, I'll add that to the test plan
+[15:30:00] *** storageguy has left #linux
+[15:45:22] *** containerking is now known as ck_meeting
+[15:50:10] <linuxsec> anyone have opinions on nftables vs iptables at this point?
+[15:50:27] <tuxdev> nftables all the way. iptables-nft is just a compatibility shim now
+[15:50:44] <sysadm_joe> the syntax is so much better. sets, maps, concatenations
+[15:51:01] <linuxsec> I've been lazy about migrating. we have like 2000 lines of iptables rules
+[15:51:18] <tuxdev> iptables-translate can do most of the conversion automatically
+[15:51:35] <linuxsec> really? I assumed it would be manual
+[15:51:52] <sysadm_joe> nope, iptables-translate -A INPUT -p tcp --dport 22 -j ACCEPT gives you the nft equivalent
+[15:52:09] <linuxsec> that's way less painful than I expected. I'll start the migration next quarter
+[15:52:26] <tuxdev> pro tip: use nft list ruleset > backup.nft before you start, so you can always restore
+[15:52:43] <linuxsec> good call
+[16:05:30] *** ck_meeting is now known as containerking
+[16:05:47] <containerking> back. meeting was about kubernetes migration, naturally
+[16:06:04] <tuxdev> everything is always about kubernetes migration
+[16:06:21] <containerking> we're evaluating k3s vs rke2 vs vanilla kubeadm
+[16:06:38] <sysadm_joe> k3s for edge/small clusters, rke2 for production with rancher, kubeadm if you want full control
+[16:06:55] <containerking> we're leaning k3s actually. the simplicity is appealing
+[16:07:12] <tuxdev> k3s is solid. sqlite backend for single-node, etcd for HA. just works
+[16:07:29] <containerking> any gotchas?
+[16:07:46] <sysadm_joe> the embedded traefik and servicelb can be surprising if you're not expecting them
+[16:08:03] <tuxdev> yeah, disable them with --disable traefik --disable servicelb if you want to bring your own ingress
+[16:08:20] <containerking> we'll use nginx ingress controller so yeah, I'll disable those
+[16:08:37] <systemd_fan> we run k3s on arm64 raspberry pi clusters for home lab stuff. works great
+[16:08:54] <containerking> that's cool. the arm64 support is a big selling point
+[16:15:30] *** linuxsec has quit (Quit: end of day for me, stay secure everyone)
+[16:30:18] *** newbie_admin has joined #linux
+[16:30:35] <newbie_admin> me again. sorry to bother but I'm trying to resize a partition and I'm scared of losing data
+[16:30:52] <tuxdev> never apologize for asking. what filesystem and are you growing or shrinking?
+[16:31:09] <newbie_admin> ext4, growing. the disk was expanded in the hypervisor
+[16:31:26] <sysadm_joe> growing ext4 is safe and can be done online. growpart for the partition, resize2fs for the filesystem
+[16:31:43] <newbie_admin> online meaning without unmounting?
+[16:32:00] <tuxdev> yes, ext4 supports online resize. just make sure you have a backup first anyway
+[16:32:17] <newbie_admin> I have a snapshot from 2 hours ago
+[16:32:34] <sysadm_joe> good enough. growpart /dev/sda 1 && resize2fs /dev/sda1
+[16:32:51] <newbie_admin> that's it? I expected it to be more complicated
+[16:33:08] <tuxdev> linux has gotten a lot better at making these things simple
+[16:33:25] <newbie_admin> running it now... it worked! thank you so much
+[16:33:42] <sysadm_joe> verify with df -h that the space shows up
+[16:33:59] <newbie_admin> yep, went from 50G to 200G. perfect
+[16:50:10] *** newbie_admin has left #linux
+[17:00:30] <containerking> alright I'm heading out. thanks for the k3s tips
+[17:00:47] *** containerking has quit (Quit: Leaving)
+[17:15:22] <systemd_fan> quiet afternoon
+[17:15:39] <tuxdev> calm before the storm. the US west coast hasn't woken up yet
+[17:15:56] <sysadm_joe> actually I have a question. anyone running cgroups v2 with container runtimes?
+[17:16:13] <tuxdev> that's the default on every modern distro now. what's the issue?
+[17:16:30] <sysadm_joe> trying to limit memory+swap together for a java app container
+[17:16:47] <tuxdev> memory.max for memory limit, memory.swap.max for swap limit in cgroup v2
+[17:17:04] <sysadm_joe> right but I want to disable swap entirely for the container
+[17:17:21] <tuxdev> set memory.swap.max to 0 or use --memory-swap equal to --memory in docker/podman
+[17:17:38] <sysadm_joe> thanks, the --memory-swap flag was confusing me. in v1 it meant memory+swap combined
+[17:17:55] <tuxdev> yeah that changed in v2. much more intuitive now
+[17:30:45] *** systemd_fan has left #linux
+[17:45:12] *** netops_dan has joined #linux
+[17:45:29] <netops_dan> evening. anyone have experience with xdp for ddos mitigation?
+[17:45:46] <tuxdev> netops_dan: a bit. we use xdp-filter for basic rate limiting on our edge
+[17:46:03] <netops_dan> I'm looking at something more sophisticated. writing custom xdp programs with libbpf
+[17:46:20] <sysadm_joe> that's a rabbit hole. have you looked at katran? facebook's xdp load balancer
+[17:46:37] <netops_dan> yeah, katran is impressive but overkill for our use case
+[17:46:54] <netops_dan> I just need to drop packets matching certain patterns at line rate
+[17:47:11] <tuxdev> then a simple xdp program is the right call. you can process millions of packets per second per core
+[17:47:28] <netops_dan> any good tutorials beyond the official docs?
+[17:47:45] <tuxdev> the xdp-tutorial repo is excellent: https://github.com/xdp-project/xdp-tutorial
+[17:48:02] <sysadm_joe> also look at cilium's bpf reference guide: https://docs.cilium.io/en/stable/bpf/
+[17:48:19] <netops_dan> bookmarked both, thanks
+[18:00:30] <tuxdev> I should probably wrap up for the day soon
+[18:00:47] <sysadm_joe> same here. been a productive channel today
+[18:01:04] <netops_dan> one more question before you go. what's the best way to test xdp programs without real traffic?
+[18:01:21] <tuxdev> use veth pairs in a network namespace. you can generate traffic with scapy or pktgen
+[18:01:38] <sysadm_joe> or use the BPF_PROG_TEST_RUN bpf syscall command to feed packets directly to your program
+[18:01:55] <netops_dan> BPF_PROG_TEST_RUN sounds cleaner for unit testing
+[18:02:12] <tuxdev> it is. you can pass in raw packet bytes and check the return code
+[18:02:29] <netops_dan> perfect. thanks for all the pointers
+[18:15:40] *** sysadm_joe has quit (Quit: end of day, see you tomorrow)
+[18:30:22] <tuxdev> alright I'm out too. good luck with the xdp stuff netops_dan
+[18:30:39] <netops_dan> thanks tuxdev, have a good evening
+[18:30:56] *** tuxdev has quit (Quit: Leaving)
+[18:45:10] *** nightowl has joined #linux
+[18:45:27] <nightowl> anyone around?
+[18:45:44] <netops_dan> I'm here
+[18:46:01] <nightowl> cool. I'm having trouble with a btrfs filesystem that won't mount after a power outage
+[18:46:18] <netops_dan> what error does mount give you?
+[18:46:35] <nightowl> "open_ctree failed" and something about a corrupted tree root
+[18:46:52] <netops_dan> try mounting with -o recovery,ro first
+[18:47:09] <nightowl> same error
+[18:47:26] <netops_dan> then try btrfs rescue zero-log /dev/sdX
+[18:47:43] <nightowl> that sounds destructive
+[18:48:00] <netops_dan> it only clears the write-ahead log, shouldn't lose data. but obviously back up first if you can
+[18:48:17] <nightowl> it's the only copy of this data unfortunately
+[18:48:34] <netops_dan> ouch. in that case, try btrfs check --readonly /dev/sdX first to assess the damage
+[18:48:51] <nightowl> running that now... it says "errors found in extent allocation tree"
+[18:49:08] <netops_dan> not the worst. try the zero-log approach and then mount with -o recovery,ro
+[18:49:25] <nightowl> ok... zero-log ran... trying mount now... it worked!
+[18:49:42] <netops_dan> great, now copy everything off to another disk immediately
+[18:49:59] <nightowl> already started an rsync. thank you so much
+[18:50:16] <netops_dan> no problem. and get a UPS for that machine
+[18:50:33] <nightowl> yeah lesson learned the hard way
+[19:05:10] *** nightowl has quit (Quit: copying data, fingers crossed)
+[19:20:30] <netops_dan> just me and the crickets now
+[19:45:15] *** netops_dan has left #linux
+[20:00:22] *** nightowl has joined #linux
+[20:00:39] <nightowl> update for whoever reads the logs: rsync completed successfully, all data recovered
+[20:00:56] <nightowl> ordered a UPS too
+[20:15:30] *** tuxdev has joined #linux
+[20:15:47] <tuxdev> couldn't sleep. nightowl glad to hear the data recovery worked
+[20:16:04] <nightowl> thanks! this channel is a lifesaver
+[20:16:21] <tuxdev> that's what #linux is for. just remember to pay it forward
+[20:16:38] <nightowl> absolutely will
+[20:30:10] *** nightowl has quit (Quit: going to bed, goodnight)
+[20:45:22] <tuxdev> and on that note, I really should sleep this time
+[20:45:39] *** tuxdev has quit (Quit: zzz)

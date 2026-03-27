@@ -1,0 +1,18 @@
+IRC Syntax 2.0.0
+================
+
+This is a major rewrite of the IRC syntax definition.
+
+New:
+  - Auto-detection of IRC log files (no more manual syntax selection)
+  - Multi-format support: irssi, weechat, HexChat, mIRC, ZNC, and Snak
+  - Proper semantic scopes for multi-color highlighting in all themes
+  - Nested contexts: URLs and channels are now highlighted within event lines
+
+Fixed:
+  - Single-character nicknames are now highlighted
+  - Timestamps with mismatched brackets no longer match
+  - URLs no longer include trailing punctuation
+
+Full changelog:
+  https://github.com/barnumbirr/sublime-irc/blob/master/CHANGELOG.md

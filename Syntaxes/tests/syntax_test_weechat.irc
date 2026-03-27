@@ -1,0 +1,37 @@
+# SYNTAX TEST "Packages/IRC Syntax/Syntaxes/IRC.sublime-syntax"
+
+2021-03-27 12:34:56	<ab> hi
+# <- meta.date.irc constant.numeric.value.irc
+#^^^ constant.numeric.value.irc
+#   ^ punctuation.separator.date.irc
+#    ^^ constant.numeric.value.irc
+#      ^ punctuation.separator.date.irc
+#       ^^ constant.numeric.value.irc
+#          ^^ constant.numeric.value.irc
+#            ^ punctuation.separator.date.irc
+#             ^^ constant.numeric.value.irc
+#               ^ punctuation.separator.date.irc
+#                ^^ constant.numeric.value.irc
+#                  ^ - meta.date
+
+2021-03-27 12:34:56	--> foo joined #bar
+#                   ^^^ punctuation.definition.event.irc
+#                       ^^^ meta.event.irc entity.name.tag.nickname.irc
+#                           ^^^^^^ meta.event.irc keyword.other.join.irc
+#                                  ^ punctuation.definition.channel.irc
+#                                   ^^^ constant.other.channel.irc
+
+2021-03-27 12:34:56	<-- foo has left (bye)
+#                   ^^^ punctuation.definition.event.irc
+#                       ^^^ meta.event.irc entity.name.tag.nickname.irc
+#                               ^^^^ meta.event.irc keyword.other.quit.irc
+#                                     ^^^ meta.event.irc string.unquoted.quit-message.irc
+
+2021-03-27 12:34:56	-- old is now known as new
+#                   ^^ punctuation.definition.event.irc
+#                      ^^^ entity.name.tag.nickname.irc
+#                                          ^^^ entity.name.tag.nickname.irc
+
+2021/03/27 12:34:56	<ab> test
+# <- meta.date.irc constant.numeric.value.irc
+#   ^ punctuation.separator.date.irc
