@@ -1,0 +1,19 @@
+IRC Syntax 2.1.0
+================
+
+New:
+  - Prefixed nicknames: <@op>, <+voice>, <%half>, <~owner>, <&admin>
+  - Event keywords highlighted: "is now known as", "has joined", etc.
+  - Log markers: --- Log opened/closed, --- Day changed, Session Start/Close:
+  - Topic display events: "Topic for #channel:" and mIRC session events
+  - URLs and channels within topic text now highlighted
+  - Quit message delimiters and join/quit hostmasks now scoped
+
+Fixed:
+  - Event markers no longer false-match inside chat message text
+  - Auto-detection now matches closing log markers
+  - URLs no longer include trailing periods or punctuation
+  - irssi-style padded nicks (< nick>) now highlighted correctly
+
+Full changelog:
+  https://github.com/barnumbirr/sublime-irc/blob/master/CHANGELOG.md

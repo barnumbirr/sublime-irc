@@ -1,0 +1,300 @@
+--- Log opened Wed Jul 18 00:00:13 2012
+--- Day changed Wed Jul 18 2012
+00:00 < SubStack> https://groups.google.com/d/msg/nodejs/zL3RX6xcMTY/-xmCeo01a50J
+00:01 < tjholowaychuk> people honestly dont give a fuck about two globals for a test env, that's the thing
+00:01 < tjholowaychuk> it really doesn't matter
+00:01 < SubStack> why not make the same argument about any library?
+00:01 < SubStack> what makes testing libraries special?
+00:01 < tjholowaychuk> more convenient to share client/server tests this way
+00:01 < tjholowaychuk> without commonjs stuff
+00:02 < tjholowaychuk> either way it really doesn't matter
+00:02 < SubStack> why not just transform the tests then?
+00:02 < tjholowaychuk> node has one too many global zomgbbbb
+00:02 < tjholowaychuk> remove process
+00:02 < tjholowaychuk> remove buffer
+00:02 < SubStack> it's one thing if the runtime environment defines a global
+00:02 < SubStack> and quite another when userspace libraries are going around doing that
+00:03 < SubStack> and whether or not node has too many globals is not relevant
+00:03 < SubStack> tjholowaychuk: I'm concerned because with mocha it's absurdly bad to a crazy degree
+00:03 < tjholowaychuk> lol
+00:04 < SubStack> like whether you're in BDD or TDD mode changes which globals are available
+00:04 < tjholowaychuk> funny because no one cares
+00:04 < tjholowaychuk> except you
+00:04 < tjholowaychuk> in which case i dont care
+00:04 < SubStack> yes I care about good software
+00:04 < SubStack> guilty
+00:05 < tjholowaychuk> good luck
+00:05 < tjholowaychuk> with all your good software
+00:05 < SubStack> that seems like a really strange position to take
+00:06 < livinded> I think tjholowaychuk has a point. At a certain point software becomes good enough. Best practices are always going to change and there will always be better ways to do things but it's at the point where it may not be worth the effort to improve farther rather than moving onto something else that will yield more benefit
+00:07 < tjholowaychuk> it's not even about that
+00:07 < tjholowaychuk> it just doens't matter
+00:07 < tjholowaychuk> when's the last time you used "beforeEach"
+00:07 < tjholowaychuk> who cares, get over it
+00:07 < livinded> never?
+00:07 < tjholowaychuk> there are things to care about and that is not one of them
+00:09  * cconstantine_ agrees with Substack in theory, and doesn't have a problem with global beforeEachs injected by mocha.
+00:09 < SubStack> cconstantine_: the kind of careless piece-wise hyperpragmatism that tj advocates is what gave us php
+00:09 < SubStack> "oh this one more thing couldn't hurt" adds the fuck up
+00:10 < cconstantine_> yup
+00:10 < SubStack> mocha tests are going to become legacy nightmares
+00:10 < SubStack> avoid avoi
+00:10 < SubStack> that's why it matters
+00:10 < cconstantine_> I don't like it, and I think you're right... but my care-o-meter is pretty low for that particular issue with mocha.  
+00:11 < livinded> I just don't use any of that crap
+00:11 < cconstantine_> I haven't really found a better alternative
+00:11 < livinded> if other people want to go ahead
+00:11 < SubStack> livinded: that's wise
+00:11 < cconstantine_> 'that crap' being mocha or any test framework?
+00:11 < livinded> I came from ruby where the testing frameworks were absurdly massive
+00:11 < SubStack> livinded: I just worry about newcomers who don't know any better and hear that mocha is popular
+00:11 < oojr> mocha is pretty nice, it is readable
+00:11 < livinded> even the included ruby one was massive
+00:11 < rvagg1> buster.js is probably a good alternative if you want all the sugar but more neatly packaged
+00:12 < livinded> I think I used maybe one or two matchers from it and that was it
+00:12 < SubStack> cconstantine_: mocha is just especially egregious in its flagrant dismissal of programming conventions
+00:12 < SubStack> but plenty of other test libs are guilty
+00:12 < cconstantine_> yeah.  If you're looking for correctness everywhere maybe node isn't a happy place for you
+00:13 < cconstantine_> SubStack, besides the globals thing, what else?
+00:13 < livinded> cconstantine_: or good design everywhere
+00:14 < cconstantine_> yeah, the web is stuffed with terrible-ness
+00:14 < Zamarok> trying to compile v0.8.2, keep getting this error: make[1]: flock: Command not found
+00:14 < Zamarok> where does one get flock? Google shows nothing
+00:14 < SubStack> cconstantine_: that's just fatalism
+00:14 < livinded> cconstantine_: once you accept that shit is going to suck and accept it it's not that bad though
+00:15 < cconstantine_> SubStack, right, I'm here aren't I?  you just have to lower your care-o-meter a bit and accept that some stuff made by other people is terrible
+00:15 < CIA-93> node: isaacs v0.8 * re1fb7b7 / deps/uv/src/unix/proctitle.c : uv: Upgrade to b49d6f7 - http://git.io/lhbdNg
+00:15 < CIA-93> node: isaacs v0.8.3-release * r14c8542 / (AUTHORS ChangeLog src/node_version.h): 2012.07.17, Version 0.8.3 (Stable) - http://git.io/X-cwLQ
+00:15 < livinded> and sometimes terrible stuff is better than no stuff
+00:15 < cconstantine_> the perfect is the enemy of the good
+00:15 < bnoordhuis> Zamarok: what os?
+00:16 < Zamarok> bnoordhuis: CentOS
+00:16 < bnoordhuis> Zamarok: it should be in the util-linux package
+00:16 < bnoordhuis> that's what debian calls it anyway
+00:17 < SubStack> cconstantine_: I prefer to be particular and choosy for my own sanity and to keep technical debt at bay
+00:17 < Zamarok> let's just say I don't have root access. Is there a way to just get flock, configure it with --prefix=$HOME, and install that way?
+00:17 < livinded> SubStack: that's why you just slowly write your own implementations of things that you need that suck
+00:17 < SubStack> these programming approaches were hard-won, let's not piss them away
+00:17 < SubStack> livinded: sure
+00:17 < SubStack> livinded: but I'm not going to stop calling out things that suck
+00:18 < SubStack> even if I use them
+00:18 < CIA-93> node: isaacs v0.8.3-release * ra6d730d / (AUTHORS ChangeLog src/node_version.h): 2012.07.17, Version 0.8.3 (Stable) - http://git.io/-o4Acw
+00:18 < SubStack> although usually there are nice alternatives nowadays
+00:18 < azinman> I have a total noob question as I'm just trying out node.js for the first time. In JS I can globals (via the window object) which is useful in keeping application state in a single object. In node, I know that across multiple files I'm suppose to use require/export, but what is the idoimatic way of doing that for things like redis client/pools connections? Just create it in 1 file and exports.client = myExpensiveConnection? Will that be recr
+00:18 < livinded> I'd rather not put forth the effort to fix other people's shit when they're going to actively fight to stop. I'll just suck it up, do the work, and pass it onto whoever has to maintain it
+00:19 < livinded> let it be their nightmare
+00:19 < cconstantine_> SubStack, yup, I agree with you :)  the node community can be particularly bad about lessons-learned in coding.  
+00:19 < bnoordhuis> Zamarok: sure, just put a a dummy flock bash script somewhere on your path that does `exec $*`
+00:19 < cconstantine_> SubStack, best ways to fight it are to fix other people's stuff, contribute good code, and advocate for good code :)
+00:19 < SubStack> cconstantine_: probably so!
+00:19 < tjholowaychuk> or write something that people will use instead of complaining
+00:20 < tjholowaychuk> i dont like browserify
+00:20 < tjholowaychuk> do i complain about it
+00:20 < tjholowaychuk> no
+00:20 < tjholowaychuk> write something else
+00:20 < SubStack> I write something else and I complain about the things that I dislike
+00:20 < cconstantine_> I think we just went meta
+00:20 < SubStack> I don't see what's wrong with complaining about things and making positive contributions
+00:20 < rvagg1> azinman: your exports are cached through your application (unless you clear the module cache) so you can use them to store static globalish things if you need
+00:21 < SubStack> I see certain ideas being especially harmful and particularly worthy of public comment
+00:21 < rvagg1> azinman: ideally you'd keep those kinds of things packaged in your module though, as local variables and not have to export
+00:21 < livinded> SubStack: I prefer it, but people don't like their egos bruised apparently
+00:22 < livinded> I'd much rather be told me code sucks and have someone tell me why than try to be nice though
+00:22 < azinman> rvagg1: I'd want to be able to access redis from many different files….
+00:22 < azinman> for example
+00:22 < tjholowaychuk> all of our code sucks
+00:22 < tjholowaychuk> we're average at best
+00:22 < livinded> it's just going to make me a better programmer, assuming what they say is correct
+00:22 < tjholowaychuk> we write fucking web sites
+00:23 < tjholowaychuk> it's great to put ideas out there etc but dont complain and make an ass out of yourself like i do about coffeescript
+00:23 < livinded> intermediate languages are just a dumb idea. Nothing against the languages themselves but target a real fucking architecture
+00:24 < tjholowaychuk> it's really not worth being a dick about though haha im trying to stop trolling
+00:24 < livinded> if you want to make your own language don't half ass it and make it a slave to another language which is dictated by a committee
+00:25 < cconstantine_> livinded, eh, coffeescript is better than javascript in many ways, and worse in others.  use where appropriate.  Until we got another client-side runtime there isn't really a good solution
+00:26 < livinded> cconstantine_: I have nothing against coffeescript as a language. It's just dumb that they don't implement it on a real platform and compile to JS instead
+00:26 < rvagg1> azinman: export from a single file and multiple other files will have access to the same thing if that's all you need, it'll be a shared state
+00:26 < bwen> cconstantine_: I disagree. I like my parentheses, curlee braces, etc...
+00:26 < cconstantine_> bwen, then don't use it
+00:26 < livinded> the ONLY thing intermediate languages should be used for is testing
+00:27 < livinded> if you're going to write software target a real platform
+00:27 < azinman> rvagg1: so its a bit like python in that it just gets run once, and each require uses the cached version?
+00:27 < cconstantine_> livinded, umm, so... no C coding?
+00:27 < cconstantine_> livinded, most modern compilers go through asm before machine code
+00:27 < livinded> cconstantine_: assembly isn't an intermediate language. It's a 1:1 representation of machine code
+00:27 < beachdog> substack is right.  We're not completely independent here; we're tied together (loosely) in this soupy mess with the frameworks and modules available to us.  Nothing wrong with pushing ourselves to be better.  
+00:28 < oojr> I need to spend more time in the visionmedia github repo 
+00:28 < samholmes> I'm doing some research for what sort of hosting providers would profide the most affordable, scalable infastructure for a node.js application/service. Has anyone here worked on a app/service that grew at a level similar to instagr.am; rapid burst of traffic in a small time period?
+00:28 < livinded> the mnemonics in assembly map directly to the instructions that are executed by the cpu which is not true of a high level language
+00:29 < cconstantine_> livinded, the arguments you're using work as well against C as coffeescript
+00:29 < cconstantine_> livinded, and asm doesn't... it has quite a few constructs that don't exist in machine code
+00:29 < livinded> cconstantine_: don't know what assembler you're using but any sane one will map directly to machine code
+00:30 < cconstantine_> livinded, the opcodes map directly, but things like symbols don't
+00:30 < livinded> there might be macros that a specific assembler provides, but the actual instructions are a 1:1 map
+00:30 < cconstantine_> anad the actual instructions are less than 1/2 the work of what an assembler does (I've written one)
+00:33 < cconstantine_> livinded, You may continue to argue that coffeescript is terrible; I'm just letting you know that last argument against it could be used against C (because it passes through an intermediate language)
+00:34 < livinded> cconstantine_: I never said coffeescript was bad, I said intermediate languages were bad because they rewrite multiple levels of abstraction where things can fuck up and are a slave to those levels
+00:35 < cconstantine_> livinded, ah, I misunderstood you
+00:35 < livinded> the syntax of coffeescript is fine
+00:35 < cconstantine_> ok
+00:35 < livinded> they should just target a real architecture
+00:35 < cconstantine_> instead of javascript
+00:35 < cconstantine_> ?
+00:35 < livinded> yes
+00:35 < cconstantine_> ok, what would they target?
+00:36 < livinded> llvm, x86, parrot, jvm?
+00:36 < cconstantine_> hehe
+00:36 < livinded> whatever, just not another language
+00:36 < cconstantine_> so, I have this grand vision of an 'net app' like framework where you run sandboxed apps, and a webpage would just use a browser 'plugin' 
+00:37 < rvagg1> azinman: (sorry), yes, that's roughly correct, you should read the docs about modules, should be informative
+00:37 < cconstantine_> llv, parrot and the jvm are also intermediates ;P
+00:37 < rvagg1> azinman: http://nodejs.org/docs/latest/api/modules.html
+00:38 < cconstantine_> livinded, I would choose llvm for this sandboxing framework
+00:38 < rvagg1> azinman: my preference is to not expose raw variables as exports but to hide them behind functions, but that's totally a personal preference thing
+00:38 < livinded> I'm working on building sandboxing support for node
+00:38 < rvagg1> if you want to share a static/global then do it with an export and require where you need
+00:39 < livinded> like real sandboxing where you can whitelist modules/methods
+00:39 < livinded> or curb functionality like killall i/o, net, etc.
+00:39 < cconstantine_> nifty
+00:40 < cconstantine_> not what I'm talking about.. but cool.  My idea is more of a decentralized app-store
+00:40 < cconstantine_> where app doesn't mean html5
+00:40 < livinded> isn't that what NaCl is for?
+00:41 < alex4nder> livinded: why wouldn't you just use the sandboxing of your operating system?
+00:41 < livinded> I'd honestly just rather use whatever distribution platform my os provides at that point. Browsers are a horrible platform
+00:42 < cconstantine_> livinded, forget the browser; if anything a browser would be something you could run in this framework, and NaCl is x86 only
+00:42 < livinded> alex4nder: how would you at the os level block methods in a dynamic language
+00:42 < cconstantine_> livinded, you block syscalls
+00:42 < livinded> right
+00:43 < livinded> but say you don't want to kill all io, only certain types
+00:43 < alex4nder> you use your OS?
+00:43 < cconstantine_> chroot?
+00:43 < livinded> or you don't want to stop the node process from doing certain things, only the code that it's executing
+00:43 < cmdrtaco> with socket.io can you not listen on two different ports (two seperate apps) if you support the flash method
+00:44 < cconstantine_> fork (real fork, not node.js fork) and chroot
+00:44 < livinded> what if you want to have setup code before the code is executed?
+00:44 < livinded> so you run some shit in the process that wants access to stuff and then go into "safe mode"
+00:45 < tjholowaychuk> sweet i just remembered you can ignore people
+00:45 < tjholowaychuk> in irc
+00:45 < alex4nder> haha
+00:45 < cconstantine_> livinded, correct, that is what real fork gets you
+00:45 < livinded> your child can't access that stuff though
+00:46 < alex4nder> learn about privsep
+00:46 < alex4nder> all the cool-kids do it
+00:46 < cconstantine_> livinded, the child start's as an exact dup of the parent
+00:46 < cmdrtaco> its the anti-derp
+00:46 < cconstantine_> livinded, including open file descriptors (sockets/files)
+00:46 < livinded> cconstantine_: right, but maybe I want to redirect stdio for the insecure code. I don't want to do that in the parent pre-fork
+00:47 < alex4nder> you do that before the insecure code starts running
+00:47 < livinded> but once I fork to a "safe" child it wont have access
+00:47 < cconstantine_> livinded, yeah, that is all covered
+00:47 < livinded> not if I'm hooking syscalls and redirecting them
+00:47 < alex4nder> haha
+00:47 < alex4nder> so you don't care about prior art
+00:48 < cmdrtaco> aN h4xkeR
+00:48 < cconstantine_> livinded, allt he stuff you're talking about has been solved by shells (or other executors) for decades
+00:48 < alex4nder> literally decades
+00:48 < cconstantine_> well... decades in posix... not so much with windows/dos
+00:49 < alex4nder> yah, but they always herpderp around until they finally make a poor copy of POSIX
+00:49 < alex4nder> shit, privsep even has a wikipedia page
+00:50 < rvagg1> cmdrtaco: you might need to bug rauchg to get answers about socket.io
+00:50 < cconstantine_> alex4nder, link?
+00:51 < alex4nder> cconstantine_: http://en.wikipedia.org/wiki/Privilege_separation
+00:52 < cconstantine_> alex4nder, neat
+00:55 < cconstantine_> I feel like I just killed someone's pet project :/
+01:08 < azinman> rvagg1: thanks
+01:31 < frewsxcv> Honest and potentially stupid question: If I want an in-memory key value store to be used with node.js, why would I use Redis when I can just use Node and a JSON object?
+01:32 < smathy> frewsxcv, because other processes can also access that redis data.
+01:32 < smathy> (at least assuming my assumptions about Redis are correct :)
+01:33 < frewsxcv> So if I don't need that, are there any other advantages?
+01:33 < frewsxcv> I assuming querying a JSON object is faster than sending/receiving from Redis
+01:34 < TooTallNate> frewsxcv: if your app crashes, then your data is safe in another process
+01:36 < frewsxcv> TooTallNate: It'd be read only data. Everytime the server would start up, it would read a JSON file
+01:36 < TooTallNate> frewsxcv: well if it's already safe in a file, then it sounds like redis is overkill in this case
+01:37 < azinman> frewsxcv: redis persists data to disk, can be shared across many machines, and lives in a separate process/machine (which means it could be much bigger machine/RAM usage than your node clients)
+01:38 < frewsxcv> okay, well Redis sounds like overkill then
+01:39 < TimeTurner> redis can be configured to not persist to disk
+01:40 < azinman> if its read-only there's no point unless its more ram than node can handle
+01:40 < azinman> which is 0.5 − ~1gig
+01:47 < CIA-93> node: Ben Noordhuis v0.8 * re8af340 / doc/api/process.markdown : doc: advise *strongly* against uncaughtException - http://git.io/khageg
+01:53 < DeathRayDragonLu> SubStack — you still around?
+01:54 < DeathRayDragonLu> you were talking about dnode & sockjs/shoe earlier
+01:54 < DeathRayDragonLu> wondering what you think of nowjs
+01:54 < DeathRayDragonLu> in comparison
+01:55 < jesusabdullah> DeathRayDragonLu: not good :(
+01:56 < DeathRayDragonLu> what's not good
+01:56 < DeathRayDragonLu> nowjs?
+01:56 < DeathRayDragonLu> porque?
+01:57 < jesusabdullah> DeathRayDragonLu: less useful abstraction than it sounds, and not nearly as well-maintained in my experience
+01:57 < DeathRayDragonLu> that was one question
+01:57 < jesusabdullah> DeathRayDragonLu: less general (only works over socket.io)
+01:58 < DeathRayDragonLu> it seemed very simple for rpg style stuff (which is my task)
+01:58 < DeathRayDragonLu> and I need to use sockets
+01:58 < tjholowaychuk> DeathRayDragonLu obviously you should use the bad dnode api
+01:58 < DeathRayDragonLu> opinions here I see
+01:58 < DeathRayDragonLu> :p
+01:58 < jesusabdullah> tjholowaychuk: elaborate?
+01:59 < tjholowaychuk> haha just trolling
+01:59 < jesusabdullah> DeathRayDragonLu: In general, nowjs is not so good. Raw socket.io is more acceptable.
+01:59 < DeathRayDragonLu> tj, I respect you, so do you favor now over dnode (I saw this debate going earlier)
+01:59 < DeathRayDragonLu> or are you just trolling
+01:59 < DeathRayDragonLu> :p
+01:59 < tjholowaychuk> DeathRayDragonLu you have to evaluate things for your own specific use-case just make sure that whatever the abstractions are
+01:59 < tjholowaychuk> dont get in your way
+01:59 < tjholowaychuk> or ideally that you can back out of them
+01:59 < DeathRayDragonLu> sure
+01:59 < tjholowaychuk> that's the important part. high-level is fine as long as you can back out
+02:00 < DeathRayDragonLu> hmmmmrrrrjjfjjjfjj
+02:00 < tjholowaychuk> i've never used nowjs personally
+02:00 < DeathRayDragonLu> ha ha
+02:00 < tjholowaychuk> im just trolling SS because he trolls everyone
+02:00 < DeathRayDragonLu> admitted noob.js here
+02:00 < DeathRayDragonLu> I'm kind of a mini troll
+02:01 < DeathRayDragonLu> but i digress
+02:01 < DeathRayDragonLu> ok thx peeps
+02:01 < jesusabdullah> even if nowjs has a reasonable api, it's still not very well maintained. sub's put like 2 yrs of solid work into it, whereas the nowjs stuff fell to the wayside as those guys focused on bridge or whatever it's called
+02:01 < tjholowaychuk> :s
+02:02 < DeathRayDragonLu> ok good to know — yeah I looked at the github commit list
+02:02 < tjholowaychuk> i guess he should have used zmq and save two years
+02:02 < jesusabdullah> well
+02:02 < monokrome> creationix: Hey. Are you around?
+02:02 < tjholowaychuk> and get a better api
+02:02 < jesusabdullah> that's an issue of transport I'd think tjholowaychuk 
+02:02 < jesusabdullah> The whole point is to have async callbacks
+02:02 < DeathRayDragonLu> last commit was like 3 months ago
+02:02 < DeathRayDragonLu> hence
+02:02 < DeathRayDragonLu> I asked.
+02:02 < DeathRayDragonLu> have to go poke around more in dnode now
+02:03 < monokrome> creationix: ping me if you find a moment :)
+02:05 < DeathRayDragonLu> By the way, for what it's worth, I started out w/ SocketStream in mind. Tried to hook it up. It worked for a while, but then broke when I tried to get something else going. Ultimately it was just too gangly.
+02:05 < DeathRayDragonLu> So I'm taking a step back and simplifying the app.
+02:05 < DeathRayDragonLu> leaner pieces.
+02:06 < rowanu> hey guys, was listening to NodeUp podcast from a while back and someone mentioned a one-line http server in a node module (like python -m SimpleHTTPServer) - anybody know what the name is?
+02:06 < DTrejo> npm docs serve
+02:06 < npmbro> DTrejo: Please see http://search.npmjs.org/#/serve
+02:07 < DTrejo> rowanu: ^
+02:07 < rowanu> DTrejo: winner! thanks muchly
+02:07 < DTrejo> np :)
+02:07 < DTrejo> my bot did all the work
+02:12 < rhl> Hi. I am looking to get some help installing the 'shared-paper' package on my webserver. When I run npm install there are issues compiling/installing dependencies I am running on Centos6, but it is hard to figure out what exactly is going wrong and why: http://rhl.io/npm-error.install
+02:12 < rhl> Also, it says cairo is not found but: cairo-1.8.8-3.1.el6.x86_64 is installed.
+02:12 < deoxxa> rhl: probably wants the development package
+02:13 < rhl> deoxxa: what if my host doesn't want to install it?
+02:14 < deoxxa> then... that's unfortunate
+02:14 <@isaacs> check it out: https://github.com/isaacs/read/pull/9
+02:14 <@isaacs> er, not that
+02:14 <@isaacs> https://isaacs.iriscouch.com/downloads/_design/app/_view/pkg?group_level=2&start_key=[%22npm%22]&end_key=[%22npm%22,{}]
+02:14 < deoxxa> tch tch
+02:14 <@isaacs> that ^
+02:15 <@isaacs> j.mp/OSAODh
+02:15 < _Tristan> Am I still high from last night, or is my package.json being minified when I'm not looking?
+02:17 < tim_smart> _Tristan: Don't do drugs.
+02:17 < _Tristan> k. Question still stands.
+02:18 < mmalecki> nothing is wrong with drugs if you're responsible
+02:18 < deoxxa> heroin is great for you
+02:18 < _Tristan> yeah, lets talk about drugs.
+02:18 < tim_smart> mmalecki: I have yet to find a perfectly responsible human.
+02:18 < mmalecki> BUT, what do you mean by minified?
+02:19 < mmalecki> when?
+02:19 < tim_smart> _Tristan: Did you run any commands or anything?
+02:19 < _Tristan> mmalecki: I do a git status and notice my package.json has been minified, you know, whitespace stripped, so I fix it, and then just now I look and it's minified again
+02:20 < tim_smart> _Tristan: What is your editor?
+02:20 < _Tristan> gedit

@@ -6,11 +6,13 @@ on:
       - '**.sublime-syntax'
       - 'Syntaxes/tests/syntax_test_*'
       - '**.tmPreferences'
+      - '.github/workflows/syntax.yml'
   pull_request:
     paths:
       - '**.sublime-syntax'
       - 'Syntaxes/tests/syntax_test_*'
       - '**.tmPreferences'
+      - '.github/workflows/syntax.yml'
   workflow_dispatch:
 
 permissions:
@@ -39,3 +41,25 @@ jobs:
           build: ${{ matrix.build }}
           package_name: ${{ env.package_name }}
           package_root: .
+
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install ruff
+        run: pip install ruff
+
+      - name: Ruff check
+        run: ruff check irc_detect.py
+
+      - name: Ruff format check
+        run: ruff format --check irc_detect.py

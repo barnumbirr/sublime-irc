@@ -10,22 +10,30 @@
 #        ^ punctuation.section.date.end.irc
 #          ^^^ punctuation.definition.event.irc
 #              ^^^^^ meta.event.irc keyword.other.join.irc
+#                   ^ meta.event.irc punctuation.separator.key-value.irc
 #                     ^^^^ meta.event.irc entity.name.tag.nickname.irc
 
 [14:31:20] *** Parts: nick (user@host.net) (leaving)
 #          ^^^ punctuation.definition.event.irc
 #              ^^^^^ meta.event.irc keyword.other.quit.irc
+#                   ^ meta.event.irc punctuation.separator.key-value.irc
 #                     ^^^^ meta.event.irc entity.name.tag.nickname.irc
+#                                          ^ meta.event.irc punctuation.section.parens.begin.irc
 #                                           ^^^^^^^ meta.event.irc string.unquoted.quit-message.irc
+#                                                  ^ meta.event.irc punctuation.section.parens.end.irc
 
 [14:32:00] *** Quits: nick (user@host.net) (Ping timeout)
 #              ^^^^^ meta.event.irc keyword.other.quit.irc
+#                   ^ meta.event.irc punctuation.separator.key-value.irc
 #                     ^^^^ meta.event.irc entity.name.tag.nickname.irc
+#                                          ^ meta.event.irc punctuation.section.parens.begin.irc
 #                                           ^^^^^^^^^^^^ meta.event.irc string.unquoted.quit-message.irc
+#                                                       ^ meta.event.irc punctuation.section.parens.end.irc
 
 [14:33:00] *** nick is now known as newnick
 #          ^^^ punctuation.definition.event.irc
 #              ^^^^ meta.event.irc entity.name.tag.nickname.irc
+#                   ^^^^^^^^^^^^^^^ meta.event.irc keyword.operator.word.irc
 #                                   ^^^^^^^ meta.event.irc entity.name.tag.nickname.irc
 
 [14:34:00] <nick> hello #channel

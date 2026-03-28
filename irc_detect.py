@@ -3,14 +3,15 @@ import re
 import sublime
 import sublime_plugin
 
+# NOTE: Keep in sync with first_line_match in Syntaxes/IRC.sublime-syntax
 _IRC_PATTERN = re.compile(
     r"^\[?\d{4}[-/]\d{2}[-/]\d{2}[\sT]\d{2}:\d{2}"
-    r"|^\[?\d{2}:\d{2}(?::\d{2})?:?\]?\s+(?:[<*]|-!-|===|-->|\*{3})"
+    r"|^\[?\d{2}:\d{2}(?::\d{2})?\]?\s+(?:[<*]|-!-|===|-->|\*{3})"
     r"|^\(\d{2}:\d{2}(?::\d{2})?\)\s+[<*]"
     r"|^[A-Z][a-z]{2}\s+\d{1,2}\s+\d{2}:\d{2}:\d{2}"
-    r"|^---\s+Log\s+opened"
-    r"|^Session\s+Start:"
-    r"|^\*{4}\s+BEGIN\s+LOGGING"
+    r"|^---\s+Log\s+(?:opened|closed)"
+    r"|^Session\s+(?:Start|Close):"
+    r"|^\*{4}\s+(?:BEGIN|END)\s+LOGGING"
 )
 
 _SYNTAX_PATH = "Packages/IRC Syntax/Syntaxes/IRC.sublime-syntax"

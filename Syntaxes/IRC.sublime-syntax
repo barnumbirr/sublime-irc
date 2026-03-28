@@ -3,18 +3,20 @@
 # https://www.sublimetext.com/docs/syntax.html
 name: IRC
 scope: text.irc
+# NOTE: Keep first_line_match in sync with _IRC_PATTERN in irc_detect.py
 first_line_match: |-
   (?x)
     ^\[?\d{4}[-/]\d{2}[-/]\d{2}[\sT]\d{2}:\d{2}
-  | ^\[?\d{2}:\d{2}(?::\d{2})?:?\]?\s+(?:[<*]|-!-|===|-->|\*{3})
+  | ^\[?\d{2}:\d{2}(?::\d{2})?\]?\s+(?:[<*]|-!-|===|-->|\*{3})
   | ^\(\d{2}:\d{2}(?::\d{2})?\)\s+[<*]
   | ^[A-Z][a-z]{2}\s+\d{1,2}\s+\d{2}:\d{2}:\d{2}
-  | ^---\s+Log\s+opened
-  | ^Session\s+Start:
-  | ^\*{4}\s+BEGIN\s+LOGGING
+  | ^---\s+Log\s+(?:opened|closed)
+  | ^Session\s+(?:Start|Close):
+  | ^\*{4}\s+(?:BEGIN|END)\s+LOGGING
 
 contexts:
   main:
+    - include: log-marker
     - include: timestamp
     - include: event
     - include: nickname
@@ -24,6 +26,39 @@ contexts:
     - include: url
     - include: channel
     - include: vhost
+
+  # ── Log markers ────────────────────────────────────────
+  # Session/log boundary lines (e.g. irssi "--- Log opened", mIRC "Session Start:")
+
+  log-marker:
+    - match: '^(---)\s+(Log)\s+(opened|closed)\b(.*)'
+      scope: meta.separator.log.irc
+      captures:
+        1: punctuation.definition.separator.irc
+        2: keyword.other.log.irc
+        3: keyword.other.log.irc
+        4: string.unquoted.log-detail.irc
+    - match: '^(---)\s+(Day)\s+(changed)\b(.*)'
+      scope: meta.separator.log.irc
+      captures:
+        1: punctuation.definition.separator.irc
+        2: keyword.other.log.irc
+        3: keyword.other.log.irc
+        4: string.unquoted.log-detail.irc
+    - match: '^(Session)\s+(Start|Close)(:)(.*)'
+      scope: meta.separator.log.irc
+      captures:
+        1: keyword.other.log.irc
+        2: keyword.other.log.irc
+        3: punctuation.separator.key-value.irc
+        4: string.unquoted.log-detail.irc
+    - match: '^(\*{4})\s+(BEGIN|END)\s+(LOGGING)\b(.*)'
+      scope: meta.separator.log.irc
+      captures:
+        1: punctuation.definition.separator.irc
+        2: keyword.other.log.irc
+        3: keyword.other.log.irc
+        4: string.unquoted.log-detail.irc
 
   # ── Timestamps ──────────────────────────────────────────
 
@@ -44,8 +79,8 @@ contexts:
         10: punctuation.separator.date.irc
         11: constant.numeric.value.irc
         12: punctuation.section.date.end.irc
-    # Bracketed time only: [12:34:56] or [12:34] or [12:34:56:] (Snak)
-    - match: '^(\[)(\d{2})(:)(\d{2})(?:(:)(\d{2}))?:?(\])'
+    # Bracketed time only: [12:34:56] or [12:34]
+    - match: '^(\[)(\d{2})(:)(\d{2})(?:(:)(\d{2}))?(\])'
       scope: meta.date.irc
       captures:
         1: punctuation.section.date.begin.irc
@@ -104,19 +139,28 @@ contexts:
   # ── Chat nicknames: <nick> ─────────────────────────────
 
   nickname:
-    - match: '(<)([a-zA-Z\[\]\\`_\^\{\|\}][a-zA-Z0-9\[\]\\`_\^\{\|\}\-]{0,31})(>)'
+    - match: '(<)\s*([~&@%+]?)([a-zA-Z\[\]\\`_\^\{\|\}][a-zA-Z0-9\[\]\\`_\^\{\|\}\-]{0,31})(>)'
       scope: meta.reference.nickname.irc
       captures:
         1: punctuation.definition.reference.nickname.begin.irc
-        2: entity.name.tag.nickname.irc
-        3: punctuation.definition.reference.nickname.end.irc
+        2: variable.annotation.prefix.irc
+        3: entity.name.tag.nickname.irc
+        4: punctuation.definition.reference.nickname.end.irc
+      push: message-body
+
+  # Message body after <nick> — only inline patterns, no event markers.
+  # This prevents false event matches in chat text (e.g. "5 * 3").
+  message-body:
+    - match: $
+      pop: true
+    - include: inline
 
   # ── Event lines ────────────────────────────────────────
   # Matches event markers from irssi (-!-), generic (===),
-  # weechat (-->, <--, --), ZNC/Snak (***), and HexChat/mIRC (*)
+  # weechat (-->, <--, --), ZNC (***), and HexChat/mIRC (*)
 
   event:
-    - match: '(-!-|===|-->|<--|\*{3}:?|--)\s+'
+    - match: '(-!-|===|-->|<--|\*{3}|--)\s+'
       captures:
         1: punctuation.definition.event.irc
       push: event-body
@@ -135,100 +179,180 @@ contexts:
     - include: event-join
     - include: event-quit
     - include: event-topic
+    - include: event-topic-display
+    - include: event-now-talking
+    - include: event-topic-is
+    - include: event-set-by
     - include: event-user-is
     - include: inline
 
   event-znc-join:
-    - match: '(Joins):\s+(\S+)\s+'
+    - match: '(Joins)(:)\s+(\S+)\s+'
       captures:
         1: keyword.other.join.irc
-        2: entity.name.tag.nickname.irc
+        2: punctuation.separator.key-value.irc
+        3: entity.name.tag.nickname.irc
       push:
         - match: $
           pop: true
-        - include: channel
-        - include: url
-        - include: vhost
+        - include: inline
 
   event-znc-quit:
-    - match: '(Quits|Parts):\s+(\S+)\s+'
+    - match: '(Quits|Parts)(:)\s+(\S+)\s+'
       captures:
         1: keyword.other.quit.irc
-        2: entity.name.tag.nickname.irc
+        2: punctuation.separator.key-value.irc
+        3: entity.name.tag.nickname.irc
       push:
         - match: $
           pop: true
-        - match: '\(([^)]*)\)'
-          captures:
-            1: string.unquoted.quit-message.irc
+        - include: quit-message
         - include: inline
 
   event-join:
-    - match: '(\S+)\s+(?:(?:\[[^\]]+\]|\([^)]+\))\s+)?(?:has\s+)?(joined)\s+'
+    - match: '(\S+)\s+(?:(\[[^\]]+\]|\([^)]+\))\s+)?(has\s+)?(joined)\s+'
       captures:
         1: entity.name.tag.nickname.irc
-        2: keyword.other.join.irc
+        2: string.unquoted.hostmask.irc
+        3: keyword.operator.word.irc
+        4: keyword.other.join.irc
       push:
         - match: $
           pop: true
-        - include: channel
-        - include: url
+        - include: inline
 
   event-quit:
-    - match: '(\S+)\s+(?:(?:\[[^\]]+\]|\([^)]+\))\s+)?(?:has\s+)?(quit|left|parted)\b'
+    - match: '(\S+)\s+(?:(\[[^\]]+\]|\([^)]+\))\s+)?(has\s+)?(quit|left|parted)\b'
       captures:
         1: entity.name.tag.nickname.irc
-        2: keyword.other.quit.irc
+        2: string.unquoted.hostmask.irc
+        3: keyword.operator.word.irc
+        4: keyword.other.quit.irc
       push:
         - match: $
           pop: true
-        - match: '\[([^\]]*)\]'
-          captures:
-            1: string.unquoted.quit-message.irc
-        - match: '\(([^)]*)\)'
-          captures:
-            1: string.unquoted.quit-message.irc
+        - include: quit-message
         - include: inline
 
   event-topic:
-    - match: '(\S+)\s+changed\s+the\s+topic\s+of\s+'
+    - match: '(\S+)\s+(changed\s+the\s+topic\s+of)\s+'
       captures:
         1: entity.name.tag.nickname.irc
+        2: keyword.operator.word.irc
       push:
         - match: $
           pop: true
-        - match: 'to:\s*(.*)'
+        - match: '(to)(:)\s*'
           captures:
-            1: string.unquoted.topic.irc
-        - include: channel
-        - include: url
+            1: keyword.operator.word.irc
+            2: punctuation.separator.key-value.irc
+          set: topic-body
+        - include: inline
+
+  event-topic-display:
+    - match: '(Topic)\s+(for)\s+'
+      captures:
+        1: keyword.other.topic.irc
+        2: keyword.operator.word.irc
+      push:
+        - match: $
+          pop: true
+        - match: '([#&])([^\x07\x2C\s:]{1,199})(:)\s*'
+          captures:
+            1: punctuation.definition.channel.irc
+            2: constant.other.channel.irc
+            3: punctuation.separator.key-value.irc
+          set: topic-body
+        - match: '(:)\s*'
+          captures:
+            1: punctuation.separator.key-value.irc
+          set: topic-body
+        - include: inline
+
+  topic-body:
+    - meta_content_scope: string.unquoted.topic.irc
+    - match: $
+      pop: true
+    - include: inline
+
+  event-now-talking:
+    - match: '(Now)\s+(talking)\s+(in)\s+'
+      captures:
+        1: keyword.other.join.irc
+        2: keyword.other.join.irc
+        3: keyword.operator.word.irc
+      push:
+        - match: $
+          pop: true
+        - include: inline
+
+  event-topic-is:
+    - match: '(Topic)\s+(is)\s+'
+      captures:
+        1: keyword.other.topic.irc
+        2: keyword.operator.word.irc
+      push:
+        - match: $
+          pop: true
+        - match: "(')(.*?)(')"
+          captures:
+            1: punctuation.definition.string.begin.irc
+            2: string.quoted.single.topic.irc
+            3: punctuation.definition.string.end.irc
+        - include: inline
+
+  event-set-by:
+    - match: '(Set)\s+(by)\s+(\S+)\s+(on)\s+(.*)'
+      captures:
+        1: keyword.other.topic.irc
+        2: keyword.operator.word.irc
+        3: entity.name.tag.nickname.irc
+        4: keyword.operator.word.irc
+        5: string.unquoted.log-detail.irc
 
   event-nick-change:
-    - match: '(\S+)\s+is\s+now\s+known\s+as\s+(\S+)'
+    - match: '(\S+)\s+(is\s+now\s+known\s+as)\s+(\S+)'
       captures:
         1: entity.name.tag.nickname.irc
-        2: entity.name.tag.nickname.irc
+        2: keyword.operator.word.irc
+        3: entity.name.tag.nickname.irc
 
   event-user-is:
-    - match: '(\S+)\s+is\s+(.*?)\s+on\s+'
+    - match: '(\S+)\s+(is)\s+(.*?)\s+(on)\s+'
       captures:
         1: entity.name.tag.nickname.irc
-        2: string.unquoted.realname.irc
+        2: keyword.operator.word.irc
+        3: string.unquoted.realname.irc
+        4: keyword.operator.word.irc
       push:
         - match: $
           pop: true
-        - include: channel
+        - include: inline
+
+  # ── Quit messages ─────────────────────────────────────
+
+  quit-message:
+    - match: '(\[)([^\]]*)(\])'
+      captures:
+        1: punctuation.section.brackets.begin.irc
+        2: string.unquoted.quit-message.irc
+        3: punctuation.section.brackets.end.irc
+    - match: '(\()([^)]*)(\))'
+      captures:
+        1: punctuation.section.parens.begin.irc
+        2: string.unquoted.quit-message.irc
+        3: punctuation.section.parens.end.irc
 
   # ── URLs ────────────────────────────────────────────────
 
   url:
-    - match: 'https?://[^\s)\]}>,"'']*'
+    - match: 'https?://[^\s)\]}>,"'']*(?<![.!?])'
       scope: markup.underline.link.irc
 
   # ── Channels ────────────────────────────────────────────
 
   channel:
-    - match: '([#&])([^\x07\x2C\s]{0,199})'
+    - match: '([#&])([^\x07\x2C\s]{1,199})'
       captures:
         1: punctuation.definition.channel.irc
         2: constant.other.channel.irc

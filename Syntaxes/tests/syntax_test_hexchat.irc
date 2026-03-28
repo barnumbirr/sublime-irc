@@ -17,6 +17,7 @@ Mar 27 12:34:56 <ab> hi
 Mar 27 12:34:56 * foo has joined #bar
 #               ^ punctuation.definition.event.irc
 #                 ^^^ meta.event.irc entity.name.tag.nickname.irc
+#                     ^^^^ meta.event.irc keyword.operator.word.irc
 #                         ^^^^^^ meta.event.irc keyword.other.join.irc
 #                                ^ punctuation.definition.channel.irc
 #                                 ^^^ constant.other.channel.irc
@@ -24,5 +25,8 @@ Mar 27 12:34:56 * foo has joined #bar
 Mar 27 12:34:56 * foo has quit (bye)
 #               ^ punctuation.definition.event.irc
 #                 ^^^ meta.event.irc entity.name.tag.nickname.irc
+#                     ^^^^ meta.event.irc keyword.operator.word.irc
 #                         ^^^^ meta.event.irc keyword.other.quit.irc
+#                              ^ meta.event.irc punctuation.section.parens.begin.irc
 #                               ^^^ meta.event.irc string.unquoted.quit-message.irc
+#                                  ^ meta.event.irc punctuation.section.parens.end.irc

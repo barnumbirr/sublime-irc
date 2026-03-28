@@ -9,7 +9,6 @@ IRC log file syntax highlighting for Sublime Text.
 - **HexChat** — `*` event markers, named-month timestamps (`Mar 27 12:34:56`)
 - **mIRC** — `*` event markers, bracketed timestamps (`[12:34]`)
 - **ZNC** — `***` event markers, `Joins:`/`Parts:`/`Quits:` keywords
-- **Snak** — `***` event markers
 
 IRC log files are auto-detected when possible via content matching.
 

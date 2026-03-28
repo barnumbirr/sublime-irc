@@ -25,6 +25,7 @@
 [12:34] * foo has joined #bar
 #       ^ punctuation.definition.event.irc
 #         ^^^ meta.event.irc entity.name.tag.nickname.irc
+#             ^^^^ meta.event.irc keyword.operator.word.irc
 #                 ^^^^^^ meta.event.irc keyword.other.join.irc
 #                        ^ punctuation.definition.channel.irc
 #                         ^^^ constant.other.channel.irc
@@ -32,10 +33,14 @@
 [12:34] * foo has quit IRC (bye)
 #       ^ punctuation.definition.event.irc
 #         ^^^ meta.event.irc entity.name.tag.nickname.irc
+#             ^^^^ meta.event.irc keyword.operator.word.irc
 #                 ^^^^ meta.event.irc keyword.other.quit.irc
+#                          ^ meta.event.irc punctuation.section.parens.begin.irc
 #                           ^^^ meta.event.irc string.unquoted.quit-message.irc
+#                              ^ meta.event.irc punctuation.section.parens.end.irc
 
 [12:34] * old is now known as new
 #       ^ punctuation.definition.event.irc
 #         ^^^ meta.event.irc entity.name.tag.nickname.irc
+#             ^^^^^^^^^^^^^^^ meta.event.irc keyword.operator.word.irc
 #                             ^^^ meta.event.irc entity.name.tag.nickname.irc

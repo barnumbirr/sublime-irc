@@ -4,7 +4,7 @@ IRC Syntax
 Thank you for installing IRC Syntax for Sublime Text!
 
 Provides syntax highlighting for IRC log files from:
-  - irssi, weechat, HexChat, mIRC, ZNC, and Snak
+  - irssi, weechat, HexChat, mIRC, and ZNC
 
 IRC log files are auto-detected when possible. If not, select 'IRC'
 from View > Syntax.

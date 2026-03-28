@@ -20,17 +20,23 @@
 
 00:01 -!- foo has quit [bye]
 #         ^^^ meta.event.irc entity.name.tag.nickname.irc
+#             ^^^^ meta.event.irc keyword.operator.word.irc
 #                 ^^^^ meta.event.irc keyword.other.quit.irc
+#                      ^ meta.event.irc punctuation.section.brackets.begin.irc
 #                       ^^^ meta.event.irc string.unquoted.quit-message.irc
+#                          ^ meta.event.irc punctuation.section.brackets.end.irc
 
 00:01 -!- foo is "Foo" on #bar
 #         ^^^ entity.name.tag.nickname.irc
+#             ^^ keyword.operator.word.irc
 #                ^^^^^ string.unquoted.realname.irc
+#                      ^^ keyword.operator.word.irc
 #                         ^ punctuation.definition.channel.irc
 #                          ^^^ constant.other.channel.irc
 
 00:01 -!- old is now known as new
 #         ^^^ entity.name.tag.nickname.irc
+#             ^^^^^^^^^^^^^^^ keyword.operator.word.irc
 #                             ^^^ entity.name.tag.nickname.irc
 
 00:01 <ab> https://x.co ok

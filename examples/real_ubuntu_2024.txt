@@ -1,0 +1,300 @@
+=== PasiZ1 is now known as PasiZ
+=== bahamat_ is now known as bahamat
+[00:26] <kotgc> Hello, how can I tell what is the EFI partition https://dpaste.com/DC4N5RRH8
+[00:27] <rbox> fdisk -l
+[00:29] <younder> The size is a good hint note that sda1 is a 512M partition
+[00:30] <kotgc> rbox thanks, that really worked https://dpaste.com/HG8N8Z749
+[00:31] <kotgc> dev/sda1
+[00:32] <kotgc> Can the EFI partition be called the root?
+[00:32] <kotgc> I need to mount the EFI to chroot to fix a black screen.
+[00:32] <younder> no, it is only for booting
+[00:33] <kotgc> ok
+[00:36] <kotgc> So I'm planning to "chroot" into the target EFI partition (/dev/sda1), so I think I have to mount /dev/sda1, so grub install/update are correct.
+=== ubuntu is now known as Guest6378
+=== arraybolt3 is now known as arraybolt3_tl
+=== arraybolt3_wc is now known as arraybolt3
+=== deepSleep is now known as Guest4327
+[02:13] <aiena> How to make snaps work correctly with SELInux in ubuntu 22.04
+[02:14] <rbox> ubuntu isn't really designed for selinux
+[02:17] <aiena> what is the correct way to implement MAC in ubuntu?
+[02:18] <rbox> if you want to use selinux, you should progably use a dist designed for selinux, lol
+[02:19] <aiena> rbox, I wa tested selinux in an ubuntu vm so no harm no foul :)
+[02:20] <aiena> rbox, the question is what is the correct mechanism for ubuntu to implement Mandatory access control
+[02:20] <rbox> "AppArmor is a Mandatory Access Control (MAC) system"
+[02:21] <aiena> ok I'm reading about it.
+[02:22] <rbox> i mean, that was the very first hit on google...
+[02:26] <aiena> where are snap apparmor policies stored? It seems like ubuntui nforces a policy but I can't find it in /etc/apparmor.d
+[02:26] <rbox> another thing thats the first hit on g oogle...
+[02:28] <aiena> foir me it just shows https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&cad=rja&uact=8&ved=2ahUKEwjq-46NrN6DAxW58DgGHWjUDP0QFnoECBQQAQ&url=https%3A%2F%2Fubuntu.com%2Fserver%2Fdocs%2Fsecurity-apparmor&usg=AOvVaw2XglGOKVe-rwrDi-5JpS5v&opi=89978449 a the first etry
+[02:28] <arraybolt3> rbox: if it's that easy for you to find, it's that easy for you to share too. Don't drive users away by griping about what Google tells you.
+[02:32] <arraybolt3> aiena: look in /var/lib/snapd/apparmor/profiles
+[02:33] <aiena> thank you
+=== deepSleep is now known as Guest1737
+=== Spr0cket- is now known as Spr0cket
+=== kinghat9 is now known as kinghat
+=== kentucky44448 is now known as kentucky4444
+=== codingkoopa8 is now known as codingkoopa
+[05:09] <aiena> I was trying to follow https://help.ubuntu.com/community/UFW and typed `ufw allow from 192.168.0.0/24 to any 22` rule but I get a wrong number of arguments error
+[05:09] <aiena> what error am I making
+[05:10] <aiena> I think I missed the word port
+[05:24] <ismail> hello .. how to enable hibernate ?
+=== Casper26_ is now known as Casper26
+=== homer is now known as V1A
+=== TomTom_ is now known as TomTom
+[09:01] <Jantz> is the famous silk road?
+[09:01] <lotuspsychje> Jantz: no, this is the Ubuntu support channel
+[09:06] <Jantz> hackers hackers I need a hacker where is she?
+[09:08] <lotuspsychje> !guidelines | Jantz
+[09:08] <ubottu> Jantz: The guidelines for using the Ubuntu channels can be found at https://wiki.ubuntu.com/IRC/Guidelines
+[13:16] <BluesKaj> Hi all
+[13:39] <deadrom> Hi. 20.04 server. DNS set to use DNS server outside. systemd-resolv --status shows desired DNS. dig says 127.0.0.53. internet says this a classic offering 100 solutions. is there a straightforward approach?
+[13:40] <deadrom> 53u+t open, dns not confed to TLS
+[13:49] <pragmaticenigma> deadrom: 127.0.0.53 is a local system caching DNS provider. Almost all installations are setup that way by default to reduce the latency of re-querying a DNS server for something within it TTL property.
+[13:50] <pragmaticenigma> deadrom: your system is querying upstream when it needs to, but if something requests www.example.com and then less than 5ms later does it again, it doesn't have to go all the way to the upstream provider for the second query.
+=== veegee_ is now known as veegee
+[13:52] <deadrom> pragmaticenigma: what if the target's IP changes and I got faster then 5ms queries, say edge application
+[13:52] <deadrom> ?
+[13:53] <ikonia> deadrom: you can point directly at a dns server, or you can use the local resolver to forward to a dns server
+[13:54] <pragmaticenigma> deadrom: what do you mean target's UP changes?
+[13:55] <deadrom> well, DNS resolves to a different IP. new instance spawn, new address
+[13:55] <ikonia> that's the dns servers job to maintain a record with the correct TTL
+[13:56] <deadrom> guess azure should do that
+[13:56] <deadrom> uuh root dns
+[13:57] <pragmaticenigma> deadrom: If a domain's IP address changes that frequently it should be defined with a short enough TTL that it wouldn't be a problem. I'm not sure I undersatnd your issue
+[13:57] <ikonia> deadrom: are you trying to host something in Azure and the ip keeps changing ?
+[13:57] <ikonia> what's the actual problem you're trying to solve
+[14:03] <pragmaticenigma> deadrom: systemd-resolvd runs a local caching instance of DNS. resolved will look up an unknown domain at the upstream provider. Any successive queries that occur to that same domain query within the domains defined TTL will be resolved locally. This is to reduce latency of DNS querying and be a good netizen by reducing load on upstream DNS resolvers. If you're hosting a service in Azure that has a frequently changing IP address, that
+[14:03] <pragmaticenigma> DNS record should have a very low TTL so it's not an issue.
+[14:34] <deadrom> ikonia: yes, azure resource with changing IPs, but I think this resolved itself: the differerently reported DNS servers were reported to be an error, turns out people just got jumpy about that but there is no functional impact.
+[14:34] <deadrom> Thanks for the explanation.
+[14:55] <ikonia> glad your sorted
+[15:20] <deadrom> ikonia, ah, edge issue, not linux issue per say. the things you discover when you shake people hard enough
+[15:41] <Guest4> Hey folks, I am using Ubuntu 22.04 for the first time, so I have barely experiences and knowledge about it. I´ve got a problem und I would be very happy, if someone could maybe help me. The issue is, that I installed Chrome-Browser to my Cinnamon-GUI and I can´t run it by clicking on the app-symbol. If I do, a clock is displayed (loading
+[15:41] <Guest4> process?!) and after a few seconds it dissapers, the cursor shows up again and nothing happens. The only way for me to start Chrome so far is via terminal, using the --no-sandbox command, but this is quiet not the best way, as I read on the Internet. If I try to start it as a non-root user via terminal, the following error is presented: „Missing
+[15:41] <Guest4> X Server or $Display. The platform failed to initialize. Exiting.“ I am using Ubuntu through VNC.
+[15:44] <rbox> what do yoj mean start it as a non root user via teerminal
+[15:44] <rbox> you should be starting it ast he user logged in to X
+[15:47] <Guest4> as a standard user without administration rights. Can you maybe explain shortly what is X?
+[15:47] <rbox> the user logged in to the graphical system
+[15:55] <ioria> Guest30, maybe the .desktop launcher is not set correctly; look at  ~/.local/share/applications/   and /usr/share/applications
+[16:07] <pragmaticenigma> Guest30: You should not be logged in as root, at any time, with exception for system specific maintaince, which commonly can be accomplished by preceeding a command with "sudo " and then enternig your user (not root) password. Google Chrome is not distributed by Ubuntu, it is considered a thirdparty application and you will have to seek help from their community. You can install the chromium browser which is offered through the Software
+[16:07] <pragmaticenigma> intaller/package manager. That package is called "chromium-browser"
+[16:09] <pragmaticenigma> Guest30: If you wish to install 3rd party applications like Google Chrome, make sure you are getting the software from the official sources and following their instructions exactly (read instructions twice before performing any action.)
+[16:21] <wyre> hi guys! I'm trying to show my hidden grub by holding esc key ...
+[16:21] <wyre> and I can see the grub cli
+[16:21] <wyre> but I'd like to see the grub menu to add some parameters to my kernel command line
+[16:22] <rbox> hit esc again
+[16:22] <rbox> it should take you back to the menu
+[16:23] <howudodat> I am trying to set up NVS4.2 server.  I already have samba fs, samba ad, and windows, mac, linux clients working (all linux running 22.04).  Now I want to add a NFS server that also uses AD for kerberos and for extended ACLs.  Can anyone recemmend a good guide on this?
+[16:23] <wyre> rbox, hitting esc is like printing a new line
+[16:26] <rbox> weirds
+[16:26] <rbox> im sure i've done that before
+[16:27] <pragmaticenigma> howudodat: You may find more server specific help in #ubuntu-server
+[16:27] <rbox> what if you hold shift instead of hitting esc on boot?
+[16:27] <wyre> rbox, the boot process continues
+[16:27] <rbox> well dont hold esc, just tap it
+[16:27] <pragmaticenigma> wyre: are you trying to make a permanent change, or just testing a temporary one?
+[16:28] <Guest30> rbox ioria pragmaticenigma Thanks for your advices. I set up the GUI by myself and read something about I had to install xorg in advance, which I didn´t. Could this also be a reason why Chrome is not running?
+[16:29] <rbox> Guest30: if you dont know what you are doing, its best to just do a normal install
+[16:29] <wyre> pragmaticenigma, just testing a temporary one
+[16:29] <wyre> but more than that ... I'd like to edit the /etc/fstab
+[16:29] <wyre> it seems to have a wrong entry
+[16:30] <howudodat> pragmaticenigma: thanks, I've been lurking there for several days.  I guess I can post there again
+[16:33] <pragmaticenigma> Guest30: With your first go at this, you should use a ready to go install of your preferred setup. You can get the unofficial (which means it is not supported here) Ubuntu Cinnamon installer from https://ubuntucinnamon.org/.  Or for a Gnome2 classic experience you can try Ubuntu MATE which is a supported and official flavor of UBuntu from https://ubuntu-mate.org/
+[16:37] <pragmaticenigma> howudodat: What you're asking for assistance on, is beyond what a typical user of the Desktop version of Ubuntu would do. That is why I suggested the other channel. If you're not having luck there you can use the IRC command '/msg alis list {keyword}' to see if another channel might be more targeted to your need. Other options might be #linux (which is very general) or you may have to find a community through a web search.
+[16:38] <howudodat> pragmaticenigma: understood.  I posted again in ubunut-server as well as #nfs, I'll see what happens, if not well...I'll keep looking
+[16:38] <howudodat> if it were easy, everyone would do it (tm)...:)
+[16:40] <pragmaticenigma> !pm | Guest30
+[16:40] <ubottu> Guest30: Please ask your questions in the channel so that other people can help you, benefit from your questions and answers, and ensure that you're not getting bad advice.
+[16:41] <Guest30> OK, I´m sorry
+[16:42] <Guest30> I thought the amout of questions might be annoying for other users in the channel
+[16:43] <nonix4> Is there a way to disable DPMS at login/lock screen? (as in blacklist it for video drivers and/or monitors which are incompatible with blanking)
+[16:43] <pragmaticenigma> Guest30: if something is not allowed, a moderator will let you know. As long as you follow the channel guidelines and code of conduct here, you are free to ask any Ubuntu releated question here.
+[16:58] <webchat3> hello
+[16:59] <webchat3> so, I just bought a dell vostro with ubuntu, i created the account set pass etc. I want to return the laptop because I do not like it
+[16:59] <webchat3> my ask is, how to delete the user ?
+[17:00] <webchat3> i tried all commands on internet but doesn t working
+[17:00] <webchat3> please help me
+[17:00] <webchat3> error code 8
+[17:00] <rbox> why do yo uneed to delete the user?
+[17:01] <webchat3> because i send the laptop back\
+[17:01] <webchat3> if I send back a laptop with password set up I think is not ok
+[17:01] <rbox> did they tell you to do anythign?
+[17:01] <rbox> they're just going tow ipe it
+[17:01] <rbox> lol
+[17:02] <webchat3> what are you saying ? just send it back ?
+[17:03] <rbox> do whatever they tell you to do
+[17:03] <rbox> did they tell you to woryr about anything?
+[17:04] <webchat3> is writed on site that if you make a return that laptop be unlocked
+[17:04] <webchat3> but how to unlock it?
+[17:04] <webchat3> i deleted all filles etc
+[17:04] <rbox> adding a user account isnt locking anything
+[17:04] <rbox> if you're unsure about their instructinos, you should ask them
+[17:05] <webchat3> my ask is how can I deleted my account
+[17:06] <arraybolt3> webchat3: You shouldn't send back a computer that you put any personal data on unless *you* wipe it first. You technically *can* delete the only user account on the system, but if anything that will lock it *worse*.
+[17:06] <nonix4> actually many wouldn't settle with deleting files, instead they'd overwrite the filesystem and reinstall (with minimal image to keep it simple/fast)
+[17:07] <arraybolt3> If you want to fully "unlock" the machine, the right way to do that would be to make sure they have your password, or delete the password entirely.
+[17:07] <webchat3> this is what I m saiyng, how to delete anything from this laptop, my personal data
+[17:07] <webchat3> how to delete the password
+[17:08] <arraybolt3> webchat3: download the same version of Ubuntu that is installed on the machine, and reinstall from scratch. Preferably scrub the entire drive using GNOME Disks (I think it can do that?) before installing.
+[17:08] <webchat3> IT IS SO COMPLICATED
+[17:08] <nonix4> I'd just overwrite the hd once with random noise, once with zeros and once with netboot image and call it done
+[17:09] <arraybolt3> webchat3: it would be this complicated with Windows too :-/
+[17:09] <arraybolt3> This is data security - if you save data to a drive, simply "deleting" it leaves pieces on the drive. If you want to make sure no one resurrects your old deleted data and steals it, you have to wipe the drive.
+[17:10] <nonix4> (actually major part of hds/ssds these days do have a secure erase command which is fast, if you choose to trust the hw manufacturer)
+[17:10] <arraybolt3> webchat3: who did you buy this machine from?
+[17:11] <arraybolt3> a particular company? Did you buy from Dell directly? Or did you buy from some third party?
+[17:11] <webchat3> #arraybolt3 me
+[17:11] <webchat3> from third party
+[17:13] <arraybolt3> yeah. So you really should probably download Ubuntu from here: https://ubuntu.com/download/desktop then flash it to a USB drive, then use the "Disks" utility to zero out the internal drive, and then reinstall Ubuntu. Set a simple short password and make sure the seller knows that password when you send it back.
+[17:19] <webchat65> hi
+[17:25] <Guest47> For now the (hopefully) last question about using a browser on a Cinnamon-GUI: I can run Firefox instead of Chrome, but when it´s open, I can´t type anything, and just act by writing my commands into a Text Editor and then just copy paste it via mouse click into Firefox. So it´s not reacting to keyboard inputs. Is there maybe an easy way to fix
+[17:25] <Guest47> it?
+[17:26] <howudodat> I would add a new user, give them sudo rights, login as them, then delete your user, rm -fr /home/<old username>
+[17:33] <Guest888> Hi, ipv6 newbie here. So, my ISP provide ipv6 , how do I set static ipv6 address on ubuntu pc
+[17:34] <Guest888> Can anyone help me?
+[17:35] <arraybolt3> Guest888: People are here to help, but if this is a server machine it might be better to try #ubuntu-server.
+[17:35] <nonix4> Guest888: Do they actually sell you stable prefix? Otherwise configuring stable suffix won't help much.
+[17:35] <arraybolt3> Otherwise, this is a great place.
+[17:36] <ubuntu_user_42> Hello, is there a way to install nm-connection-editor without installing Gnome Shell and its dependencies, akin to how Arch Linux does it?
+[17:37] <nonix4> Guest888: but indeed may want to utilize netplan.io and systemd-networkd instead of networkmanager if the use scenario even slightly resembles servers
+[17:38] <rbox> ubuntu_user_42: how are you trying to install it?
+[17:39] <ubuntu_user_42> It seems to be contained in network-manager-gnome, which is weird, because I remember having a package called network-manager-applet
+[17:40] <Guest888> nonix4: what do you mean by stable prefix? I check my router, everytimes it restart the 1st 3 field (eg.. 2001:0DB8:face::) does not change.
+[17:41] <Guest888> nonix4: and have "/64" on the router interface
+[17:45] <ubuntu_user_42> Okay, I got it work with the Fedora package for nm-connection-editor + Alien. Probably not the best way to do it, but it seems to work just fine.
+[17:45] <rbox> ubuntu_user_42: thanks for the play by play
+[17:47] <arraybolt3> ubuntu_user_42: nm-connection-editor doesn't usually require GNOME Shell I don't think?
+[17:47] <arraybolt3> just `sudo apt install nm-connection-editor` should have done the trick, but perhaps `sudo apt install --no-install-recommends nm-connection-editor` would help
+[17:47] <ubuntu_user_42> There is no nm-connection-editor package
+[17:48] <arraybolt3> oh you're right
+[17:48] <ubuntu_user_42> That is the problem, it used to network-manager-applet, which apparently got removed and merged with network-manager-gnome? Not sure. Like I said, I remember having network-manager-applet
+[17:48] <ubuntu_user_42> s/used to/used to be
+[17:48] <arraybolt3> gnome-shell is a Recommends of network-manager-gnome
+[17:48] <arraybolt3> so it might work to `sudo apt install --no-install-recomments network-manager-gnome`
+[17:49] <ubuntu_user_42> Doesn't look like it. Even with --no-install-recommends, `gnome-shell` is installed, alongside with `mutter-common` and all the libraries gnome-shell would require
+[17:50] <arraybolt3> weird
+[17:54] <nonix4> ubuntu_user_42: it depends on gnome-shell | policykit-1-gnome | polkit-1-auth-agent -- so maybe install one of the polkit ones first?
+[17:55] <ubuntu_user_42> Darn, that worked!
+[17:56] <ubuntu_user_42> Thanks a lot
+[17:56] <arraybolt3> \o/
+[17:56] <arraybolt3> nonix4: nice going!
+=== shlom is now known as V1A
+=== lyn is now known as Guest6049
+=== Guest6049 is now known as lynorian2
+=== lyn is now known as Guest8107
+[19:55] <zeratul> if I want to extend the sudo timeout where in the visudo file do I add that setting?
+[20:33] <pragmaticenigma> zeratul: First make sure you keep a copy of the original line, the alter the line `Defaults env_reset` to `Defaults env_reset, timestamp_timeout=5` where the number 5 represents the number of minutes you wish sudo to remain active.
+[20:33] <pragmaticenigma> zeratul: you are simply adding the `, timestamp_timeout=5` after the original entry
+[20:47] <zeratul> pragmaticenigma, why the , after Defaults env_reset ???
+[20:55] <pragmaticenigma> zeratul: You are welcome to take a look at https://www.man7.org/linux/man-pages/man5/sudoers.5.html for that information
+=== cappy is now known as cappy_
+=== cappy_ is now known as cappy
+[22:09] <messier16> hi running ubuntu 22.04.03 headless server I get error messages which seem to indicate a problem with a sata port or cable or drive; I have run smart tests on all drives and they are reported to be ok. here https://pastebin.com/YNTzM4rw are the error messages from $grep error /var/log/syslog
+[22:10] <messier16> it appears perhaps the problem is with the /dev/sda drive
+[22:10] <messier16> but I need help deciphering
+[22:12] <rbox> yeah, looks like some kind of a hardware error
+[22:13] <messier16> does this indicate it is, specifically, the /dev/sda drive? mediamagnate kernel: [293456.821909] blk_update_request: I/O error, dev sda, sector 888202112 op 0x0:(READ) flags 0x80700 phys_seg 32 prio class 0
+[22:13] <messier16> there are four internal drives
+[22:13] <rbox> well it says sda
+[22:14] <rbox> it woudnl't say sda if it was about sdd
+[22:14] <messier16> ok
+[22:14] <messier16> that's what I thought but I don't have enough experience to know for sure
+[22:14] <messier16> thank you rbox
+[22:16] <tomreyn> messier16: what yuo should take note of is ther serial number of the drive you want to replace. smatctl is one of the tools reporting that.
+[22:18] <tomreyn> while 'sda' means 'first sata drive', what actually is 'the first', as seen by the running system, may be more difficult to match tho the installed disks when opening the case.
+[22:18] <tomreyn> serial numbers are usually printed on HDD labels.
+[22:19] <messier16> well, luckily.. all drives are different sizes. so identification should be fairly easy. I think.
+[22:19] <messier16> but thank you for the info and the tip
+[22:23] <messier16> there's an odd thing - the only time I get the error messages is when a drive is connected via an external USB cable - it's in one of those drive bays. but the /dev/sda drive is definitely a 4tb internal seagate.
+[22:24] <messier16> alright I'm running a long smartctl test on this drive as test results showed I'd only done a short test, which it passed. I could have sworn I did a long test as well. Thank you for your time.
+[22:27] <Aavar> I just upgraded to 22.04 and I have a script that among other things runs "zpool status -v" to check the status of my zfs. When I run it I get this message: https://dpaste.com/34HH2U7XE Is it safe for me to run "zpool upgrade"?
+[22:28] <rbox> Aavar: you should back up your data to be sure
+[22:33] <Aavar> rbox: it is bankes up, but it is far away and will take a long time to recover. Is it a bad idea to just leave it?
+[22:34] <rbox> well some features wont be used
+=== Edgy25 is now known as Edgy2
+[22:41] <pragmaticenigma> Aavar: a remote backup is not a backup... harddrives are relatively cheap, and ideal for making sure you have a local backup
+[22:41] <pragmaticenigma> Aavar: More specifically 3-2-1 should be considered the back up strategy. 3 backups, with 2 on different media, and one remotely stored
+=== tabakhase__ is now known as tabakhase
+[22:42] <Aavar> pragmaticenigma: I know, but this is not important data. It is only inconvenient to loose it
+[22:43] <pragmaticenigma> then it's important data :P
+[22:44] <Aavar> pragmaticenigma: if you call old linux ISOs that I might install again important, then yes. Ripping the ISOs is quite time consuming
+[22:46] <Aavar> pragmaticenigma: :P
+=== Jubes91 is now known as Jubes9
+=== salient89 is now known as salient8
+=== infogulch5 is now known as infogulch
+=== djhankb1 is now known as djhankb
+=== MrC is now known as Guest7989
+=== MrBenC is now known as MrC
+=== vx^ is now known as vx
+=== mrelcee_ is now known as mrelcee
+=== mateus-morais8 is now known as mateus-morais
+=== dvdmuckle_ is now known as dvdmuckle
+=== pr3sonic is now known as highrate
+[23:00] <Luiserebii> Hello, I am looking to update my vim. I see it is at `version 8.1.1847` when I open it. However, when I try to update it via `sudo apt-get install vim`, I see: `vim is already the newest version (2:8.1.2269-1ubuntu5.21).`
+[23:00] <Luiserebii> Why is there that version discrepancy?
+[23:02] <Aavar> Luiserebii: because i'ts not upgraded in the repository yet. I guess.
+[23:02] <Bashing-om> !latest | Luiserebii
+[23:02] <ubottu> Luiserebii: Packages in Ubuntu may not be the latest. Ubuntu aims for stability, so "latest" may not be a good idea. Post-release updates are only considered if they are fixes for security vulnerabilities, high impact bug fixes, or unintrusive bug fixes with substantial benefit. See also !backports, !sru, and !ppa.
+[23:02] <Bashing-om> !info vim lunar
+[23:02] <ubottu> 'lunar' is not a valid release
+[23:04] <Luiserebii> Is there a safe way that I can install the newest version while keeping the package via `apt-get`? Or will I just have to uninstall it and install it a different way?
+[23:04] <Luiserebii> Or at least, a newer version?
+[23:04] <rbox> you can find some random ppa
+[23:04] <rbox> or you can compile it
+[23:05] <rbox> Luiserebii: you can find some random ppa, or you can compile it
+[23:07] <Luiserebii> Hmmmm
+[23:07] <Aavar> Luiserebii: have you checked what version is in snap?
+=== skoobasteeve4 is now known as skoobasteeve
+[23:08] <Luiserebii> I admit, I'm a bit confused. I see: https://launchpad.net/ubuntu/+source/vim/2:9.0.1672-1ubuntu2.2. Is there a way I can pull this in and install it via apt-get?
+[23:08] <tomreyn> Luiserebii: you run ubuntu 20.04 LTS apparently. there are newer releases you could upgrade to, and those provided newer versions of vim, too.
+[23:08] <Luiserebii> Aavar: I have not seen it, but I am afraid of conflicts with apt-get. Would I have to uninstall vim via apt-get to be safe?
+[23:08] <tomreyn> newer *Ubuntu* releases, providing newer versions of vim
+[23:09] <Aavar> Luiserebii: snap will never conflict with apt.
+=== salient86 is now known as salient8
+[23:10] <Luiserebii> Ohhh, I see, I am on 20.04 LTS, yes... darn. I guess I have to make the move up soon. I've been putting it off partially because I've become comfortable with my customization on 20.04 haha
+[23:11] <tomreyn> maybe you can keep them, or most of them.
+[23:12] <tomreyn> becoming too dependant on customizations to be able to upgrade is risk you should not take.
+[23:12] <tomreyn> better go with the flow, accept some minor level of imperfection
+[23:12] <Luiserebii> Oh, yes, I suppose that is wise.
+[23:15] <tomreyn> 22.04 LTS is the current long term support release, the next one will be 24.04, and those version numbers are actually YY.MM, year and month, of when they release
+[23:15] <jeremy31> Basically the LTS is the .04 release of an even number year
+[23:16] <Aavar> Luiserebii: 8.2 is in 22.04, but also in snap. Just run "sudo snap install --beta vim-editor" and you will have a newer version.
+[23:17] <tomreyn> https://snapcraft.io/vim-editor provides a may 2020 "beta" channel providing 8.2.788, that's too old to be recommendable.
+[23:17] <tomreyn> as in, not maintained for 4 years, unlike the .deb's, which do get security patches.
+[23:18] <Aavar> tomreyn: I stand corrected.
+[23:19] <Luiserebii> I did find a ppa that I was able to update to. Thank you so much for all your help!
+[23:19] <tomreyn> Aavar: well. this version IS newer / higher than the one Luiserebii has now (though hers will have security and bug fixes, whereas the snap one won't have them since)
+=== lynndotpy0 is now known as lynndotpy
+=== punkcoder6 is now known as punkcoder
+[23:21] <tomreyn> Luiserebii: be aware that ppa's may provde no security patches either. it entirely depends on their maintainers and whether they care about it (which they don#t need to do).
+[23:21] <Luiserebii> I managed to push it to vim 9 using the PPA, but I would think the next priority is getting to 22.04 or maybe the 24 LTS (when it releases)
+[23:23] <Aavar> Luiserebii: I recommend doing it in steps. In my experience, upgrading two versions has more potential problems than one.
+[23:26] <Luiserebii> Ahhh, ok. I will definitely follow that advice. Thank you again!
+[23:31] <tomreyn> Luiserebii: which PPA are you using then? one of jonathanf's?
+[23:31] <ogra_> als note tat adding a PPA effectiveky gives the PPA owner root access to your system (via dpkg maintainer scripts the packags can do anything they want) so think about how much you trust such a particular PPA owner
+=== octav1a_ is now known as octav1a
+[23:39] <dtype> are there popular third party PPAs that are lower barrier to entry than official Ubuntu, for folks wiling to do some work but not wanting to introduce the trust problem of another PPA?
+[23:41] <tomreyn> pick some software you like, look for available PPAs, see what you can contribute
+[23:42] <ogra_> well, PPAs always have that trust problem ... thats due to the design of dpkg/apt ...
+[23:42] <dtype> i mean, i'm doing a project that needs to distribute a little python script as a collection point, and would like to give folks an option to install more correctly, but it isn't big enough to end up in Ubuntu proper
+[23:42] <dtype> i could just do my own PPA, but then of course the trust issue
+[23:43] <pragmaticenigma> dtype: A python script should be packaged within python and installed in a venv at the end user using pip
+[23:43] <ogra_> luckily PPAs always include the source packges so you *can* inspect what they are doing ... but you indeed need the knowledge and invst some time
+[23:43] <dtype> pragmaticenigma: it needs to run on systemd/cron as part of the install
+[23:43] <ogra_> (and nothing stops the owner of introducing something evil with the next updae indeed)
+[23:44] <pragmaticenigma> dtype: You can run a script from within a venv from cron very easiliy
+[23:44] <dtype> sure, can consider that as an option
+[23:45] <dtype> fwiw, doesn't have to be python but it is in practice today
+[23:47] <pragmaticenigma> I think the part that is missing is that channels like this one consider 3rd party PPAs contributing to an unsupported installation of Ubuntu. It's one of the first things a volunteer here will tell someone to remove before attempting to troubleshoot a system
+[23:48] <JanC> there isn't really much different between a distro and a PPA when it comes to "trust", just that you have to trust an extra person/group, and you have to make the same considerations to judge them
+[23:51] <dtype> pragmaticenigma: I had the same thing with a perl script like 25 years ago that became popular and you can still install today in about every distribution, even though it is not great programming
+[23:52] <pragmaticenigma> 99% of programs were just someone's quick fix that "worked" and for fear of breaking things never get touched again
+[23:52] <dtype> still odd to me that you can `apt-get install ethstats` which was some hacky thing from ~2000
+[23:53] <arraybolt3> well people liked it and the package hasn't broken yet :)
+[23:53] <arraybolt3> dtype: have you considered making it a Snap?
+[23:53] <dtype> i haven't touched it in 22 years
+[23:54] <arraybolt3> I mean the new script
+[23:54] <arraybolt3> Those don't require any scary PPA addition steps to install, the tool to install them is built into Ubuntu, and they oftentimes work well if you know what you're doing with confinement
+[23:54] <pragmaticenigma> are you sure it's the same thing... a search of ethstats turns up an ethereum
+[23:54] <pragmaticenigma>  block chain

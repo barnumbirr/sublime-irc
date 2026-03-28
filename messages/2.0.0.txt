@@ -5,7 +5,7 @@ This is a major rewrite of the IRC syntax definition.
 
 New:
   - Auto-detection of IRC log files (no more manual syntax selection)
-  - Multi-format support: irssi, weechat, HexChat, mIRC, ZNC, and Snak
+  - Multi-format support: irssi, weechat, HexChat, mIRC, and ZNC
   - Proper semantic scopes for multi-color highlighting in all themes
   - Nested contexts: URLs and channels are now highlighted within event lines
 
