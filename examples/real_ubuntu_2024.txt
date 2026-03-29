@@ -1,5 +1,3 @@
-=== PasiZ1 is now known as PasiZ
-=== bahamat_ is now known as bahamat
 [00:26] <kotgc> Hello, how can I tell what is the EFI partition https://dpaste.com/DC4N5RRH8
 [00:27] <rbox> fdisk -l
 [00:29] <younder> The size is a good hint note that sda1 is a 512M partition

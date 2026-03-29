@@ -9,8 +9,8 @@ _IRC_PATTERN = re.compile(
     r"|^\[?\d{2}:\d{2}(?::\d{2})?\]?\s+(?:[<*]|-!-|===|-->|\*{3})"
     r"|^\(\d{2}:\d{2}(?::\d{2})?\)\s+[<*]"
     r"|^[A-Z][a-z]{2}\s+\d{1,2}\s+\d{2}:\d{2}:\d{2}"
-    r"|^---\s+Log\s+(?:opened|closed)"
-    r"|^Session\s+(?:Start|Close):"
+    r"|^---\s+(?:Log\s+(?:opened|closed)|Day\s+changed)"
+    r"|^Session\s+(?:Start|Close|Ident):"
     r"|^\*{4}\s+(?:BEGIN|END)\s+LOGGING"
 )
 

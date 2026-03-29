@@ -38,14 +38,29 @@
 # ── Hostmask in join/quit events ────────────────────────
 
 00:01 -!- foo [user@host.net] has joined #bar
-#             ^^^^^^^^^^^^^^^ meta.event.irc string.unquoted.hostmask.irc
+#             ^ meta.event.irc punctuation.definition.hostmask.begin.irc
+#              ^^^^ string.unquoted.hostmask.irc
+#                  ^ punctuation.separator.email.irc
+#                   ^^^^ string.unquoted.hostmask.irc
+#                       ^ punctuation.separator.domain.irc
+#                        ^^^ string.unquoted.hostmask.irc
+#                           ^ punctuation.definition.hostmask.end.irc
 #                             ^^^^ meta.event.irc keyword.operator.word.irc
 #                                 ^^^^^^ meta.event.irc keyword.other.join.irc
 
 00:01 -!- foo (user@host.net) has quit (bye)
-#             ^^^^^^^^^^^^^^^ meta.event.irc string.unquoted.hostmask.irc
+#             ^ meta.event.irc punctuation.definition.hostmask.begin.irc
+#              ^^^^ string.unquoted.hostmask.irc
+#                  ^ punctuation.separator.email.irc
+#                   ^^^^ string.unquoted.hostmask.irc
+#                       ^ punctuation.separator.domain.irc
+#                        ^^^ string.unquoted.hostmask.irc
+#                           ^ punctuation.definition.hostmask.end.irc
 #                             ^^^^ meta.event.irc keyword.operator.word.irc
 #                                 ^^^^ meta.event.irc keyword.other.quit.irc
+#                                      ^ punctuation.section.parens.begin.irc
+#                                       ^^^ string.unquoted.quit-message.irc
+#                                          ^ punctuation.section.parens.end.irc
 
 # ── URL excludes trailing punctuation ────────────────────
 
@@ -133,7 +148,7 @@
 #     ^^ constant.numeric.value.irc
 #       ^ punctuation.separator.date.irc
 #        ^^ constant.numeric.value.irc
-#          ^ meta.date.irc - constant.numeric
+#          ^ punctuation.separator.date.irc
 #           ^^ constant.numeric.value.irc
 #             ^ punctuation.separator.date.irc
 #              ^^ constant.numeric.value.irc
@@ -252,6 +267,12 @@ Session Close: Sat Jun 15 22:00:00 2024
 #   ^^^ meta.separator.log.irc keyword.other.log.irc
 #       ^^^^^^^ meta.separator.log.irc keyword.other.log.irc
 
+Session Ident: #linux
+# <- meta.separator.log.irc keyword.other.log.irc
+#^^^^^^ meta.separator.log.irc keyword.other.log.irc
+#       ^^^^^ meta.separator.log.irc keyword.other.log.irc
+#            ^ meta.separator.log.irc punctuation.separator.key-value.irc
+
 # ── mIRC session events ──────────────────────────────
 
 [12:34] * Now talking in #linux
@@ -291,3 +312,207 @@ Session Close: Sat Jun 15 22:00:00 2024
 
 [12:34] <ab> well -- anyway
 #                 ^^ - punctuation.definition.event
+
+# ── More event markers in message text ─────────────────
+
+[12:34] <ab> see --> arrow
+#                ^^^ - punctuation.definition.event
+
+[12:34] <ab> x === y
+#              ^^^ - punctuation.definition.event
+
+[12:34] <ab> use *** for emphasis
+#                ^^^ - punctuation.definition.event
+
+[12:34] <ab> note -!- here
+#                 ^^^ - punctuation.definition.event
+
+# ── Nicknames with RFC 2812 special chars ──────────────
+
+[12:34] <nick|work> hello
+#        ^^^^^^^^^ entity.name.tag.nickname.irc
+
+[12:34] <nick`> hello
+#        ^^^^^ entity.name.tag.nickname.irc
+
+# ── Multiple channels on same line ─────────────────────
+
+[12:34] <ab> join #foo and #bar
+#                 ^ punctuation.definition.channel.irc
+#                  ^^^ constant.other.channel.irc
+#                      ^^^ - constant.other.channel
+#                          ^ punctuation.definition.channel.irc
+#                           ^^^ constant.other.channel.irc
+
+# ── Channel with hyphen ────────────────────────────────
+
+[12:34] <ab> join #linux-kernel
+#                 ^ punctuation.definition.channel.irc
+#                  ^^^^^^^^^^^^ constant.other.channel.irc
+
+# ── Parenthesized vhost in message body ────────────────
+
+[12:34] <ab> see (user@host.example.net) info
+#                ^ punctuation.definition.vhost.begin.irc
+#                 ^^^^ entity.name.reference.vhost.irc
+#                     ^ punctuation.separator.email.irc
+#                      ^^^^ entity.name.reference.vhost.irc
+#                          ^ punctuation.separator.domain.irc
+#                           ^^^^^^^ entity.name.reference.vhost.irc
+#                                  ^ punctuation.separator.domain.irc
+#                                   ^^^ entity.name.reference.vhost.irc
+#                                      ^ punctuation.definition.vhost.end.irc
+
+# ── Unbracketed HH:MM:SS ──────────────────────────────
+
+00:01:30 <ab> test
+# <- meta.date.irc constant.numeric.value.irc
+#^ constant.numeric.value.irc
+# ^ punctuation.separator.date.irc
+#  ^^ constant.numeric.value.irc
+#    ^ punctuation.separator.date.irc
+#     ^^ constant.numeric.value.irc
+#       ^ - meta.date
+
+# ── Bracketed datetime without seconds ─────────────────
+
+[2021-03-27 12:34] <ab> test
+# <- punctuation.section.date.begin.irc
+#^^^^ constant.numeric.value.irc
+#    ^ punctuation.separator.date.irc
+#     ^^ constant.numeric.value.irc
+#       ^ punctuation.separator.date.irc
+#        ^^ constant.numeric.value.irc
+#           ^^ constant.numeric.value.irc
+#             ^ punctuation.separator.date.irc
+#              ^^ constant.numeric.value.irc
+#                ^ punctuation.section.date.end.irc
+
+# ── Slash-separated full datetime ──────────────────────
+
+2021/03/27 12:34:56	<ab> test
+# <- meta.date.irc constant.numeric.value.irc
+#^^^ constant.numeric.value.irc
+#   ^ punctuation.separator.date.irc
+#    ^^ constant.numeric.value.irc
+#      ^ punctuation.separator.date.irc
+#       ^^ constant.numeric.value.irc
+#          ^^ constant.numeric.value.irc
+#            ^ punctuation.separator.date.irc
+#             ^^ constant.numeric.value.irc
+#               ^ punctuation.separator.date.irc
+#                ^^ constant.numeric.value.irc
+
+# ── Unbracketed datetime without seconds ───────────────
+
+2021-03-27 12:34	<ab> test
+# <- meta.date.irc constant.numeric.value.irc
+#^^^ constant.numeric.value.irc
+#   ^ punctuation.separator.date.irc
+#    ^^ constant.numeric.value.irc
+#      ^ punctuation.separator.date.irc
+#       ^^ constant.numeric.value.irc
+#          ^^ constant.numeric.value.irc
+#            ^ punctuation.separator.date.irc
+#             ^^ constant.numeric.value.irc
+#               ^ - meta.date
+
+# ── http URL ───────────────────────────────────────────
+
+[12:34] <ab> http://example.com ok
+#            ^^^^^^^^^^^^^^^^^^ markup.underline.link.irc
+
+# ── URL with path ─────────────────────────────────────
+
+[12:34] <ab> https://example.com/path/to/page ok
+#            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ markup.underline.link.irc
+
+# ── URL with query string ─────────────────────────────
+
+[12:34] <ab> https://example.com/path?q=1&r=2 ok
+#            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ markup.underline.link.irc
+
+# ── URL with port ─────────────────────────────────────
+
+[12:34] <ab> https://example.com:8080/path ok
+#            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ markup.underline.link.irc
+
+# ── URL with fragment ─────────────────────────────────
+
+[12:34] <ab> https://example.com/page#section ok
+#            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ markup.underline.link.irc
+#                                    ^ - punctuation.definition.channel
+
+# ── URL trailing ? ────────────────────────────────────
+
+[12:34] <ab> https://x.co? ok
+#            ^^^^^^^^^^^^ markup.underline.link.irc
+#                        ^ - markup.underline.link
+
+# ── URL before ] ──────────────────────────────────────
+
+[12:34] <ab> [https://x.co] ok
+#             ^^^^^^^^^^^^ markup.underline.link.irc
+#                         ^ - markup.underline.link
+
+# ── URL trailing : and ; ───────────────────────────────
+
+[12:34] <ab> https://x.co: ok
+#            ^^^^^^^^^^^^ markup.underline.link.irc
+#                        ^ - markup.underline.link
+
+[12:34] <ab> https://x.co; ok
+#            ^^^^^^^^^^^^ markup.underline.link.irc
+#                        ^ - markup.underline.link
+
+# ── parted keyword ────────────────────────────────────
+
+00:01 -!- foo has parted #bar
+#         ^^^ entity.name.tag.nickname.irc
+#             ^^^^ keyword.operator.word.irc
+#                 ^^^^^^ keyword.other.quit.irc
+#                        ^ punctuation.definition.channel.irc
+#                         ^^^ constant.other.channel.irc
+
+# ── has left with channel and quit message ─────────────
+
+00:01 -!- foo has left #bar [heading out]
+#         ^^^ entity.name.tag.nickname.irc
+#             ^^^^ keyword.operator.word.irc
+#                 ^^^^ keyword.other.quit.irc
+#                      ^ punctuation.definition.channel.irc
+#                       ^^^ constant.other.channel.irc
+#                           ^ punctuation.section.brackets.begin.irc
+#                            ^^^^^^^^^^^ string.unquoted.quit-message.irc
+#                                       ^ punctuation.section.brackets.end.irc
+
+# ── event-user-is channel after on ─────────────────────
+
+00:01 -!- foo is "Foo" on #bar #baz
+#                         ^ punctuation.definition.channel.irc
+#                          ^^^ constant.other.channel.irc
+#                              ^ punctuation.definition.channel.irc
+#                               ^^^ constant.other.channel.irc
+
+# ── Action/emote nickname ──────────────────────────────
+
+[12:34] * nick waves
+#       ^ punctuation.definition.event.irc
+#         ^^^^ meta.event.irc entity.name.tag.nickname.irc
+
+00:01 -!- Topic set by chanop [~chanop@services.libera.chat] [Fri Jun 14 22:30:00 2024]
+#         ^^^^^ meta.event.irc keyword.other.topic.irc
+#               ^^^ meta.event.irc keyword.operator.word.irc
+#                   ^^ meta.event.irc keyword.operator.word.irc
+#                      ^^^^^^ meta.event.irc entity.name.tag.nickname.irc
+#                             ^ punctuation.definition.vhost.begin.irc
+
+# ── === join event ─────────────────────────────────────
+
+00:01 === foo has joined #bar
+#     ^^^ punctuation.definition.event.irc
+#         ^^^ meta.event.irc entity.name.tag.nickname.irc
+#             ^^^^ meta.event.irc keyword.operator.word.irc
+#                 ^^^^^^ meta.event.irc keyword.other.join.irc
+#                        ^ punctuation.definition.channel.irc
+#                         ^^^ constant.other.channel.irc

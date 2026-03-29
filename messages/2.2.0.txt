@@ -1,0 +1,22 @@
+IRC Syntax 2.2.0
+================
+
+New:
+  - Hostmask sub-components: @, ., and delimiters in [user@host.net]
+    and (user@host.net) now individually scoped in join/quit events
+  - Parenthesized vhost support: (user@host.net) now highlighted in
+    message bodies and ZNC events (previously only [bracket] style)
+  - ISO T separator in timestamps now scoped as punctuation
+  - Action/emote nickname: nick in "* nick waves" now highlighted
+  - "Topic set by nick" event highlighting (irssi/weechat formats)
+  - "Session Ident:" log marker highlighting (mIRC format)
+  - Expanded test suite: timestamp variants, URL patterns, event
+    keywords, negative assertions, RFC 2812 nickname edge cases
+
+Fixed:
+  - URLs no longer include trailing : or ; at end of sentences
+  - Auto-detection now matches "--- Day changed" and
+    "Session Ident:" lines
+
+Full changelog:
+  https://github.com/barnumbirr/sublime-irc/blob/master/CHANGELOG.md

@@ -10,8 +10,8 @@ first_line_match: |-
   | ^\[?\d{2}:\d{2}(?::\d{2})?\]?\s+(?:[<*]|-!-|===|-->|\*{3})
   | ^\(\d{2}:\d{2}(?::\d{2})?\)\s+[<*]
   | ^[A-Z][a-z]{2}\s+\d{1,2}\s+\d{2}:\d{2}:\d{2}
-  | ^---\s+Log\s+(?:opened|closed)
-  | ^Session\s+(?:Start|Close):
+  | ^---\s+(?:Log\s+(?:opened|closed)|Day\s+changed)
+  | ^Session\s+(?:Start|Close|Ident):
   | ^\*{4}\s+(?:BEGIN|END)\s+LOGGING
 
 contexts:
@@ -45,7 +45,7 @@ contexts:
         2: keyword.other.log.irc
         3: keyword.other.log.irc
         4: string.unquoted.log-detail.irc
-    - match: '^(Session)\s+(Start|Close)(:)(.*)'
+    - match: '^(Session)\s+(Start|Close|Ident)(:)(.*)'
       scope: meta.separator.log.irc
       captures:
         1: keyword.other.log.irc
@@ -63,8 +63,8 @@ contexts:
   # ── Timestamps ──────────────────────────────────────────
 
   timestamp:
-    # Bracketed with date: [2021-03-27 12:34:56] or [2021/03/27 12:34]
-    - match: '^(\[)(\d{4})([-/])(\d{2})([-/])(\d{2})[\sT](\d{2})(:)(\d{2})(?:(:)(\d{2}))?(\])'
+    # Bracketed with date: [2021-03-27 12:34:56] or [2021/03/27 12:34] or [2021-03-27T12:34:56]
+    - match: '^(\[)(\d{4})([-/])(\d{2})([-/])(\d{2})(?:(T)|\s)(\d{2})(:)(\d{2})(?:(:)(\d{2}))?(\])'
       scope: meta.date.irc
       captures:
         1: punctuation.section.date.begin.irc
@@ -73,12 +73,13 @@ contexts:
         4: constant.numeric.value.irc
         5: punctuation.separator.date.irc
         6: constant.numeric.value.irc
-        7: constant.numeric.value.irc
-        8: punctuation.separator.date.irc
-        9: constant.numeric.value.irc
-        10: punctuation.separator.date.irc
-        11: constant.numeric.value.irc
-        12: punctuation.section.date.end.irc
+        7: punctuation.separator.date.irc
+        8: constant.numeric.value.irc
+        9: punctuation.separator.date.irc
+        10: constant.numeric.value.irc
+        11: punctuation.separator.date.irc
+        12: constant.numeric.value.irc
+        13: punctuation.section.date.end.irc
     # Bracketed time only: [12:34:56] or [12:34]
     - match: '^(\[)(\d{2})(:)(\d{2})(?:(:)(\d{2}))?(\])'
       scope: meta.date.irc
@@ -90,8 +91,8 @@ contexts:
         5: punctuation.separator.date.irc
         6: constant.numeric.value.irc
         7: punctuation.section.date.end.irc
-    # Unbracketed with date: 2021-03-27 12:34:56
-    - match: '^(\d{4})([-/])(\d{2})([-/])(\d{2})[\sT](\d{2})(:)(\d{2})(?:(:)(\d{2}))?'
+    # Unbracketed with date: 2021-03-27 12:34:56 or 2021-03-27T12:34:56
+    - match: '^(\d{4})([-/])(\d{2})([-/])(\d{2})(?:(T)|\s)(\d{2})(:)(\d{2})(?:(:)(\d{2}))?'
       scope: meta.date.irc
       captures:
         1: constant.numeric.value.irc
@@ -99,11 +100,12 @@ contexts:
         3: constant.numeric.value.irc
         4: punctuation.separator.date.irc
         5: constant.numeric.value.irc
-        6: constant.numeric.value.irc
-        7: punctuation.separator.date.irc
-        8: constant.numeric.value.irc
-        9: punctuation.separator.date.irc
-        10: constant.numeric.value.irc
+        6: punctuation.separator.date.irc
+        7: constant.numeric.value.irc
+        8: punctuation.separator.date.irc
+        9: constant.numeric.value.irc
+        10: punctuation.separator.date.irc
+        11: constant.numeric.value.irc
     # Unbracketed time only: 12:34 or 12:34:56 (must be followed by whitespace)
     - match: '^(\d{2})(:)(\d{2})(?:(:)(\d{2}))?(?=\s|$)'
       scope: meta.date.irc
@@ -182,8 +184,10 @@ contexts:
     - include: event-topic-display
     - include: event-now-talking
     - include: event-topic-is
+    - include: event-topic-set-by
     - include: event-set-by
     - include: event-user-is
+    - include: event-action
     - include: inline
 
   event-znc-join:
@@ -210,29 +214,82 @@ contexts:
         - include: inline
 
   event-join:
-    - match: '(\S+)\s+(?:(\[[^\]]+\]|\([^)]+\))\s+)?(has\s+)?(joined)\s+'
+    # With bracket hostmask: nick [host] has? joined
+    - match: '(\S+)\s+(?=\[[^\]]+\]\s+(?:has\s+)?joined\s)'
       captures:
         1: entity.name.tag.nickname.irc
-        2: string.unquoted.hostmask.irc
-        3: keyword.operator.word.irc
-        4: keyword.other.join.irc
+      push:
+        - event-join-keywords
+        - hostmask-bracket
+    # With paren hostmask: nick (host) has? joined
+    - match: '(\S+)\s+(?=\([^)]+\)\s+(?:has\s+)?joined\s)'
+      captures:
+        1: entity.name.tag.nickname.irc
+      push:
+        - event-join-keywords
+        - hostmask-paren
+    # Without hostmask: nick has? joined
+    - match: '(\S+)\s+(has\s+)?(joined)\s+'
+      captures:
+        1: entity.name.tag.nickname.irc
+        2: keyword.operator.word.irc
+        3: keyword.other.join.irc
       push:
         - match: $
           pop: true
         - include: inline
 
+  event-join-keywords:
+    - match: '\s*(has\s+)?(joined)\s+'
+      captures:
+        1: keyword.operator.word.irc
+        2: keyword.other.join.irc
+      set:
+        - match: $
+          pop: true
+        - include: inline
+    - match: $
+      pop: true
+
   event-quit:
-    - match: '(\S+)\s+(?:(\[[^\]]+\]|\([^)]+\))\s+)?(has\s+)?(quit|left|parted)\b'
+    # With bracket hostmask: nick [host] has? quit/left/parted
+    - match: '(\S+)\s+(?=\[[^\]]+\]\s+(?:has\s+)?(?:quit|left|parted)\b)'
       captures:
         1: entity.name.tag.nickname.irc
-        2: string.unquoted.hostmask.irc
-        3: keyword.operator.word.irc
-        4: keyword.other.quit.irc
+      push:
+        - event-quit-keywords
+        - hostmask-bracket
+    # With paren hostmask: nick (host) has? quit/left/parted
+    - match: '(\S+)\s+(?=\([^)]+\)\s+(?:has\s+)?(?:quit|left|parted)\b)'
+      captures:
+        1: entity.name.tag.nickname.irc
+      push:
+        - event-quit-keywords
+        - hostmask-paren
+    # Without hostmask: nick has? quit/left/parted
+    - match: '(\S+)\s+(has\s+)?(quit|left|parted)\b'
+      captures:
+        1: entity.name.tag.nickname.irc
+        2: keyword.operator.word.irc
+        3: keyword.other.quit.irc
       push:
         - match: $
           pop: true
         - include: quit-message
         - include: inline
+
+  event-quit-keywords:
+    - match: '\s*(has\s+)?(quit|left|parted)\b'
+      captures:
+        1: keyword.operator.word.irc
+        2: keyword.other.quit.irc
+      set:
+        - match: $
+          pop: true
+        - include: quit-message
+        - include: inline
+    - match: $
+      pop: true
 
   event-topic:
     - match: '(\S+)\s+(changed\s+the\s+topic\s+of)\s+'
@@ -301,6 +358,18 @@ contexts:
             3: punctuation.definition.string.end.irc
         - include: inline
 
+  event-topic-set-by:
+    - match: '(Topic)\s+(set)\s+(by)\s+(\S+)'
+      captures:
+        1: keyword.other.topic.irc
+        2: keyword.operator.word.irc
+        3: keyword.operator.word.irc
+        4: entity.name.tag.nickname.irc
+      push:
+        - match: $
+          pop: true
+        - include: inline
+
   event-set-by:
     - match: '(Set)\s+(by)\s+(\S+)\s+(on)\s+(.*)'
       captures:
@@ -329,6 +398,17 @@ contexts:
           pop: true
         - include: inline
 
+  # Catch-all for action/emote lines (e.g. "* nick waves").
+  # Must be last before inline in event-body includes so specific events take priority.
+  event-action:
+    - match: '(\S+)'
+      captures:
+        1: entity.name.tag.nickname.irc
+      push:
+        - match: $
+          pop: true
+        - include: inline
+
   # ── Quit messages ─────────────────────────────────────
 
   quit-message:
@@ -343,10 +423,48 @@ contexts:
         2: string.unquoted.quit-message.irc
         3: punctuation.section.parens.end.irc
 
+  # ── Hostmasks in events ─────────────────────────────────
+
+  # NOTE: hostmask-bracket and hostmask-paren are identical except for the
+  # closing delimiter. Keep them in sync when making changes.
+  hostmask-bracket:
+    - match: '(\[)'
+      captures:
+        1: punctuation.definition.hostmask.begin.irc
+      set: hostmask-bracket-body
+
+  hostmask-bracket-body:
+    - meta_content_scope: string.unquoted.hostmask.irc
+    - match: '@'
+      scope: punctuation.separator.email.irc
+    - match: '\.'
+      scope: punctuation.separator.domain.irc
+    - match: '(\])'
+      captures:
+        1: punctuation.definition.hostmask.end.irc
+      pop: true
+
+  hostmask-paren:
+    - match: '(\()'
+      captures:
+        1: punctuation.definition.hostmask.begin.irc
+      set: hostmask-paren-body
+
+  hostmask-paren-body:
+    - meta_content_scope: string.unquoted.hostmask.irc
+    - match: '@'
+      scope: punctuation.separator.email.irc
+    - match: '\.'
+      scope: punctuation.separator.domain.irc
+    - match: '(\))'
+      captures:
+        1: punctuation.definition.hostmask.end.irc
+      pop: true
+
   # ── URLs ────────────────────────────────────────────────
 
   url:
-    - match: 'https?://[^\s)\]}>,"'']*(?<![.!?])'
+    - match: 'https?://[^\s)\]}>,"'']*(?<![.!?:;])'
       scope: markup.underline.link.irc
 
   # ── Channels ────────────────────────────────────────────
@@ -363,6 +481,9 @@ contexts:
     - match: '\[(?=\S+?@\S+?\.\S+?\])'
       scope: punctuation.definition.vhost.begin.irc
       push: [vhost-meta, vhost-name]
+    - match: '\((?=\S+?@\S+?\.\S+?\))'
+      scope: punctuation.definition.vhost.begin.irc
+      push: [vhost-meta, vhost-paren-name]
 
   vhost-meta:
     - meta_scope: meta.reference.vhost.irc
@@ -384,5 +505,25 @@ contexts:
 
   vhost-end:
     - match: '\]'
+      scope: punctuation.definition.vhost.end.irc
+      pop: true
+
+  # NOTE: vhost-paren-* mirrors vhost-name/domain/end with ) instead of ].
+  # Keep them in sync when making changes.
+  vhost-paren-name:
+    - meta_content_scope: entity.name.reference.vhost.irc
+    - match: '@'
+      scope: punctuation.separator.email.irc
+      set: vhost-paren-domain
+    - include: vhost-paren-end
+
+  vhost-paren-domain:
+    - meta_content_scope: entity.name.reference.vhost.irc
+    - match: '\.'
+      scope: punctuation.separator.domain.irc
+    - include: vhost-paren-end
+
+  vhost-paren-end:
+    - match: '\)'
       scope: punctuation.definition.vhost.end.irc
       pop: true

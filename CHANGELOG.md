@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [2.2.0] - 2026-03-29
+
+### Added
+- Hostmask sub-component highlighting in join/quit events: `@`, `.`, and delimiters now individually scoped within `[user@host.net]` and `(user@host.net)`
+- Parenthesized vhost support: `(user@host.net)` in message bodies and ZNC events now highlighted with full sub-component scoping (previously only bracket-style `[user@host.net]` was supported)
+- ISO `T` separator in datetime timestamps now scoped as `punctuation.separator.date.irc`
+- Action/emote nickname highlighting: the nick in `* nick waves` lines now scoped as `entity.name.tag.nickname.irc`
+- `Topic set by nick` event highlighting for irssi and weechat formats
+- `Session Ident:` log marker highlighting for mIRC format
+- Auto-detection now matches `--- Day changed` log markers and `Session Ident:` lines
+- Comprehensive syntax test coverage: timestamp variants (unbracketed HH:MM:SS, bracketed datetime without seconds, slash-separated, unbracketed without seconds), URL patterns (http, paths, query strings, ports, fragments), event keywords (`parted`, `has left #channel [reason]`, `=== join`), negative assertions for all event markers in message text, RFC 2812 nickname edge cases (`|`, `` ` ``), multi-channel and hyphenated channel names
+
+### Fixed
+- URL pattern no longer includes trailing `:` or `;` at end of sentences
+- Auto-detection pattern synced with `irc_detect.py` (`--- Day changed`, `Session Ident:`)
+
 ## [2.1.0] - 2026-03-28
 
 ### Added
