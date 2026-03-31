@@ -10,6 +10,14 @@ IRC log file syntax highlighting for Sublime Text.
 - **mIRC** — `*` event markers, bracketed timestamps (`[12:34]`)
 - **ZNC** — `***` event markers, `Joins:`/`Parts:`/`Quits:` keywords
 
+### Highlighted Elements
+
+- **Timestamps** — bracketed, unbracketed, ISO datetime, named-month, parenthesized
+- **Chat messages** — `<nick>` with prefix support (`@`, `+`, `%`, `~`, `&`)
+- **Events** — join, quit, part, kick, mode, nick change, topic change, user info
+- **Inline content** — URLs (`http`, `https`, `ftp`, `irc`, `ircs`, `ssh`, `magnet`, `mailto`), channels (`#`, `&`), hostmasks, virtual hosts
+- **Log markers** — `--- Log opened/closed`, `Session Start/Close`, `**** BEGIN/END LOGGING`
+
 IRC log files are auto-detected when possible via content matching.
 
 ## Preview

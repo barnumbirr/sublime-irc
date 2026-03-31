@@ -1,0 +1,28 @@
+IRC Syntax 2.3.0
+================
+
+New:
+  - KICK event highlighting across all 5 client formats
+  - MODE change highlighting: irssi mode/#channel, weechat Mode,
+    mIRC "sets mode:" formats with mode-string scoping (+o, -b, etc.)
+  - URL protocol expansion: ftp, ftps, irc, ircs, ssh, magnet, mailto
+  - meta.message.body.irc scope on chat message text — enables color
+    schemes to style messages differently from events
+  - Action/emote text scope: "waves" in "* nick waves" now scoped as
+    string.unquoted.action.irc for distinct styling
+  - Quoted realname highlighting: "Real Name" in user-is events now
+    properly scoped with string delimiters
+  - Expanded test suite: KICK/MODE events per client format, bare
+    event lines, quit without "has", URL protocol variants, realname
+    edge cases, hostmask+quit pipeline, mode false-positive guards
+
+Changed:
+  - Extracted variables for nick, channel, URL patterns (DRY)
+  - Extracted shared mode-body context (DRY)
+
+Fixed:
+  - "sets mode" no longer false-matches "sets model" (word boundary)
+  - <-- marker now explicitly detected (was relying on accidental match)
+
+Full changelog:
+  https://github.com/barnumbirr/sublime-irc/blob/master/CHANGELOG.md

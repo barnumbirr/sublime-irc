@@ -7,6 +7,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [2.3.0] - 2026-03-31
+
+### Added
+- KICK event highlighting for all 5 client formats: "was kicked from #channel by operator" (irssi/weechat) and "was kicked by operator from #channel" (HexChat/mIRC/ZNC), with `keyword.other.kick.irc` scope
+- MODE change highlighting: irssi `mode/#channel [+o nick] by ChanServ`, weechat `Mode #channel [+o nick] by ChanServ`, mIRC `nick sets mode: +o target`, with `keyword.other.mode.irc` and `variable.parameter.mode-string.irc` scopes
+- URL protocol expansion: `ftp://`, `ftps://`, `irc://`, `ircs://`, `ssh://`, `magnet:`, `mailto:` now highlighted alongside `http://`/`https://`
+- `meta.message.body.irc` scope on chat message text after `<nick>` — enables color schemes to style messages differently from events
+- `string.unquoted.action.irc` scope on action/emote text (e.g., the "waves" in `* nick waves`)
+- Quoted realname highlighting: `"Real Name"` in user-is events now scoped as `string.quoted.double.realname.irc` with proper `punctuation.definition.string.begin/end.irc` delimiters
+- Explicit `<--` marker in `first_line_match` and `irc_detect.py` detection patterns
+- Syntax tests for KICK and MODE events across all 5 client format test files
+- Syntax tests for: `===` nick changes without timestamp, bare event lines, quit without `has` keyword, URL fragment vs channel negative assertion, quoted/unquoted realname variants, `event-set-by`, `event-topic-display` fallback, hostmask+quit full pipeline, `sets model` negative assertion, weechat `--` marker for join events
+
+### Changed
+- Extracted `variables:` section for `nick`, `channel`, `url_chars` patterns (DRY)
+- Extracted `mode-body` shared context for irssi/weechat MODE bracket/by/inline handling (DRY)
+- Realname in user-is events restructured from single-match to push-based context for proper quote delimiter scoping
+
+### Fixed
+- `sets mode` pattern no longer false-matches words like "sets model" or "sets modern" (added `\b` word boundary)
+
 ## [2.2.0] - 2026-03-29
 
 ### Added

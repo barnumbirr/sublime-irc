@@ -6,7 +6,7 @@ import sublime_plugin
 # NOTE: Keep in sync with first_line_match in Syntaxes/IRC.sublime-syntax
 _IRC_PATTERN = re.compile(
     r"^\[?\d{4}[-/]\d{2}[-/]\d{2}[\sT]\d{2}:\d{2}"
-    r"|^\[?\d{2}:\d{2}(?::\d{2})?\]?\s+(?:[<*]|-!-|===|-->|\*{3})"
+    r"|^\[?\d{2}:\d{2}(?::\d{2})?\]?\s+(?:[<*]|-!-|===|-->|<--|\*{3})"
     r"|^\(\d{2}:\d{2}(?::\d{2})?\)\s+[<*]"
     r"|^[A-Z][a-z]{2}\s+\d{1,2}\s+\d{2}:\d{2}:\d{2}"
     r"|^---\s+(?:Log\s+(?:opened|closed)|Day\s+changed)"

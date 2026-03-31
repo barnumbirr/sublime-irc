@@ -30,3 +30,17 @@ Mar 27 12:34:56 * foo has quit (bye)
 #                              ^ meta.event.irc punctuation.section.parens.begin.irc
 #                               ^^^ meta.event.irc string.unquoted.quit-message.irc
 #                                  ^ meta.event.irc punctuation.section.parens.end.irc
+
+# ── KICK event ────────────────────────────────────────
+
+Mar 27 12:34:56 * baduser has been kicked by chanop from #linux (spam)
+#                 ^^^^^^^ entity.name.tag.nickname.irc
+#                         ^^^^^^^^^^^^^^^ keyword.other.kick.irc
+#                                         ^^ keyword.operator.word.irc
+#                                            ^^^^^^ entity.name.tag.nickname.irc
+#                                                   ^^^^ keyword.operator.word.irc
+#                                                        ^ punctuation.definition.channel.irc
+#                                                         ^^^^^ constant.other.channel.irc
+#                                                               ^ punctuation.section.parens.begin.irc
+#                                                                ^^^^ string.unquoted.quit-message.irc
+#                                                                    ^ punctuation.section.parens.end.irc

@@ -7,12 +7,20 @@ scope: text.irc
 first_line_match: |-
   (?x)
     ^\[?\d{4}[-/]\d{2}[-/]\d{2}[\sT]\d{2}:\d{2}
-  | ^\[?\d{2}:\d{2}(?::\d{2})?\]?\s+(?:[<*]|-!-|===|-->|\*{3})
+  | ^\[?\d{2}:\d{2}(?::\d{2})?\]?\s+(?:[<*]|-!-|===|-->|<--|\*{3})
   | ^\(\d{2}:\d{2}(?::\d{2})?\)\s+[<*]
   | ^[A-Z][a-z]{2}\s+\d{1,2}\s+\d{2}:\d{2}:\d{2}
   | ^---\s+(?:Log\s+(?:opened|closed)|Day\s+changed)
   | ^Session\s+(?:Start|Close|Ident):
   | ^\*{4}\s+(?:BEGIN|END)\s+LOGGING
+
+variables:
+  # RFC 2812 valid nickname: letter or special, then up to 31 alphanumeric/special/hyphen
+  nick: '[a-zA-Z\[\]\\`_\^\{\|\}][a-zA-Z0-9\[\]\\`_\^\{\|\}\-]{0,31}'
+  # RFC 2812 channel: prefix (#/&) + 1-199 chars (excludes BEL, comma, whitespace)
+  channel: '([#&])([^\x07\x2C\s]{1,199})'
+  # URL body: non-whitespace run excluding certain trailing punctuation
+  url_chars: '[^\s)\]}>,"'']*(?<![.!?:;])'
 
 contexts:
   main:
@@ -141,7 +149,7 @@ contexts:
   # ── Chat nicknames: <nick> ─────────────────────────────
 
   nickname:
-    - match: '(<)\s*([~&@%+]?)([a-zA-Z\[\]\\`_\^\{\|\}][a-zA-Z0-9\[\]\\`_\^\{\|\}\-]{0,31})(>)'
+    - match: '(<)\s*([~&@%+]?)({{nick}})(>)'
       scope: meta.reference.nickname.irc
       captures:
         1: punctuation.definition.reference.nickname.begin.irc
@@ -153,6 +161,7 @@ contexts:
   # Message body after <nick> — only inline patterns, no event markers.
   # This prevents false event matches in chat text (e.g. "5 * 3").
   message-body:
+    - meta_content_scope: meta.message.body.irc
     - match: $
       pop: true
     - include: inline
@@ -180,6 +189,8 @@ contexts:
     - include: event-znc-quit
     - include: event-join
     - include: event-quit
+    - include: event-kick
+    - include: event-mode
     - include: event-topic
     - include: event-topic-display
     - include: event-now-talking
@@ -291,6 +302,84 @@ contexts:
     - match: $
       pop: true
 
+  event-kick:
+    # Pattern A: nick was/has been kicked from #channel by operator [reason]
+    - match: '(\S+)\s+((?:was|has\s+been)\s+kicked)\s+(from)\s+'
+      captures:
+        1: entity.name.tag.nickname.irc
+        2: keyword.other.kick.irc
+        3: keyword.operator.word.irc
+      push:
+        - match: $
+          pop: true
+        - match: '(by)\s+(\S+)'
+          captures:
+            1: keyword.operator.word.irc
+            2: entity.name.tag.nickname.irc
+        - include: quit-message
+        - include: inline
+    # Pattern B: nick was/has been kicked by operator from #channel [reason]
+    - match: '(\S+)\s+((?:was|has\s+been)\s+kicked)\s+(by)\s+(\S+)\s+(from)\s+'
+      captures:
+        1: entity.name.tag.nickname.irc
+        2: keyword.other.kick.irc
+        3: keyword.operator.word.irc
+        4: entity.name.tag.nickname.irc
+        5: keyword.operator.word.irc
+      push:
+        - match: $
+          pop: true
+        - include: quit-message
+        - include: inline
+
+  event-mode:
+    # irssi: mode/#channel [+o nick] by ChanServ  (and ServerMode variant)
+    - match: '((?:Server)?[Mm]ode)(/){{channel}}\s+'
+      captures:
+        1: keyword.other.mode.irc
+        2: punctuation.separator.path.irc
+        3: punctuation.definition.channel.irc
+        4: constant.other.channel.irc
+      push: mode-body
+    # weechat: Mode #channel [+o nick] by ChanServ
+    - match: '(Mode)\s+{{channel}}\s+'
+      captures:
+        1: keyword.other.mode.irc
+        2: punctuation.definition.channel.irc
+        3: constant.other.channel.irc
+      push: mode-body
+    # mIRC/generic: nick sets mode: +o target  OR  nick sets mode +o target on #channel
+    - match: '(\S+)\s+(sets\s+mode)\b(:?)\s*'
+      captures:
+        1: entity.name.tag.nickname.irc
+        2: keyword.other.mode.irc
+        3: punctuation.separator.key-value.irc
+      push:
+        - match: $
+          pop: true
+        - match: '([+-]\S+)'
+          captures:
+            1: variable.parameter.mode-string.irc
+        - match: '(on)\s+'
+          captures:
+            1: keyword.operator.word.irc
+        - include: inline
+
+  # Shared context for irssi/weechat mode events: [+o nick] by ChanServ
+  mode-body:
+    - match: $
+      pop: true
+    - match: '(\[)([^\]]+)(\])'
+      captures:
+        1: punctuation.section.brackets.begin.irc
+        2: variable.parameter.mode-string.irc
+        3: punctuation.section.brackets.end.irc
+    - match: '(by)\s+(\S+)'
+      captures:
+        1: keyword.operator.word.irc
+        2: entity.name.tag.nickname.irc
+    - include: inline
+
   event-topic:
     - match: '(\S+)\s+(changed\s+the\s+topic\s+of)\s+'
       captures:
@@ -387,15 +476,31 @@ contexts:
         3: entity.name.tag.nickname.irc
 
   event-user-is:
-    - match: '(\S+)\s+(is)\s+(.*?)\s+(on)\s+'
+    - match: '(\S+)\s+(is)\s+'
       captures:
         1: entity.name.tag.nickname.irc
         2: keyword.operator.word.irc
-        3: string.unquoted.realname.irc
-        4: keyword.operator.word.irc
       push:
         - match: $
           pop: true
+        - match: '(")([^"]*?)(")\s+(on)\s+'
+          captures:
+            1: punctuation.definition.string.begin.irc
+            2: string.quoted.double.realname.irc
+            3: punctuation.definition.string.end.irc
+            4: keyword.operator.word.irc
+          set:
+            - match: $
+              pop: true
+            - include: inline
+        - match: '(.*?)\s+(on)\s+'
+          captures:
+            1: string.unquoted.realname.irc
+            2: keyword.operator.word.irc
+          set:
+            - match: $
+              pop: true
+            - include: inline
         - include: inline
 
   # Catch-all for action/emote lines (e.g. "* nick waves").
@@ -405,6 +510,7 @@ contexts:
       captures:
         1: entity.name.tag.nickname.irc
       push:
+        - meta_content_scope: string.unquoted.action.irc
         - match: $
           pop: true
         - include: inline
@@ -464,13 +570,15 @@ contexts:
   # ── URLs ────────────────────────────────────────────────
 
   url:
-    - match: 'https?://[^\s)\]}>,"'']*(?<![.!?:;])'
+    - match: '(?:https?|ftps?|ircs?|ssh)://{{url_chars}}'
+      scope: markup.underline.link.irc
+    - match: '(?:magnet|mailto):{{url_chars}}'
       scope: markup.underline.link.irc
 
   # ── Channels ────────────────────────────────────────────
 
   channel:
-    - match: '([#&])([^\x07\x2C\s]{1,199})'
+    - match: '{{channel}}'
       captures:
         1: punctuation.definition.channel.irc
         2: constant.other.channel.irc

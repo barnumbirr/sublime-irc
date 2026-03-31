@@ -494,11 +494,16 @@ Session Ident: #linux
 #                              ^ punctuation.definition.channel.irc
 #                               ^^^ constant.other.channel.irc
 
-# ── Action/emote nickname ──────────────────────────────
+# ── Action/emote nickname and text ─────────────────────
 
 [12:34] * nick waves
 #       ^ punctuation.definition.event.irc
 #         ^^^^ meta.event.irc entity.name.tag.nickname.irc
+#              ^^^^^ meta.event.irc string.unquoted.action.irc
+
+[12:34] * nick waves at https://x.co
+#              ^^^^^^^^^ meta.event.irc string.unquoted.action.irc
+#                       ^^^^^^^^^^^^ meta.event.irc string.unquoted.action.irc markup.underline.link.irc
 
 00:01 -!- Topic set by chanop [~chanop@services.libera.chat] [Fri Jun 14 22:30:00 2024]
 #         ^^^^^ meta.event.irc keyword.other.topic.irc
@@ -516,3 +521,215 @@ Session Ident: #linux
 #                 ^^^^^^ meta.event.irc keyword.other.join.irc
 #                        ^ punctuation.definition.channel.irc
 #                         ^^^ constant.other.channel.irc
+
+# ── === nick change with no timestamp ──────────────────
+
+=== ubuntu is now known as Guest6378
+# <- punctuation.definition.event.irc
+#   ^^^^^^ entity.name.tag.nickname.irc
+#          ^^^^^^^^^^^^^^^ keyword.operator.word.irc
+#                          ^^^^^^^^^ entity.name.tag.nickname.irc
+
+# ── Bare event line (no timestamp at all) ──────────────
+
+=== foo joined #bar
+# <- punctuation.definition.event.irc
+#   ^^^ entity.name.tag.nickname.irc
+#       ^^^^^^ keyword.other.join.irc
+#              ^ punctuation.definition.channel.irc
+#               ^^^ constant.other.channel.irc
+
+# ── Quit without "has" keyword ─────────────────────────
+
+[12:34] * nick quit (bye)
+#         ^^^^ entity.name.tag.nickname.irc
+#              ^^^^ keyword.other.quit.irc
+#                   ^ punctuation.section.parens.begin.irc
+#                    ^^^ string.unquoted.quit-message.irc
+#                       ^ punctuation.section.parens.end.irc
+
+# ── Message body meta scope ───────────────────────────
+
+[12:34] <ab> hello world
+#            ^^^^^^^^^^^ meta.message.body.irc
+#            ^^^^^ - meta.event
+
+[12:34] <ab> https://x.co ok
+#            ^^^^^^^^^^^^ meta.message.body.irc markup.underline.link.irc
+#                         ^^ meta.message.body.irc
+
+[12:34] <ab> join #linux
+#                 ^ meta.message.body.irc punctuation.definition.channel.irc
+#                  ^^^^^ meta.message.body.irc constant.other.channel.irc
+
+# ── KICK events ───────────────────────────────────────
+
+# Pattern A: kicked from #channel by operator
+00:01 -!- baduser was kicked from #linux by chanop [spam]
+#         ^^^^^^^ entity.name.tag.nickname.irc
+#                 ^^^^^^^^^^ keyword.other.kick.irc
+#                            ^^^^ keyword.operator.word.irc
+#                                 ^ punctuation.definition.channel.irc
+#                                  ^^^^^ constant.other.channel.irc
+#                                        ^^ keyword.operator.word.irc
+#                                           ^^^^^^ entity.name.tag.nickname.irc
+#                                                  ^ punctuation.section.brackets.begin.irc
+#                                                   ^^^^ string.unquoted.quit-message.irc
+#                                                       ^ punctuation.section.brackets.end.irc
+
+# Pattern A: "has been kicked" variant
+00:01 -!- baduser has been kicked from #linux by chanop (spam)
+#         ^^^^^^^ entity.name.tag.nickname.irc
+#                 ^^^^^^^^^^^^^^^ keyword.other.kick.irc
+#                                 ^^^^ keyword.operator.word.irc
+#                                      ^ punctuation.definition.channel.irc
+#                                       ^^^^^ constant.other.channel.irc
+#                                             ^^ keyword.operator.word.irc
+#                                                ^^^^^^ entity.name.tag.nickname.irc
+
+# Pattern B: kicked by operator from #channel
+[12:34] * baduser was kicked by chanop from #linux (spam)
+#         ^^^^^^^ entity.name.tag.nickname.irc
+#                 ^^^^^^^^^^ keyword.other.kick.irc
+#                            ^^ keyword.operator.word.irc
+#                               ^^^^^^ entity.name.tag.nickname.irc
+#                                      ^^^^ keyword.operator.word.irc
+#                                           ^ punctuation.definition.channel.irc
+#                                            ^^^^^ constant.other.channel.irc
+#                                                  ^ punctuation.section.parens.begin.irc
+#                                                   ^^^^ string.unquoted.quit-message.irc
+#                                                       ^ punctuation.section.parens.end.irc
+
+# ── MODE changes ──────────────────────────────────────
+
+# irssi mode/# format
+00:01 -!- mode/#linux [+o chanop] by ChanServ
+#         ^^^^ keyword.other.mode.irc
+#             ^ punctuation.separator.path.irc
+#              ^ punctuation.definition.channel.irc
+#               ^^^^^ constant.other.channel.irc
+#                     ^ punctuation.section.brackets.begin.irc
+#                      ^^^^^^^^^ variable.parameter.mode-string.irc
+#                               ^ punctuation.section.brackets.end.irc
+#                                 ^^ keyword.operator.word.irc
+#                                    ^^^^^^^^ entity.name.tag.nickname.irc
+
+# irssi ServerMode variant
+00:01 -!- ServerMode/#linux [+o chanop] by ChanServ
+#         ^^^^^^^^^^ keyword.other.mode.irc
+#                   ^ punctuation.separator.path.irc
+#                    ^ punctuation.definition.channel.irc
+#                     ^^^^^ constant.other.channel.irc
+
+# mIRC "sets mode:" format
+[12:34] * ChanServ sets mode: +o nick
+#         ^^^^^^^^ entity.name.tag.nickname.irc
+#                  ^^^^^^^^^ keyword.other.mode.irc
+#                           ^ punctuation.separator.key-value.irc
+#                             ^^ variable.parameter.mode-string.irc
+
+# mIRC "sets mode" without colon
+[12:34] * ChanServ sets mode +v nick
+#         ^^^^^^^^ entity.name.tag.nickname.irc
+#                  ^^^^^^^^^ keyword.other.mode.irc
+#                            ^^ variable.parameter.mode-string.irc
+
+# Ban via mode
+00:01 -!- mode/#linux [+b *!*@troll.example.com] by chanop
+#         ^^^^ keyword.other.mode.irc
+#                     ^ punctuation.section.brackets.begin.irc
+#                      ^^^^^^^^^^^^^^^^^^^^^^^^ variable.parameter.mode-string.irc
+#                                              ^ punctuation.section.brackets.end.irc
+
+# ── URL protocol expansion ────────────────────────────
+
+[12:34] <ab> ftp://files.example.com/pub ok
+#            ^^^^^^^^^^^^^^^^^^^^^^^^^^^ markup.underline.link.irc
+#                                        ^^ - markup.underline.link
+
+[12:34] <ab> irc://irc.libera.chat/#linux ok
+#            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ markup.underline.link.irc
+#                                         ^^ - markup.underline.link
+
+[12:34] <ab> ircs://irc.libera.chat/#linux ok
+#            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ markup.underline.link.irc
+
+# irc:// URL must not trigger channel highlighting for #linux in URL
+[12:34] <ab> irc://irc.libera.chat/#linux
+#                                  ^ - punctuation.definition.channel
+#                                   ^^^^^ - constant.other.channel
+
+[12:34] <ab> ssh://user@host.example.com ok
+#            ^^^^^^^^^^^^^^^^^^^^^^^^^^^ markup.underline.link.irc
+
+[12:34] <ab> magnet:?xt=urn:btih:abc123 ok
+#            ^^^^^^^^^^^^^^^^^^^^^^^^^^ markup.underline.link.irc
+
+[12:34] <ab> mailto:user@example.com ok
+#            ^^^^^^^^^^^^^^^^^^^^^^ markup.underline.link.irc
+
+# ── Quoted vs unquoted realname ────────────────────────
+
+00:01 -!- foo is "Foo Bar" on #baz
+#         ^^^ entity.name.tag.nickname.irc
+#             ^^ keyword.operator.word.irc
+#                ^ punctuation.definition.string.begin.irc
+#                 ^^^^^^^ string.quoted.double.realname.irc
+#                        ^ punctuation.definition.string.end.irc
+#                          ^^ keyword.operator.word.irc
+#                             ^ punctuation.definition.channel.irc
+#                              ^^^ constant.other.channel.irc
+
+# Realname containing " on " in quotes
+00:01 -!- foo is "Someone on vacation" on #bar
+#                ^ punctuation.definition.string.begin.irc
+#                 ^^^^^^^^^^^^^^^^^^^ string.quoted.double.realname.irc
+#                                    ^ punctuation.definition.string.end.irc
+#                                      ^^ keyword.operator.word.irc
+
+# Unquoted realname
+00:01 -!- foo is Foo Bar on #baz
+#         ^^^ entity.name.tag.nickname.irc
+#             ^^ keyword.operator.word.irc
+#                ^^^^^^^ string.unquoted.realname.irc
+#                        ^^ keyword.operator.word.irc
+
+# ── Set by (mIRC topic set) ──────────────────────────
+
+[12:34] * Set by sysop on Fri Jun 14 19:32:11 2024
+#         ^^^ keyword.other.topic.irc
+#             ^^ keyword.operator.word.irc
+#                ^^^^^ entity.name.tag.nickname.irc
+#                      ^^ keyword.operator.word.irc
+#                         ^^^^^^^^^^^^^^^^^^^^^^^^ string.unquoted.log-detail.irc
+
+# ── Topic display without channel ─────────────────────
+
+00:01 -!- Topic for unknown: some text
+#         ^^^^^ keyword.other.topic.irc
+#               ^^^ keyword.operator.word.irc
+#                          ^ punctuation.separator.key-value.irc
+#                            ^^^^^^^^^ string.unquoted.topic.irc
+
+# ── Quit with hostmask + paren reason (full pipeline) ─
+
+00:01 -!- foo (user@host.net) has quit (bye)
+#         ^^^ entity.name.tag.nickname.irc
+#             ^ punctuation.definition.hostmask.begin.irc
+#              ^^^^ string.unquoted.hostmask.irc
+#                  ^ punctuation.separator.email.irc
+#                   ^^^^ string.unquoted.hostmask.irc
+#                       ^ punctuation.separator.domain.irc
+#                        ^^^ string.unquoted.hostmask.irc
+#                           ^ punctuation.definition.hostmask.end.irc
+#                             ^^^^ keyword.operator.word.irc
+#                                 ^^^^ keyword.other.quit.irc
+#                                      ^ punctuation.section.parens.begin.irc
+#                                       ^^^ string.unquoted.quit-message.irc
+#                                          ^ punctuation.section.parens.end.irc
+
+# ── "sets model" should NOT match mode ────────────────
+
+[12:34] * nick sets model airplane
+#              ^^^^ - keyword.other.mode
+#                   ^^^^^ - keyword.other.mode
