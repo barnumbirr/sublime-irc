@@ -58,6 +58,8 @@ Jun 15 08:30:40 <kerneldev> wb
 Jun 15 08:31:05 <tux42> what'd I miss?
 Jun 15 08:31:28 <secops_mike> supply chain security discussion
 Jun 15 08:31:55 <tux42> fun times
+Jun 15 08:34:00 * spambot has been kicked by tux42 from #linux (no spam)
+Jun 15 08:34:15 * tux42 sets mode: +b *!*@spam.example.com
 Jun 15 08:35:00 * netguru has quit (Ping timeout: 260 seconds)
 Jun 15 08:42:15 * storageguy (sg@nas01.homelabs.example.org) has joined #linux
 Jun 15 08:42:30 <storageguy> hey all. zfs question

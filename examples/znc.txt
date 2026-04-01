@@ -34,6 +34,7 @@
 [08:09:20] <netadmin_bob> I'm going to go check that
 [08:09:35] <tux42> lol classic
 [08:09:48] <sysop_jen> haha we've all been there
+[08:09:50] *** spambot was kicked by sysop_jen from #linux (unwanted bot)
 [08:10:10] *** Quits: kerneldev (rms@198.51.100.44) (Quit: back to hacking)
 [08:10:30] * tux42 refills coffee
 [08:15:02] <netadmin_bob> yep. that was it. ip_forward was 0

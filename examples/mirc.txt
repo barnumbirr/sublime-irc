@@ -42,6 +42,8 @@ Session Ident: #linux
 [08:22] <dockermike> let me check... it was set to false. that's probably it
 [08:23] <tux_admin> dockermike: also verify your kubelet is using --cgroup-driver=systemd
 [08:25] * netguru has quit IRC (Ping timeout: 260 seconds)
+[08:26] * spambot was kicked by kerneldev (advertising)
+[08:26] * kerneldev sets mode: +b *!*@botnet.example.net
 [08:27] <dockermike> that was it! SystemdCgroup = true fixed it. pods are starting now
 [08:28] <kerneldev> the cgroupv1 to v2 migration catches everyone at least once
 [08:29] <tux_admin> the docs at https://kubernetes.io/docs/concepts/architecture/cgroups/ are actually pretty good now

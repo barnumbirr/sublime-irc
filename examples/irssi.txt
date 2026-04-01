@@ -73,6 +73,8 @@
 09:33 <ghostdancer> https://docs.kernel.org/userspace-api/landlock.html
 09:34 <sysop_meg> so a web app could restrict its own filesystem access at startup?
 09:35 <ghostdancer> exactly. defense in depth. even if compromised, the attacker can't traverse outside the sandbox
+09:38 -!- spambot [~bot@dsl-45-22-198-3.hsd.example.net] was kicked from #linux by ghostdancer [no bots allowed]
+09:39 -!- mode/#linux [+b *!*@dsl-45-22-198-3.hsd.example.net] by ghostdancer
 09:40 -!- netdev_pat [~pat@cpe-76-93-148-200.socal.res.rr.com] has left #linux [heading to a meeting]
 09:45 -!- brewer42 [~brewer@gateway/web/freenode/ip.203.0.113.42] has joined #linux
 09:46 <brewer42> back. kernel patched and rebooted, no more panics

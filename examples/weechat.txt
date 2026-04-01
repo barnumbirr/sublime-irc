@@ -64,6 +64,8 @@
 2024-06-15 09:02:30	<container_kid>	nmcli connection import type wireguard file /etc/wireguard/wg0.conf
 2024-06-15 09:03:22	<netguru>	nice, I'll test that approach, thanks container_kid
 2024-06-15 09:05:00	<--	container_kid (ck@podman.containers.example.net) has quit (Quit: lunch break)
+2024-06-15 09:07:00	<--	spambot has been kicked from #linux by tux_admin (flooding)
+2024-06-15 09:08:00	--	Mode #linux [+b *!*@botnet.example.com] by tux_admin
 2024-06-15 09:15:00	-->	secops (sec@infosec.example.com) has joined #linux
 2024-06-15 09:15:00	--	secops is "Pat Kim" on #linux #security #hardening
 2024-06-15 09:15:18	<secops>	hey channel, anyone using LUKS2 with TPM2 for automatic unlock?
